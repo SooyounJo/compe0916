@@ -5,21 +5,21 @@ import Image from "next/image";
 import {
   markLeftOrbitEnterPlayed,
   shouldPlayLeftOrbitEnter,
-} from "@/lib/leftOrbitEnterLatch";
+} from "../lib/leftOrbitEnterLatch";
 import {
   LEFT_ORBIT_ARC_ENTRY,
   LEFT_ORBIT_STEP4_ENTRY_BASE_S,
   LEFT_ORBIT_STEP4_ICONS,
-} from "@/lib/leftOrbitStep4";
+} from "../lib/leftOrbitStep4";
 import {
   LEFT_STEP5_ICONS,
   LEFT_STEP5_INNER_PCT,
-} from "@/lib/leftOrbitStep5";
+} from "../lib/leftOrbitStep5";
 
 function iconMotionClass(step, arcSettled, playEnter) {
   if (step === 5) return "left-icon-orbit-settled";
   if (step === 4 && arcSettled) return "left-icon-orbit-settled";
-  if (step === 4 && playEnter) return "left-icon-orbit-enter-arc";
+  if (step === 4 && playEnter) return "ux1-left-icon-orbit-enter-arc";
   if (step === 4) return "left-icon-orbit-settled";
   return "";
 }
@@ -33,13 +33,14 @@ function Step5Icon({ icon }) {
 
   return (
     <div
-      className="left-icon-orbit-settled absolute -translate-x-1/2 -translate-y-1/2"
+      className="ux1-left-icon-orbit-step5-in absolute -translate-x-1/2 -translate-y-1/2"
       style={{
         left: icon.left,
         top: icon.top,
         width: `${icon.sizeCqw}cqw`,
         height: `${icon.sizeCqw}cqw`,
-        opacity: icon.opacity ?? 1,
+        animationDelay: `${icon.delayS ?? 0}s`,
+        "--orbit-step5-opacity": icon.opacity ?? 1,
       }}
     >
       {icon.variant === "music" ? (
@@ -119,7 +120,7 @@ export default function LeftCompanionIconArc({ step = 1 }) {
 
   const onEnterStart = useCallback(
     (e) => {
-      if (step !== 4 || e.animationName !== "left-icon-arc-enter") return;
+      if (step !== 4 || e.animationName !== "ux1-left-icon-arc-enter") return;
       markLeftOrbitEnterPlayed();
     },
     [step],
@@ -127,7 +128,7 @@ export default function LeftCompanionIconArc({ step = 1 }) {
 
   const onEnterEnd = useCallback(
     (e) => {
-      if (step !== 4 || e.animationName !== "left-icon-arc-enter") return;
+      if (step !== 4 || e.animationName !== "ux1-left-icon-arc-enter") return;
       enterDoneCountRef.current += 1;
       if (enterDoneCountRef.current >= LEFT_ORBIT_STEP4_ICONS.length) {
         setArcSettled(true);

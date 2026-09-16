@@ -10,10 +10,16 @@ const SLOT_CLASS =
 export default function VoiceMusicSlot({ step, dotsGathering = false }) {
   if (step < 2 || step > 4) return null;
 
-  const voiceActive = (step === 2 || step === 3) && !dotsGathering && step !== 4;
+  const voiceActive =
+    (step === 2 || step === 3) && !dotsGathering && step !== 4;
 
   return (
-    <div className={SLOT_CLASS} aria-hidden={step === 4}>
+    <div
+      className={`${SLOT_CLASS} ${
+        voiceActive ? "voice-slot--glow" : ""
+      }`}
+      aria-hidden={step === 4}
+    >
       <div
         className={`absolute inset-0 origin-center will-change-[transform,opacity,filter] ${T} ${
           voiceActive

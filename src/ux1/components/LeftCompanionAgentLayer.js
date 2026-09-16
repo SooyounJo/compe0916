@@ -1,5 +1,5 @@
-import { AgentDotsContinuity } from "@/components/AgentDots";
-import { AgentBlobShell } from "@/components/AgentBlobCluster";
+import { AgentDotsContinuity } from "./AgentDots";
+import { AgentBlobShell } from "./AgentBlobCluster";
 
 const CENTER_CLUSTER_EASE =
   "ease-[cubic-bezier(0.33,0,0.15,1)] transition-[transform,opacity,filter]";
@@ -43,18 +43,22 @@ export default function LeftCompanionAgentLayer({
         style={{ transformOrigin: "center center" }}
       >
         {showCenterBlobShell ? (
-          <div
-            className={`pointer-events-none absolute left-1/2 top-1/2 z-0 -translate-x-1/2 -translate-y-1/2 ${BLOB_SHELL_REVEAL} ${blobShellRevealClass}`}
-          >
-            <AgentBlobShell
-              active={
-                shellLit &&
-                step === 3 &&
-                !dotsGathering &&
-                !centerClusterExit
-              }
-            />
-          </div>
+          <>
+            {/* 좌측 3번: 하얀 글로우 아래에 아주 옅은 그림자 레이어 */}
+            <div className="pointer-events-none absolute left-1/2 top-1/2 z-[-1] -translate-x-1/2 -translate-y-1/2 h-[clamp(80px,19vw,104px)] w-[clamp(80px,19vw,104px)] rounded-full bg-[radial-gradient(circle,rgba(0,0,0,0.04),rgba(0,0,0,0.08)_42%,transparent_76%)] blur-[10px]" />
+            <div
+              className={`pointer-events-none absolute left-1/2 top-1/2 z-0 -translate-x-1/2 -translate-y-1/2 ${BLOB_SHELL_REVEAL} ${blobShellRevealClass}`}
+            >
+              <AgentBlobShell
+                active={
+                  shellLit &&
+                  step === 3 &&
+                  !dotsGathering &&
+                  !centerClusterExit
+                }
+              />
+            </div>
+          </>
         ) : null}
         <div className="relative z-10">
           <AgentDotsContinuity

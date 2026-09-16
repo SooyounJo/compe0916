@@ -1,11 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import LeftCompanionAgentLayer from "@/components/LeftCompanionAgentLayer";
-import LeftCompanionIconArc from "@/components/LeftCompanionIconArc";
-import LeftCompanionStep1 from "@/components/LeftCompanionStep1";
-import LeftCompanionStep6 from "@/components/LeftCompanionStep6";
-import LeftVoiceWineMorph from "@/components/LeftVoiceWineMorph";
+import LeftCompanionAgentLayer from "./LeftCompanionAgentLayer";
+import LeftCompanionIconArc from "./LeftCompanionIconArc";
+import LeftCompanionStep1 from "./LeftCompanionStep1";
+import LeftCompanionStep6 from "./LeftCompanionStep6";
+import LeftVoiceWineMorph from "./LeftVoiceWineMorph";
+import BlurFade from "./BlurFade";
 
 const LEFT_BLOB_BG_STEP1 = "/figma/left-blob/step1-bg.png";
 const LEFT_BLOB_BG_FROM_STEP2 = "/figma/left-blob/ambient-bg.png";
@@ -51,7 +52,9 @@ export default function LeftAmbientBackground({
         priority={step === 1}
       />
 
-      <LeftCompanionStep1 show={step === 1} />
+      <BlurFade show={step === 1}>
+        <LeftCompanionStep1 show />
+      </BlurFade>
 
       <div
         className={`pointer-events-none absolute left-1/2 z-[3] -translate-x-1/2 -translate-y-1/2 transition-[top,opacity] duration-[1200ms] ease-[cubic-bezier(0.25,0.1,0.2,1)] ${

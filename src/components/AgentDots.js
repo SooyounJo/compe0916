@@ -9,7 +9,7 @@ const STEP1_ROW_BOX_W = "calc(9px * 3 + 0.65rem * 2)";
 const STEP1_ROW_BOX_H = "18px";
 
 const CLUSTER_BOX_W = 34;
-const CLUSTER_BOX_H = 31;
+const CLUSTER_BOX_H = 34;
 const ROW_BOX_W = "calc(11px * 3 + 0.85rem * 2)";
 const ROW_BOX_H = "11px";
 
@@ -26,10 +26,11 @@ const STEP1_ROW_OFFSETS = [
   { x: "calc(9px + 0.65rem)", y: "-3.2px" },
 ];
 
+/** 2~3 중앙 회전 닷 — 완전한 정삼각형으로 균일 회전 */
 const CLUSTER_OFFSETS = [
-  { x: "-10.5px", y: "-9px", opacity: 1 },
-  { x: "10.5px", y: "-4px", opacity: 0.8 },
-  { x: "-2px", y: "9px", opacity: 0.5 },
+  { x: "0px", y: "-10.5px", opacity: 1 },
+  { x: "9.1px", y: "5.25px", opacity: 0.8 },
+  { x: "-9.1px", y: "5.25px", opacity: 0.5 },
 ];
 
 const GATHER_CENTER = { x: "0px", y: "0px", opacity: 0 };

@@ -1,6 +1,6 @@
 import Image from "next/image";
-import MusicBlob from "@/components/MusicBlob";
-import { insetOrbitPosition } from "@/lib/orbitIconLayout";
+import MusicBlob from "./MusicBlob";
+import { insetOrbitPosition } from "../lib/orbitIconLayout";
 
 const ORBIT_ICONS = [
   {

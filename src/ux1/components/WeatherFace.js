@@ -1,5 +1,5 @@
 import Image from "next/image";
-import BlurFade from "@/components/BlurFade";
+import BlurFade from "./BlurFade";
 
 /** Figma 20:3022 — 텍스트·아이콘만 (점은 CircleUI에서 연속 레이어로) */
 const F = 1872;

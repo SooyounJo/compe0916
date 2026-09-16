@@ -1,16 +1,16 @@
 import Image from "next/image";
-import { AgentDotsContinuity } from "@/components/AgentDots";
-import { AgentBlobShell } from "@/components/AgentBlobCluster";
-import BlurFade from "@/components/BlurFade";
-import VoiceMusicSlot from "@/components/VoiceMusicSlot";
-import PartyFooter from "@/components/PartyFooter";
-import WeatherFace from "@/components/WeatherFace";
-import IconOrbitCarousel from "@/components/IconOrbitCarousel";
-import OrbitWinePersist from "@/components/OrbitWinePersist";
-import PartyNightScreen from "@/components/PartyNightScreen";
-import PartyNightBackground from "@/components/PartyNightBackground";
-import DotGridAmbient from "@/components/DotGridAmbient";
-import WeatherBackground from "@/components/WeatherBackground";
+import { AgentDotsContinuity } from "./AgentDots";
+import { AgentBlobShell } from "./AgentBlobCluster";
+import BlurFade from "./BlurFade";
+import VoiceMusicSlot from "./VoiceMusicSlot";
+import PartyFooter from "./PartyFooter";
+import WeatherFace from "./WeatherFace";
+import IconOrbitCarousel from "./IconOrbitCarousel";
+import OrbitWinePersist from "./OrbitWinePersist";
+import PartyNightScreen from "./PartyNightScreen";
+import PartyNightBackground from "./PartyNightBackground";
+import DotGridAmbient from "./DotGridAmbient";
+import WeatherBackground from "./WeatherBackground";
 
 const T = "duration-1000 ease-in-out transition-all";
 /** 3→4: gather(3末) → 4에서 블롭·닷 함께 축소 */

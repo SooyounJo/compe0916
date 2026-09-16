@@ -1,4 +1,4 @@
-import BlurFade from "@/components/BlurFade";
+import BlurFade from "./BlurFade";
 
 /** Figma 17:1709 — 6번 Party Night 타이틀 (와인은 OrbitWinePersist) */
 export default function PartyNightScreen({ step }) {
