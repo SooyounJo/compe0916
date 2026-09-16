@@ -15,16 +15,16 @@ export default function WeatherFace({ show = true }) {
         className="absolute left-1/2 flex w-[25.106%] -translate-x-1/2 flex-col items-end gap-[10.417cqw]"
         style={{ top: `${(481 / F) * 100}%` }}
       >
-        <div className="relative h-[5.876cqw] w-full shrink-0">
+        <div className="relative h-[4.6cqw] w-full shrink-0">
           <Image
             src="/figma/cloud-sun.svg"
             alt=""
             width={110}
             height={110}
-            className="absolute left-0 top-0 h-[5.876cqw] w-[5.876cqw] max-w-none"
+            className="absolute left-0 top-0 h-[4.6cqw] w-[4.6cqw] max-w-none"
           />
           <p
-            className="font-haas absolute -translate-x-1/2 whitespace-nowrap text-[4.122cqw] font-light tracking-[-0.02em] text-[#575757]"
+            className="font-haas absolute -translate-x-1/2 whitespace-nowrap text-[3.62cqw] font-light tracking-[-0.02em] text-[#575757]"
             style={{
               left: `${(303.5 / BLOCK_W) * 100}%`,
               top: `${(11.5 / 110) * 100}%`,

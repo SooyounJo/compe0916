@@ -58,7 +58,8 @@ export default function LeftAmbientBackground({
           step <= 4 || dotsGathering ? "" : "pointer-events-none opacity-0"
         }`}
         style={{
-          top: step <= 1 ? "68%" : "50%",
+          /** 실기 레이아웃에 맞춰 약간 위로 */
+          top: step <= 1 ? "70%" : "50%",
         }}
       >
         <LeftCompanionAgentLayer

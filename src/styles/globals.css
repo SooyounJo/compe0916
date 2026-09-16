@@ -25,6 +25,19 @@
   }
 }
 
+/* 1단계 좌측 — 순차 투명도 펄스 (Figma step1-dots) */
+@keyframes agent-dot-wave-step1 {
+  0%,
+  100% {
+    transform: translateY(2px);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateY(-5px);
+    opacity: 1;
+  }
+}
+
 @keyframes agent-dot-trail-wave {
   0%,
   100% {
@@ -42,6 +55,10 @@
 .agent-dot-wave {
   animation: agent-dot-wave 3.4s ease-in-out infinite;
   will-change: transform, opacity;
+}
+
+.agent-dot-wave-step1 {
+  animation: agent-dot-wave-step1 3.4s ease-in-out infinite;
 }
 
 .agent-dot-trail-wave {
