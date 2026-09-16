@@ -15,9 +15,6 @@ export default function LeftCompanionAgentLayer({
   const dotsPhase = step <= 1 ? 1 : step <= 3 ? step : 3;
   const centerClusterGather = dotsGathering && step === 3;
   const centerClusterExit = step >= 4;
-  /** 1~4: 닷 연속 (1→2 우측 thinking dot과 동일) */
-  const showLayer =
-    step <= 4 || (dotsGathering && step === 3);
   const showCenterBlobShell =
     (step >= 2 && step <= 4) || dotsGathering;
   const shellLit = (step >= 3 && step <= 4) || dotsGathering;
@@ -27,8 +24,6 @@ export default function LeftCompanionAgentLayer({
   const blobShellRevealClass = shellLit
     ? "scale-100 opacity-100 blur-0"
     : "scale-[0.38] opacity-0 blur-[8px] pointer-events-none";
-
-  if (!showLayer) return null;
 
   const clusterMotionClass = centerClusterExit
     ? CENTER_CLUSTER_GONE
