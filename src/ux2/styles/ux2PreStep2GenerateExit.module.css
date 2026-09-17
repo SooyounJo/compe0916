@@ -1,0 +1,21 @@
+/** -2→-1 generate — opacity만 (sceneExitLayer blur(12px) 금지) */
+.generateExitLayer {
+  opacity: 1;
+  transition: opacity var(--ux2-pre2-gen-exit-ms, 880ms)
+    cubic-bezier(0.33, 0, 0.15, 1);
+}
+
+.generateExitLayerOut {
+  opacity: 0;
+}
+
+/** -2 scene blur(15px) → 밑 night(z10)과 맞추며 퇴장 */
+.generateSceneUnblur {
+  filter: blur(0) !important;
+  transform: scale(1) !important;
+  transition:
+    filter var(--ux2-pre2-gen-exit-ms, 880ms)
+      cubic-bezier(0.33, 0, 0.15, 1),
+    transform var(--ux2-pre2-gen-exit-ms, 880ms)
+      cubic-bezier(0.33, 0, 0.15, 1);
+}

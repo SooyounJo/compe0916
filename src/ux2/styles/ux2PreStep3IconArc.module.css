@@ -23,6 +23,15 @@
   }
 }
 
+/** -3 enter 종료와 동일 — -2·-1 persist (클래스만 교체, look 유지) */
+.settled {
+  left: var(--orbit-end-left);
+  top: var(--orbit-end-top);
+  transform: translate(-50%, -50%) scale(1);
+  opacity: var(--orbit-end-opacity, 1);
+  filter: blur(0);
+}
+
 /** -3→-2 — 제자리 opacity out (좌측 아이콘부터 stagger) */
 .exit {
   left: var(--orbit-end-left);

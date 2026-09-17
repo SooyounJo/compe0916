@@ -18,14 +18,14 @@ export default function Ux2PreStep3SearchBlob({
   iconFillColor = "#9A93AA",
   /** 우측: 보이스 퇴장 직후 마운트 — CSS delay 생략 */
   immediateEnter = false,
-  /** -2 좌: -3에서 등장한 블롭 유지 */
+  /** -2·-1: -3 enter와 동일 look 유지 (재enter·tint 없음) */
   settled = false,
 }) {
   if (!show) {
     return null;
   }
 
-  const motion = settled ? "left-icon-orbit-settled" : preStep3Styles.enter;
+  const motion = settled ? preStep3Styles.settled : preStep3Styles.enter;
 
   return (
     <div
@@ -51,7 +51,6 @@ export default function Ux2PreStep3SearchBlob({
         iconSizePct={54}
         iconFillColor={iconFillColor}
         emphasized
-        blueTint={settled}
         style={{ width: "100%", height: "100%" }}
       />
     </div>
