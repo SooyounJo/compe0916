@@ -385,6 +385,10 @@
   transition-duration: 0.55s, 0.55s;
 }
 
+.ux2-pre-step-4-prompt.ui-blur-fade {
+  transition-duration: 0.88s, 0.88s;
+}
+
 @keyframes left-icon-arc-enter {
   0% {
     transform: translate(

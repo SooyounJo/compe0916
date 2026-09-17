@@ -27,7 +27,7 @@ const UX1_EXIT_CLASS = "ux1-left-icon-orbit-exit-arc";
 
 function iconMotionClass(step, arcSettled, playEnter, playExit, playPreStep3Exit) {
   if (playPreStep3Exit) {
-    return UX1_EXIT_CLASS;
+    return preStep3Styles.exit;
   }
   if (step === -3) {
     return preStep3Styles.enter;
@@ -72,7 +72,10 @@ function Step4Glyph({ icon }) {
   );
 }
 
-export default function LeftCompanionIconArc({ step = 1 }) {
+export default function LeftCompanionIconArc({
+  step = 1,
+  forcePreStep3Exit = false,
+}) {
   const [arcSettled, setArcSettled] = useState(false);
   const [entering, setEntering] = useState(false);
   const [enterGen, setEnterGen] = useState(0);
@@ -92,7 +95,7 @@ export default function LeftCompanionIconArc({ step = 1 }) {
       return undefined;
     }
 
-    if (step === -2 && prev === -3) {
+    if ((step === -2 && prev === -3) || (step === -2 && forcePreStep3Exit)) {
       preStep3ExitDoneCountRef.current = 0;
       setExitingToPreStep2(true);
       return undefined;
@@ -134,7 +137,7 @@ export default function LeftCompanionIconArc({ step = 1 }) {
     }
 
     return undefined;
-  }, [step]);
+  }, [step, forcePreStep3Exit]);
 
   const preStep3Arc = step === -3;
   const playPreStep3Exit = exitingToPreStep2;
@@ -162,8 +165,8 @@ export default function LeftCompanionIconArc({ step = 1 }) {
 
   const onExitEnd = useCallback(
     (e) => {
-      if (e.animationName !== "ux1-left-icon-arc-exit") return;
       if (playPreStep3Exit) {
+        if (e.animationName !== "ux2PreStep3IconFadeOut") return;
         preStep3ExitDoneCountRef.current += 1;
         if (
           preStep3ExitDoneCountRef.current >= UX2_LEFT_ORBIT_STEP4_ICONS.length
@@ -172,6 +175,7 @@ export default function LeftCompanionIconArc({ step = 1 }) {
         }
         return;
       }
+      if (e.animationName !== "ux1-left-icon-arc-exit") return;
       if (!exitingTo5) return;
       exitDoneCountRef.current += 1;
       if (exitDoneCountRef.current >= UX2_LEFT_ORBIT_STEP4_ICONS.length) {
@@ -239,7 +243,21 @@ export default function LeftCompanionIconArc({ step = 1 }) {
               playEnter
                 ? onEnterEnd
                 : playExit || playPreStep3Exit
-                  ? onExitEnd
+                  ? (e) => {
+                      if (
+                        playPreStep3Exit &&
+                        e.animationName !== "ux2PreStep3IconFadeOut"
+                      ) {
+                        return;
+                      }
+                      if (
+                        playExit &&
+                        e.animationName !== "ux1-left-icon-arc-exit"
+                      ) {
+                        return;
+                      }
+                      onExitEnd(e);
+                    }
                   : undefined
             }
           >

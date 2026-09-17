@@ -20,10 +20,10 @@ import { pctInCircle } from "@/ux2/lib/ux2Step2RightFeed";
 import RightCompanionStep3Overlay from "@/ux2/components/RightCompanionStep3Overlay";
 import cardStyles from "@/ux2/styles/step1-to2-cards.module.css";
 
-const STEP3_FEED_EXIT_DELAY_MS = 120;
+const STEP3_FEED_EXIT_DELAY_MS = 140;
 /** 화면 좌→중→우 슬롯 순차 퇴장 간격 */
-const STEP3_EXIT_STAGGER_MS = 420;
-const STEP3_CARD_EXIT_MS = 1050;
+const STEP3_EXIT_STAGGER_MS = 540;
+const STEP3_CARD_EXIT_MS = 1320;
 const STEP3_OVERLAY_IN_MS =
   STEP3_FEED_EXIT_DELAY_MS +
   STEP3_EXIT_STAGGER_MS * 2 +

@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useRef } from "react";
 import { useUx2PreStep1Handoff } from "@/ux2/lib/ux2PreStep1Handoff";
+import { UX2_PRE_STEP1_BG_CROSSFADE_MS } from "@/ux2/lib/ux2PreStepRightEnter";
 import { ux2IsPreStep } from "@/ux2/lib/ux2FlowSteps";
 
 /** 배경 MP4 — 0~5.11초 구간 루프 */
@@ -16,11 +17,12 @@ export default function WeatherBackground({
   dualInnerGlow = false,
 }) {
   const step4Bg = step === 4;
-  const revealStep0Bg = useUx2PreStep1Handoff(step);
-  /** -4~-2: night만 · -1: night out과 동시에 0단계 BG · 0~2: step1-right-bg */
+  const { revealUnderlay } = useUx2PreStep1Handoff(step);
+  /** -1 crossfade: 아래 step1 BG를 먼저 opacity 1 → 위 night만 서서히 out */
   const showStep1RightPhoto =
     (step >= 0 && step <= 2 && !ux2IsPreStep(step)) ||
-    (step === -1 && revealStep0Bg);
+    (step === -1 && revealUnderlay);
+  const step1UnderNightCrossfade = step === -1 && revealUnderlay;
   const hideAmbientMotion = dualInnerGlow && ux2IsPreStep(step);
   const showDualGlow =
     dualInnerGlow &&
@@ -70,9 +72,15 @@ export default function WeatherBackground({
         alt=""
         fill
         priority
-        className={`object-cover object-center transition-opacity duration-[1200ms] ease-[cubic-bezier(0.33,0,0.15,1)] ${
-          showStep1RightPhoto ? "opacity-100" : "opacity-0"
-        }`}
+        className="object-cover object-center transition-opacity ease-[cubic-bezier(0.33,0,0.15,1)]"
+        style={{
+          transitionDuration: step1UnderNightCrossfade
+            ? "0ms"
+            : step === -1
+              ? `${UX2_PRE_STEP1_BG_CROSSFADE_MS}ms`
+              : "1200ms",
+          opacity: showStep1RightPhoto ? 1 : 0,
+        }}
         sizes="(max-width: 900px) 41vmin, 560px"
       />
       <div

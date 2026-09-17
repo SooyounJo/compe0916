@@ -1,85 +1,53 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import BlurFade from "@/ux2/components/BlurFade";
+import { useEffect, useRef } from "react";
+import { useUx2PreStep1Handoff } from "@/ux2/lib/ux2PreStep1Handoff";
 import {
   UX2_PRE_STEP_NIGHT_FADE_MS,
-  UX2_PRE_STEP_NIGHT_HOLD_MS,
 } from "@/ux2/lib/ux2PreStepRightEnter";
-import { UX2_FIRST_STEP } from "@/ux2/lib/ux2FlowSteps";
+import { UX2_PRE_STEP_FIRST } from "@/ux2/lib/ux2FlowSteps";
 import styles from "@/ux2/styles/ux2PreStepRightBackground.module.css";
 
 export const UX2_PRE_STEP_NIGHT_VIDEO = "/video/ux2-pre-step-night.mp4";
 
-/** -4~-2: night BlurFade in · -1: hold 후 night out → 아래 0단계 step1-right-bg */
+/** -4~-1: night 레이어 · -1 crossfade는 opacity만 (언마운트·blur 퇴장 없음) */
 export default function Ux2PreStepRightBackground({ step = 0 }) {
   const videoRef = useRef(null);
-  const prevStepRef = useRef(step);
-  const fadeTimerRef = useRef(null);
-  const unmountTimerRef = useRef(null);
-  const [layerMounted, setLayerMounted] = useState(
-    step >= UX2_FIRST_STEP && step <= -1,
-  );
-  const [videoVisible, setVideoVisible] = useState(false);
+  const { nightFadingOut, minus1NightHold } = useUx2PreStep1Handoff(step);
 
-  useEffect(() => {
-    const prev = prevStepRef.current;
-    prevStepRef.current = step;
-
-    if (fadeTimerRef.current) clearTimeout(fadeTimerRef.current);
-    if (unmountTimerRef.current) clearTimeout(unmountTimerRef.current);
-
-    if (step === -1) {
-      setLayerMounted(true);
-      setVideoVisible(true);
-      fadeTimerRef.current = setTimeout(() => {
-        setVideoVisible(false);
-        unmountTimerRef.current = setTimeout(() => {
-          setLayerMounted(false);
-        }, UX2_PRE_STEP_NIGHT_FADE_MS + 80);
-      }, UX2_PRE_STEP_NIGHT_HOLD_MS);
-      return () => {
-        if (fadeTimerRef.current) clearTimeout(fadeTimerRef.current);
-        if (unmountTimerRef.current) clearTimeout(unmountTimerRef.current);
-      };
-    }
-
-    if (step >= 0) {
-      setVideoVisible(false);
-      unmountTimerRef.current = setTimeout(() => {
-        setLayerMounted(false);
-      }, UX2_PRE_STEP_NIGHT_FADE_MS + 80);
-      return () => {
-        if (unmountTimerRef.current) clearTimeout(unmountTimerRef.current);
-      };
-    }
-
-    setVideoVisible(false);
-    setLayerMounted(false);
-    return undefined;
-  }, [step]);
+  const showNightStack =
+    step >= UX2_PRE_STEP_FIRST && step <= -1;
 
   useEffect(() => {
     const video = videoRef.current;
-    if (!video) return undefined;
+    if (!video || !showNightStack) return undefined;
 
-    if (videoVisible && layerMounted) {
-      void video.play().catch(() => {});
-      return undefined;
-    }
-
-    video.pause();
+    void video.play().catch(() => {});
     return undefined;
-  }, [videoVisible, layerMounted]);
+  }, [showNightStack, step]);
 
-  if (!layerMounted) {
+  if (!showNightStack) {
     return null;
   }
 
+  const fadeClass =
+    step === -1 && nightFadingOut ? styles.nightVideoFading : "";
+
+  const inlineOpacity =
+    step <= -2 || minus1NightHold || nightFadingOut
+      ? 1
+      : step === -1
+        ? 0
+        : 1;
+
   return (
-    <BlurFade
-      show={videoVisible}
-      className={`${styles.nightVideo} pointer-events-none absolute inset-0 z-[10] overflow-hidden rounded-full`}
+    <div
+      className={`${styles.nightVideoLayer} ${fadeClass} pointer-events-none absolute inset-0 z-[10] overflow-hidden rounded-full`}
+      style={{
+        "--ux2-pre1-night-fade-s": `${UX2_PRE_STEP_NIGHT_FADE_MS / 1000}s`,
+        opacity: inlineOpacity,
+      }}
+      aria-hidden={step === -1 && inlineOpacity === 0 && !nightFadingOut}
     >
       <video
         ref={videoRef}
@@ -90,6 +58,6 @@ export default function Ux2PreStepRightBackground({ step = 0 }) {
         preload="auto"
         className="absolute inset-0 h-full w-full object-cover object-center"
       />
-    </BlurFade>
+    </div>
   );
 }

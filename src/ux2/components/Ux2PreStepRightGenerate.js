@@ -18,8 +18,8 @@ const BLURRED_PROMPT_STYLE = {
 /** -4~-2 우측 — night 영상 + 닷 그리드 generate (스텝 간 유지) */
 export default function Ux2PreStepRightGenerate({ step = 0 }) {
   const show = step >= -4 && step <= -2;
-  /** -2→-1 퇴장 BlurFade 동안만 DOM 유지 */
-  if (step < -4 || step > -1) {
+  /** -1은 Ux2PreStepRightBackground night와 즉시 레이어 교체 (blur 퇴장·검은 배경 방지) */
+  if (step < -4 || step > -2) {
     return null;
   }
 

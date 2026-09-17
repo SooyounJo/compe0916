@@ -10,18 +10,13 @@ import {
   sizeCqwRight5,
   STEP5_RIGHT_PEOPLE,
   STEP5_RIGHT_PROMPT,
-  STEP5_RIGHT_VIDEO,
-  ux2RightVideoBlobCenterPx,
 } from "@/ux2/lib/ux2Step5RightLayout";
 import {
   UX2_STEP5_RIGHT_HANDOFF_S,
   ux2Step5RightPromptDelayMs,
 } from "@/ux2/lib/ux2Step5RightEnter";
 import { ux2Step5RightRiseStaggerDelayS } from "@/ux2/lib/ux2Step4To5CrossHandoff";
-import {
-  ux2Step5DualPeopleDelayS,
-  ux2Step5DualRightVideoHandoffDelayS,
-} from "@/ux2/lib/ux2Step45DualTiming";
+import { ux2Step5DualPeopleDelayS } from "@/ux2/lib/ux2Step45DualTiming";
 import textStyles from "@/ux2/styles/ux2Step1LeftTextIn.module.css";
 
 const PROMPT_STYLE = {
@@ -37,15 +32,12 @@ const STEP5_TO6_EXIT_MS = 1680;
 /** 4→5 — 4부터 마운트(prevStep), gap에서 슬롯으로 transform 곡선 */
 export default function RightCompanionStep5({ show = false, step = 5 }) {
   const [playPeopleEnter, setPlayPeopleEnter] = useState(false);
-  const [playVideoEnter, setPlayVideoEnter] = useState(false);
   const [showPeople, setShowPeople] = useState(false);
-  const [showVideo, setShowVideo] = useState(false);
   const [leavingTo6, setLeavingTo6] = useState(false);
   const [showPrompt, setShowPrompt] = useState(false);
   const prevStepRef = useRef(null);
 
   const peopleSize = sizeCqwRight5(STEP5_RIGHT_PEOPLE.size);
-  const videoSize = sizeCqwRight5(STEP5_RIGHT_VIDEO.size);
 
   useLayoutEffect(() => {
     const prev = prevStepRef.current;
@@ -56,9 +48,7 @@ export default function RightCompanionStep5({ show = false, step = 5 }) {
 
     if (to6) {
       setLeavingTo6(true);
-      setShowVideo(true);
       setPlayPeopleEnter(false);
-      setPlayVideoEnter(false);
       const t = setTimeout(() => setLeavingTo6(false), STEP5_TO6_EXIT_MS);
       return () => clearTimeout(t);
     }
@@ -66,13 +56,10 @@ export default function RightCompanionStep5({ show = false, step = 5 }) {
     if (from4) {
       setLeavingTo6(false);
       setShowPeople(false);
-      setShowVideo(false);
       setPlayPeopleEnter(false);
-      setPlayVideoEnter(false);
       setShowPrompt(false);
 
       const peopleMs = ux2Step5DualPeopleDelayS() * 1000;
-      const videoMs = ux2Step5DualRightVideoHandoffDelayS() * 1000;
       const handoffMs = UX2_STEP5_RIGHT_HANDOFF_S * 1000 + 120;
       const promptMs = ux2Step5RightPromptDelayMs();
 
@@ -84,30 +71,18 @@ export default function RightCompanionStep5({ show = false, step = 5 }) {
         () => setPlayPeopleEnter(false),
         peopleMs + handoffMs,
       );
-      const videoStart = setTimeout(() => {
-        setShowVideo(true);
-        setPlayVideoEnter(true);
-      }, videoMs);
-      const videoEnd = setTimeout(
-        () => setPlayVideoEnter(false),
-        videoMs + handoffMs,
-      );
       const promptStart = setTimeout(() => setShowPrompt(true), promptMs);
 
       return () => {
         clearTimeout(peopleStart);
         clearTimeout(peopleEnd);
-        clearTimeout(videoStart);
-        clearTimeout(videoEnd);
         clearTimeout(promptStart);
       };
     }
 
     if (step === 5 && prev !== 4) {
       setShowPeople(true);
-      setShowVideo(true);
       setPlayPeopleEnter(false);
-      setPlayVideoEnter(false);
       setShowPrompt(false);
       const promptStart = setTimeout(
         () => setShowPrompt(true),
@@ -118,9 +93,7 @@ export default function RightCompanionStep5({ show = false, step = 5 }) {
 
     if (step < 5) {
       setPlayPeopleEnter(false);
-      setPlayVideoEnter(false);
       setShowPeople(false);
-      setShowVideo(false);
       setLeavingTo6(false);
       setShowPrompt(false);
     }
@@ -142,21 +115,12 @@ export default function RightCompanionStep5({ show = false, step = 5 }) {
 
   const peopleEndLeft = `${pctRight5(STEP5_RIGHT_PEOPLE.centerX)}%`;
   const peopleEndTop = `${pctRight5(STEP5_RIGHT_PEOPLE.centerY)}%`;
-  const videoCenter = ux2RightVideoBlobCenterPx();
-  const videoEndLeft = `${pctRight5(videoCenter.centerX)}%`;
-  const videoEndTop = `${pctRight5(videoCenter.centerY)}%`;
-
   const peopleEnd = {
     "--orbit-end-left": peopleEndLeft,
     "--orbit-end-top": peopleEndTop,
   };
-  const videoEnd = {
-    "--orbit-end-left": videoEndLeft,
-    "--orbit-end-top": videoEndTop,
-  };
 
   const peopleHandoffVars = ux2Step5RightRiseEnterVars("people");
-  const videoHandoffVars = ux2Step5RightRiseEnterVars("video");
 
   const blurFadeShow = (show && step === 5) || leavingTo6;
 
@@ -199,38 +163,6 @@ export default function RightCompanionStep5({ show = false, step = 5 }) {
               fill
               className="object-contain drop-shadow-[0_0_20px_rgba(255,255,255,0.22)]"
               sizes="22vw"
-            />
-          </div>
-        </div>
-        )}
-
-        {(showVideo || leavingTo6) && (
-        <div
-          className={
-            playVideoEnter
-              ? rightHandoffStyles.handoff
-              : "icon-orbit-settled absolute"
-          }
-          style={{
-            width: `${videoSize}%`,
-            height: `${videoSize}%`,
-            animationDelay: playVideoEnter
-              ? `${ux2Step5RightRiseStaggerDelayS("video")}s`
-              : undefined,
-            animationDuration: playVideoEnter
-              ? `${UX2_STEP5_RIGHT_HANDOFF_S}s`
-              : undefined,
-            ...videoEnd,
-            ...(playVideoEnter ? videoHandoffVars : {}),
-          }}
-        >
-          <div className="relative h-full w-full">
-            <Image
-              src="/figma/ux2/step4/video-blob.svg"
-              alt=""
-              fill
-              className="object-contain drop-shadow-[0_0_20px_rgba(255,255,255,0.22)]"
-              sizes="18vw"
             />
           </div>
         </div>

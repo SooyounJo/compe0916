@@ -5,11 +5,22 @@ import Image from "next/image";
 import BlurFade from "@/ux2/components/BlurFade";
 import Ux2IconBlob from "@/ux2/components/Ux2IconBlob";
 import Ux2PreStepBlobReveal from "@/ux2/components/Ux2PreStepBlobReveal";
-import Ux2LeftCenterLoadingDots from "@/ux2/components/Ux2LeftCenterLoadingDots";
+import Ux2Ux1Step7CenterLoadingDots from "@/ux2/components/Ux2Ux1Step7CenterLoadingDots";
+import Ux2VoiceRecorderFill from "@/ux2/components/Ux2VoiceRecorderFill";
 import { pctCircle, STEP0_SEARCH_BLOB } from "@/ux2/lib/ux2Step0Layout";
 import { LEFT_TEXT_GRADIENT } from "@/ux2/lib/ux2Step1Layout";
 import { UX2_PRE_STEP_PROMPTS } from "@/ux2/lib/ux2PreStepCopy";
+import { useUx2PreStep4TextReveal } from "@/ux2/lib/useUx2PreStep4TextReveal";
+import { UX2_PRE_STEP_FIRST } from "@/ux2/lib/ux2FlowSteps";
 import { useUx2PreStep1Handoff } from "@/ux2/lib/ux2PreStep1Handoff";
+import { UX2_PRE_STEP_NIGHT_FADE_MS } from "@/ux2/lib/ux2PreStepRightEnter";
+import preStepBgStyles from "@/ux2/styles/ux2PreStepRightBackground.module.css";
+import {
+  UX2_PRE_STEP4_EXIT_MS,
+  UX2_PRE_STEP4_TO3_ENTER_MS,
+  ux2PreStep4ExitHoldMs,
+} from "@/ux2/lib/ux2PreStep4To3Exit";
+import preStep4ExitStyles from "@/ux2/styles/ux2PreStep4To3Exit.module.css";
 import {
   UX2_PRE_STEP2_BLOB_ENTER_DURATION_S,
   ux2PreStep2AllBlobsEnterEndS,
@@ -45,12 +56,25 @@ const PURPLE_TEXT = {
   textShadow: "0 4px 73px rgba(255,255,255,0.8)",
 };
 
-function PreStepAmbient({ children, showGradient = true }) {
+function PreStepAmbient({
+  children,
+  showGradient = true,
+  slowGradientFade = false,
+}) {
+  const gradientFadeStyle = slowGradientFade
+    ? {
+        "--ux2-pre1-night-fade-s": `${UX2_PRE_STEP_NIGHT_FADE_MS / 1000}s`,
+      }
+    : undefined;
+
   return (
     <>
       <BlurFade
         show={showGradient}
-        className="left-step4-ui-blur-in pointer-events-none absolute inset-0 overflow-hidden"
+        className={`left-step4-ui-blur-in pointer-events-none absolute inset-0 overflow-hidden ${
+          slowGradientFade ? preStepBgStyles.ux2PreStep1SlowBlur : ""
+        }`}
+        style={gradientFadeStyle}
       >
         <div
           className="absolute inset-0 opacity-[0.42] mix-blend-soft-light"
@@ -73,7 +97,7 @@ function PreStepCenterDots() {
         height: `${sizeCqwPre(PRE_STEP_DOTS.height)}%`,
       }}
     >
-      <Ux2LeftCenterLoadingDots />
+      <Ux2Ux1Step7CenterLoadingDots />
     </div>
   );
 }
@@ -93,13 +117,7 @@ function PreStepVoiceAndDots({ showCenterDots = true, showVoice = true }) {
             height: `${voiceSize}%`,
           }}
         >
-          <Image
-            src="/figma/ux2/step0/voice-recorder.svg"
-            alt=""
-            fill
-            className="object-contain drop-shadow-[0_4px_24px_rgba(255,255,255,0.4)]"
-            sizes="14vw"
-          />
+          <Ux2VoiceRecorderFill active glowVariant="slot" />
         </div>
       ) : null}
     </>
@@ -233,13 +251,15 @@ function PreStepScene({
   showCenterDots = true,
   /** -4: 가운데 닷만 (보이스 슬롯 미사용) */
   dotsOnly = false,
+  preStep4PromptIn = false,
+  enterInstant = false,
+  exiting = false,
   children,
 }) {
-  return (
-    <BlurFade
-      show={show}
-      className="left-step4-ui-blur-in pointer-events-none absolute inset-0 z-[5] overflow-hidden"
-    >
+  const sceneClass =
+    "left-step4-ui-blur-in pointer-events-none absolute inset-0 z-[5] overflow-hidden";
+
+  const sceneBody = (
       <PreStepAmbient showGradient={showGradient}>
         {dotsOnly ? (
           <PreStepCenterDots />
@@ -250,28 +270,106 @@ function PreStepScene({
           />
         )}
         {children}
-        <PreStepPrompt stepKey={stepKey} />
+        {stepKey === -4 ? (
+          <BlurFade
+            show={preStep4PromptIn}
+            className="ux2-pre-step-4-prompt pointer-events-none absolute inset-0 z-[6] overflow-visible"
+          >
+            <PreStepPrompt stepKey={-4} />
+          </BlurFade>
+        ) : (
+          <PreStepPrompt stepKey={stepKey} />
+        )}
       </PreStepAmbient>
+  );
+
+  if (!show && !exiting) {
+    return null;
+  }
+
+  if (exiting) {
+    return (
+      <div
+        className={`ui-blur-fade ui-blur-fade--visible z-[7] ${sceneClass} ${preStep4ExitStyles.sceneExiting}`}
+        style={{ "--ux2-pre4-exit-ms": `${UX2_PRE_STEP4_EXIT_MS}ms` }}
+        aria-hidden={false}
+      >
+        {sceneBody}
+      </div>
+    );
+  }
+
+  if (enterInstant) {
+    return (
+      <div
+        className={`ui-blur-fade ui-blur-fade--visible ${sceneClass}`}
+        aria-hidden={false}
+      >
+        {sceneBody}
+      </div>
+    );
+  }
+
+  return (
+    <BlurFade show={show} className={sceneClass}>
+      {sceneBody}
     </BlurFade>
   );
 }
 
 /** Figma 12:303 — -3 BG·닷 (검색 블롭·arc는 LeftAmbientBackground) */
-export function LeftCompanionPreStepAmbient({ show = false, showGradient = true }) {
+export function LeftCompanionPreStepAmbient({
+  show = false,
+  showGradient = true,
+  enterSoft = false,
+  enterActive = false,
+}) {
+  if (!show) {
+    return null;
+  }
+
+  const wrapClass =
+    "pointer-events-none absolute inset-0 z-[4] overflow-hidden";
+
+  const body = (
+    <PreStepAmbient showGradient={showGradient}>
+      <PreStepVoiceAndDots showVoice />
+    </PreStepAmbient>
+  );
+
+  if (enterSoft) {
+    return (
+      <div
+        className={`${wrapClass} ${preStep4ExitStyles.layerEnter} ${
+          enterActive ? preStep4ExitStyles.layerEnterActive : ""
+        }`}
+        style={{
+          "--ux2-pre4-enter-ms": `${UX2_PRE_STEP4_TO3_ENTER_MS}ms`,
+        }}
+      >
+        {body}
+      </div>
+    );
+  }
+
   return (
-    <BlurFade
-      show={show}
-      className="left-step4-ui-blur-in pointer-events-none absolute inset-0 z-[4] overflow-hidden"
-    >
-      <PreStepAmbient showGradient={showGradient}>
-        <PreStepVoiceAndDots showVoice />
-      </PreStepAmbient>
+    <BlurFade show className={`left-step4-ui-blur-in ${wrapClass}`}>
+      {body}
     </BlurFade>
   );
 }
 
 /** Figma 1:572 / 12:496 / 12:691 — -4·-2·-1 (-3은 arc·ambient) BlurFade 교차 */
-export default function LeftCompanionPreStep({ step = 0 }) {
+export default function LeftCompanionPreStep({
+  step = 0,
+  preStep4TextReady = false,
+  preStep4HandoffInstant = false,
+}) {
+  const preStep4PromptIn = useUx2PreStep4TextReveal(
+    step,
+    preStep4TextReady,
+    preStep4HandoffInstant,
+  );
   const revealStep0Bg = useUx2PreStep1Handoff(step);
   const fadePreGradient = step === -1 && revealStep0Bg;
   const prevStepRef = useRef(step);
@@ -279,6 +377,7 @@ export default function LeftCompanionPreStep({ step = 0 }) {
   const [preStep1InstaEnterKey, setPreStep1InstaEnterKey] = useState(0);
   const [leftSearchEnter, setLeftSearchEnter] = useState(false);
   const [showPreStep2Prompt, setShowPreStep2Prompt] = useState(false);
+  const [holdPreStep4Exit, setHoldPreStep4Exit] = useState(false);
   /** -1까지 정적 블롭 · 0은 Ux2Step0IconMotion handoff */
   /** -2 좌: 검색 블롭만(LeftAmbientBackground) · -1: 인스타+검색 handoff */
   const showPreStep2Layer = step === -2 || step === -1;
@@ -309,6 +408,17 @@ export default function LeftCompanionPreStep({ step = 0 }) {
       setLeftSearchEnter(false);
       setShowPreStep2Prompt(false);
     }
+    if (prev === UX2_PRE_STEP_FIRST && step === -3) {
+      setHoldPreStep4Exit(true);
+      const t = setTimeout(
+        () => setHoldPreStep4Exit(false),
+        ux2PreStep4ExitHoldMs(),
+      );
+      return () => clearTimeout(t);
+    }
+    if (step === UX2_PRE_STEP_FIRST) {
+      setHoldPreStep4Exit(false);
+    }
     if (step < -2) {
       setLeftSearchEnter(false);
       setShowPreStep2Prompt(false);
@@ -321,7 +431,14 @@ export default function LeftCompanionPreStep({ step = 0 }) {
 
   return (
     <>
-      <PreStepScene stepKey={-4} show={step === -4} dotsOnly>
+      <PreStepScene
+        stepKey={-4}
+        show={step === -4 || holdPreStep4Exit}
+        exiting={holdPreStep4Exit && step !== -4}
+        dotsOnly
+        preStep4PromptIn={preStep4PromptIn || holdPreStep4Exit}
+        enterInstant={preStep4HandoffInstant}
+      >
         <IconBlob
           centerX={PRE_STEP_4_COCKTAIL.centerX}
           centerY={PRE_STEP_4_COCKTAIL.centerY}
@@ -333,7 +450,10 @@ export default function LeftCompanionPreStep({ step = 0 }) {
       {/* -2·-1·0: 검색·인스타 슬롯 동일 → -1→0 아이콘 연속 유지 */}
       <div className="pointer-events-none absolute inset-0 z-[5] overflow-hidden">
         {showPreStep2Layer ? (
-          <PreStepAmbient showGradient={!fadePreGradient && step !== 0}>
+          <PreStepAmbient
+            showGradient={!fadePreGradient && step !== 0}
+            slowGradientFade={step === -1}
+          >
             {step === -2 || step === -1 ? (
               <div key={`pre-step-left-search-${preStep2EnterKey}`}>
                 <Step0MatchIconBlob

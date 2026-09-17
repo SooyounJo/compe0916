@@ -76,16 +76,19 @@ export const PRE_STEP_RIGHT_2_SEARCH = {
   size: STEP0_RIGHT_ICON_BLOB.size,
 };
 
+/** -2 우 arc — Figma 대비 위로 (캘린더·갤러리 공통) */
+const PRE_STEP_RIGHT_2_ARC_UP_FIGMA_PX = 118;
+
 /** 12:679 — calendar (215, opacity 40%) */
 export const PRE_STEP_RIGHT_2_CALENDAR = {
   centerX: figma638X(FIGMA_12_638_CX - 17.5),
-  centerY: figma638Y(226 + 215 / 2),
+  centerY: figma638Y(226 + 215 / 2 - PRE_STEP_RIGHT_2_ARC_UP_FIGMA_PX),
   size: figma638X(215),
 };
 
 /** 12:638 / 32:291 — gallery (231) */
 export const PRE_STEP_RIGHT_2_GALLERY = {
   centerX: figma638X(437 + 231 / 2),
-  centerY: figma638Y(441 + 231 / 2),
+  centerY: figma638Y(441 + 231 / 2 - PRE_STEP_RIGHT_2_ARC_UP_FIGMA_PX),
   size: figma638X(231),
 };

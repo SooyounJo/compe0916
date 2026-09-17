@@ -1,0 +1,1 @@
+export const UX2_STEP910_CARD_CROSSFADE_MS = 1380;

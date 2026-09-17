@@ -1,4 +1,4 @@
-import { UX2_NAV_STEPS } from "@/ux2/lib/ux2FlowSteps";
+import { UX2_MINUS5_STEP, UX2_NAV_STEPS } from "@/ux2/lib/ux2FlowSteps";
 
 export default function ScreenNav({ activeStep, onSelect }) {
   return (
@@ -19,7 +19,7 @@ export default function ScreenNav({ activeStep, onSelect }) {
             }`}
             aria-current={isActive ? "step" : undefined}
           >
-            {step}
+            {step === UX2_MINUS5_STEP ? "−5" : step}
           </button>
         );
       })}

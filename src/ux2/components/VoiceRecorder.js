@@ -1,9 +1,11 @@
 const BAR_DELAYS = ["0s", "0.12s", "0.05s", "0.18s", "0.08s"];
 
-export default function VoiceRecorder({ active, compact = false }) {
-  const sizeClass = compact
-    ? "h-[7.37cqw] w-[7.37cqw]"
-    : "h-[clamp(72px,18vw,96px)] w-[clamp(72px,18vw,96px)]";
+export default function VoiceRecorder({ active, compact = false, fill = false }) {
+  const sizeClass = fill
+    ? "h-full w-full"
+    : compact
+      ? "h-[7.37cqw] w-[7.37cqw]"
+      : "h-[clamp(72px,18vw,96px)] w-[clamp(72px,18vw,96px)]";
 
   return (
     <div

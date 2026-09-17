@@ -1,0 +1,17 @@
+.sceneExiting {
+  opacity: 0;
+  transition: opacity var(--ux2-pre4-exit-ms, 680ms)
+    cubic-bezier(0.33, 0, 0.15, 1);
+  filter: none !important;
+}
+
+.layerEnter {
+  opacity: 0;
+  filter: none;
+  transition: opacity var(--ux2-pre4-enter-ms, 560ms)
+    cubic-bezier(0.33, 0, 0.15, 1);
+}
+
+.layerEnterActive {
+  opacity: 1;
+}

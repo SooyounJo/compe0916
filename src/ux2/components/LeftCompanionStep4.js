@@ -1,7 +1,8 @@
 "use client";
 
-import Image from "next/image";
 import BlurFade from "@/ux2/components/BlurFade";
+import Ux2Ux1Step7CenterLoadingDots from "@/ux2/components/Ux2Ux1Step7CenterLoadingDots";
+import Ux2VoiceRecorderFill from "@/ux2/components/Ux2VoiceRecorderFill";
 import {
   pctLeft,
   STEP4_LEFT_DOTS,
@@ -30,20 +31,14 @@ export default function LeftCompanionStep4({ show = false }) {
       />
 
       <div
-        className="absolute left-1/2 -translate-x-1/2"
+        className="absolute left-1/2 flex -translate-x-1/2 items-center justify-center"
         style={{
           top: `${dotsTop}%`,
           width: `${dotsWidthPct}%`,
           height: `${dotsHeightPct}%`,
         }}
       >
-        <Image
-          src="/figma/left-orbit/step6-dots.svg"
-          alt=""
-          fill
-          className="object-contain"
-          sizes="20vw"
-        />
+        <Ux2Ux1Step7CenterLoadingDots />
       </div>
 
       <div
@@ -55,13 +50,7 @@ export default function LeftCompanionStep4({ show = false }) {
           height: `${voiceSizePct}%`,
         }}
       >
-        <Image
-          src="/figma/ux2/step0/voice-recorder.svg"
-          alt=""
-          fill
-          className="object-contain drop-shadow-[0_4px_24px_rgba(255,255,255,0.4)]"
-          sizes="14vw"
-        />
+        <Ux2VoiceRecorderFill active glowVariant="slot" />
       </div>
     </BlurFade>
   );

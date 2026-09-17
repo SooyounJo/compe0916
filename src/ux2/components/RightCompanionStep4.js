@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useLayoutEffect, useState } from "react";
-import Image from "next/image";
 import BlurFade from "@/ux2/components/BlurFade";
+import Ux2VoiceRecorderFill from "@/ux2/components/Ux2VoiceRecorderFill";
 import {
   pctRight,
   STEP4_RIGHT_PROMPT,
@@ -64,13 +64,7 @@ export default function RightCompanionStep4({ show = false }) {
             height: `${voiceSizePct}%`,
           }}
         >
-          <Image
-            src="/figma/ux2/step0/voice-recorder.svg"
-            alt=""
-            fill
-            className="object-contain"
-            sizes="18vw"
-          />
+          <Ux2VoiceRecorderFill active={showVoice} glowVariant="slot" />
         </div>
       </BlurFade>
 

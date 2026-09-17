@@ -6,6 +6,9 @@ export default function CompanionLeftBlob({
   className = "",
   showIgPersist = false,
   onIgSlotReady,
+  preStep4TextReady = false,
+  preStep4HandoffInstant = false,
+  preStepForegroundWrapClass = "",
 }) {
   return (
     <div
@@ -18,6 +21,9 @@ export default function CompanionLeftBlob({
         dotsGathering={dotsGathering}
         showIgPersist={showIgPersist}
         onIgSlotReady={onIgSlotReady}
+        preStep4TextReady={preStep4TextReady}
+        preStep4HandoffInstant={preStep4HandoffInstant}
+        preStepForegroundWrapClass={preStepForegroundWrapClass}
       />
     </div>
   );

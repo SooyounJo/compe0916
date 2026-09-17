@@ -1,28 +1,72 @@
-import { useEffect, useState } from "react";
-import { UX2_PRE_STEP_NIGHT_HOLD_MS } from "@/ux2/lib/ux2PreStepRightEnter";
+"use client";
 
-/** -1 — night 퇴장과 동시에 0단계 BG(좌·우) 페이드 인 */
-export function useUx2PreStep1Handoff(step) {
-  const [revealStep0Bg, setRevealStep0Bg] = useState(step >= 0);
+import { createContext, useContext, useEffect, useState } from "react";
+import {
+  UX2_PRE_STEP_NIGHT_FADE_MS,
+  UX2_PRE_STEP_NIGHT_HOLD_MS,
+} from "@/ux2/lib/ux2PreStepRightEnter";
+
+const Ux2PreStep1HandoffContext = createContext(null);
+
+function useUx2PreStep1HandoffState(step) {
+  const [revealUnderlay, setRevealUnderlay] = useState(step >= 0);
+  const [nightFadingOut, setNightFadingOut] = useState(false);
 
   useEffect(() => {
     if (step === -1) {
-      setRevealStep0Bg(false);
-      const t = setTimeout(
-        () => setRevealStep0Bg(true),
-        UX2_PRE_STEP_NIGHT_HOLD_MS,
-      );
-      return () => clearTimeout(t);
+      setRevealUnderlay(false);
+      setNightFadingOut(false);
+
+      const startCrossfade = setTimeout(() => {
+        setRevealUnderlay(true);
+        setNightFadingOut(true);
+      }, UX2_PRE_STEP_NIGHT_HOLD_MS);
+
+      const endCrossfade = setTimeout(() => {
+        setNightFadingOut(false);
+      }, UX2_PRE_STEP_NIGHT_HOLD_MS + UX2_PRE_STEP_NIGHT_FADE_MS);
+
+      return () => {
+        clearTimeout(startCrossfade);
+        clearTimeout(endCrossfade);
+      };
     }
 
     if (step >= 0) {
-      setRevealStep0Bg(true);
+      setRevealUnderlay(true);
+      setNightFadingOut(false);
       return undefined;
     }
 
-    setRevealStep0Bg(false);
+    setRevealUnderlay(false);
+    setNightFadingOut(false);
     return undefined;
   }, [step]);
 
-  return revealStep0Bg;
+  const revealed = revealUnderlay || step >= 0;
+
+  return {
+    revealStep0Bg: revealed,
+    revealUnderlay: revealed,
+    nightFadingOut: step === -1 && nightFadingOut,
+    minus1NightHold: step === -1 && !revealUnderlay,
+  };
+}
+
+export function Ux2PreStep1HandoffProvider({ step, children }) {
+  const value = useUx2PreStep1HandoffState(step);
+  return (
+    <Ux2PreStep1HandoffContext.Provider value={value}>
+      {children}
+    </Ux2PreStep1HandoffContext.Provider>
+  );
+}
+
+/** -1 — night 위 레이어 opacity out · 아래 0단계 BG 즉시 깔기 (듀얼 좌·우 공유) */
+export function useUx2PreStep1Handoff(step) {
+  const shared = useContext(Ux2PreStep1HandoffContext);
+  if (shared) {
+    return shared;
+  }
+  return useUx2PreStep1HandoffState(step);
 }

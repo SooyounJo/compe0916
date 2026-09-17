@@ -5,6 +5,7 @@ import Image from "next/image";
 import BlurFade from "@/ux2/components/BlurFade";
 import continuityStyles from "@/ux2/styles/ux2Step67Continuity.module.css";
 import Ux2LeftCenterLoadingDots from "@/ux2/components/Ux2LeftCenterLoadingDots";
+import Ux2Ux1Step7CenterLoadingDots from "@/ux2/components/Ux2Ux1Step7CenterLoadingDots";
 import {
   pctLeft6,
   sizeCqwLeft6,
@@ -255,7 +256,11 @@ export default function LeftCompanionStep6({ show = false, step = 6 }) {
           onAnimationEnd={playStep6Enter ? onStep6EnterEnd : undefined}
         >
           <div className="flex h-full w-full items-center justify-center">
-            <Ux2LeftCenterLoadingDots />
+            {step === 7 ? (
+              <Ux2Ux1Step7CenterLoadingDots />
+            ) : (
+              <Ux2LeftCenterLoadingDots />
+            )}
           </div>
         </Step6EnterSlot>
       ) : null}

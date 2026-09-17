@@ -1,7 +1,7 @@
-import Image from "next/image";
 import BlurFade from "@/ux2/components/BlurFade";
+import Ux2VoiceRecorderFill from "@/ux2/components/Ux2VoiceRecorderFill";
 
-/** 검색/인스타 슬롯 — 3단계 보이스 아이콘 */
+/** 검색/인스타 슬롯 — 3단계 보이스 아이콘 (UX1 VoiceRecorder 모션) */
 export default function Ux2VoiceIconAtSlot({
   show = false,
   slotCenterX,
@@ -21,13 +21,7 @@ export default function Ux2VoiceIconAtSlot({
         height: `${iconSizeCqw}cqw`,
       }}
     >
-      <Image
-        src="/figma/ux2/step0/voice-recorder.svg"
-        alt=""
-        fill
-        className="object-contain drop-shadow-[0_4px_24px_rgba(255,255,255,0.45)]"
-        sizes="12vw"
-      />
+      <Ux2VoiceRecorderFill active={show} glowVariant="slot" />
     </BlurFade>
   );
 }
