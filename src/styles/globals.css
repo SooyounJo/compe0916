@@ -420,6 +420,31 @@
   }
 }
 
+/* UX1 4→5: 제자리에서 좌→우 순차 퇴장 (blur 제외 — GPU 부하·끊김 방지) */
+.ux1-left-icon-orbit-exit-arc {
+  left: var(--orbit-end-left);
+  top: var(--orbit-end-top);
+  transform: translate3d(-50%, -50%, 0) scale(1);
+  opacity: var(--orbit-end-opacity, 1);
+  animation-name: ux1-left-icon-arc-exit;
+  animation-duration: 1.2s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  animation-fill-mode: forwards;
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+
+@keyframes ux1-left-icon-arc-exit {
+  0% {
+    transform: translate3d(-50%, -50%, 0) scale(1);
+    opacity: var(--orbit-end-opacity, 1);
+  }
+  100% {
+    transform: translate3d(-50%, calc(-50% + 5%), 0) scale(0.82);
+    opacity: 0;
+  }
+}
+
 /* UX1 좌측 5단계: 각자의 자리에서 좌측 끝에 있는 작은 아이콘부터 스르륵 순서대로 나타남 */
 .ux1-left-icon-orbit-step5-in {
   animation-name: ux1-left-icon-orbit-step5-in;
@@ -603,6 +628,15 @@
     transform: translate(-50%, -50%) scale(1);
     filter: blur(0);
   }
+}
+
+/* 5단계 — 4에서 등장한 음악 아이콘 그대로 유지 */
+.right-step4-music-icon--settled {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+  filter: blur(0);
+  animation: none;
+  will-change: auto;
 }
 
 /* 1~5: weather-bg — blur는 wrapper (video 직접 filter 시 재생/렌더 깨짐) */
@@ -871,6 +905,31 @@
   top: var(--orbit-end-top);
   transform: translate(-50%, -50%) scale(1);
   opacity: 1;
+}
+
+/* UX1 4→5: 좌 arc 퇴장과 동시 stagger — 우측 아이콘 순차 등장 */
+.ux1-right-icon-step5-enter {
+  left: var(--orbit-end-left);
+  top: var(--orbit-end-top);
+  transform: translate3d(-50%, calc(-50% + 5%), 0) scale(0.82);
+  opacity: 0;
+  animation-name: ux1-right-icon-step5-enter;
+  animation-duration: 1.2s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  animation-fill-mode: both;
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+
+@keyframes ux1-right-icon-step5-enter {
+  0% {
+    transform: translate3d(-50%, calc(-50% + 5%), 0) scale(0.82);
+    opacity: 0;
+  }
+  100% {
+    transform: translate3d(-50%, -50%, 0) scale(1);
+    opacity: 1;
+  }
 }
 
 .icon-orbit-trail {

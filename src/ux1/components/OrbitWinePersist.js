@@ -1,19 +1,47 @@
-import Image from "next/image";
-import { ORBIT_WINE } from "@/lib/orbitIconLayout";
+"use client";
 
-/** 5·6 — 좌하단 와인 정착 */
+import { useLayoutEffect, useRef, useState } from "react";
+import Image from "next/image";
+import {
+  ORBIT_WINE,
+  RIGHT_STEP5_STAGGER_INDEX,
+} from "../lib/orbitIconLayout";
+import { rightStep5EnterDelayS } from "../lib/leftOrbitStep4";
+
+/** 5·6 — 좌측 arc 와인 (5에서 가장 먼저 등장) */
 export default function OrbitWinePersist({ step }) {
+  const [entering, setEntering] = useState(false);
+  const prevStepRef = useRef(null);
+
+  useLayoutEffect(() => {
+    const prevStep = prevStepRef.current;
+    prevStepRef.current = step;
+
+    if (step === 5 && prevStep === 4) {
+      setEntering(true);
+      return undefined;
+    }
+
+    setEntering(false);
+    return undefined;
+  }, [step]);
+
   if (step < 5) return null;
+
+  const motion = entering ? "ux1-right-icon-step5-enter" : "icon-orbit-settled";
 
   return (
     <div className="pointer-events-none absolute inset-0 z-[32]">
       <div
-        className="icon-orbit-settled absolute -translate-x-1/2 -translate-y-1/2"
+        className={`absolute ${motion}`}
         style={{
           left: ORBIT_WINE.left,
           top: ORBIT_WINE.top,
           width: `${ORBIT_WINE.sizeCqw}cqw`,
           height: `${ORBIT_WINE.sizeCqw}cqw`,
+          animationDelay: entering
+            ? `${rightStep5EnterDelayS(RIGHT_STEP5_STAGGER_INDEX.wine)}s`
+            : undefined,
         }}
         aria-hidden
       >

@@ -108,10 +108,16 @@ export default function CircleUI({
 
       <VoiceMusicSlot step={step} dotsGathering={dotsGathering} />
 
-      {dualRight && step === 4 ? (
+      {dualRight && (step === 4 || step === 5) ? (
         <div
-          className="right-step4-music-icon"
-          style={{ animationDelay: `${UX1_STEP4_RIGHT_REVEAL_DELAY_S}s` }}
+          className={`right-step4-music-icon${
+            step === 5 ? " right-step4-music-icon--settled" : ""
+          }`}
+          style={
+            step === 4
+              ? { animationDelay: `${UX1_STEP4_RIGHT_REVEAL_DELAY_S}s` }
+              : undefined
+          }
           aria-hidden
         >
           <RightStep4MusicIcon />

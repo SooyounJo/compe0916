@@ -117,8 +117,32 @@ export const LEFT_ORBIT_ARC_ENTRY = arcPosition(ENTRY_RIM_DEG);
 export const LEFT_ORBIT_STEP4_ENTRY_STAGGER_S =
   SLOT_SPACING_DEG / ENTRY_DEG_PER_S;
 export const LEFT_ORBIT_STEP4_ENTRY_BASE_S = 0.2;
-/** globals.css ux1-left-icon-arc-enter duration과 동일 */
+
+/** 좌 arc 순차 모션과 동일한 delay (0=moon … 4=people) */
+export function leftOrbitStep4StaggerDelayS(staggerIndex = 0) {
+  return (
+    LEFT_ORBIT_STEP4_ENTRY_BASE_S +
+    staggerIndex * LEFT_ORBIT_STEP4_ENTRY_STAGGER_S
+  );
+}
+
+/** globals.css ux1-left-icon-arc-enter / exit duration과 동일 */
 export const UX1_LEFT_ORBIT_STEP4_ENTER_ANIM_S = 1.45;
+/** globals.css ux1-left-icon-arc-exit duration과 동일 */
+export const UX1_STEP4_EXIT_ANIM_S = 1.2;
+/** 4→5: 좌 퇴장 시작 후 우 등장까지 — 좌가 먼저, 우가 따라옴 */
+export const UX1_STEP5_RIGHT_ENTER_LAG_S =
+  LEFT_ORBIT_STEP4_ENTRY_STAGGER_S * 0.85 + UX1_STEP4_EXIT_ANIM_S * 0.22;
+
+/** 우 5 arc 등장 delay (0=wine … 2=people) — 대응 좌 퇴장 + lag */
+export function rightStep5EnterDelayS(rightStaggerIndex = 0) {
+  return leftOrbitStep4StaggerDelayS(rightStaggerIndex) + UX1_STEP5_RIGHT_ENTER_LAG_S;
+}
+/** 4→5: 좌 arc 5개 제자리 퇴장 완료 */
+export const UX1_STEP4_TO5_EXIT_TOTAL_S =
+  LEFT_ORBIT_STEP4_ENTRY_BASE_S +
+  4 * LEFT_ORBIT_STEP4_ENTRY_STAGGER_S +
+  UX1_STEP4_EXIT_ANIM_S;
 /** globals.css right-step4-music-icon-in duration과 동일 */
 export const UX1_STEP4_MUSIC_ENTER_ANIM_S = 1.45;
 /** 좌 arc 5개 진입 완료 후 우 음악·Let's Party 동시 등장 */
