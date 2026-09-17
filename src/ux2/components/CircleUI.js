@@ -187,7 +187,7 @@ export default function CircleUI({
           )
         ) : null}
       </BlurFade>
-      {dualRight && (step === -1 || step === 7) ? (
+      {dualRight && step === -1 ? (
         <div className="pointer-events-none absolute left-1/2 top-1/2 z-[38] -translate-x-1/2 -translate-y-1/2">
           <Ux2Ux1Step8CircleLoadingDots white />
         </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { ux2PreStep3SearchAtVoiceDelayS } from "@/ux2/lib/ux2PreStep3IconEnter";
 import Image from "next/image";
 import BlurFade from "@/ux2/components/BlurFade";
 import Ux2IconBlob from "@/ux2/components/Ux2IconBlob";
@@ -13,24 +14,26 @@ import { UX2_PRE_STEP_PROMPTS } from "@/ux2/lib/ux2PreStepCopy";
 import { useUx2PreStep4TextReveal } from "@/ux2/lib/useUx2PreStep4TextReveal";
 import { UX2_PRE_STEP_FIRST } from "@/ux2/lib/ux2FlowSteps";
 import { useUx2PreStep1Handoff } from "@/ux2/lib/ux2PreStep1Handoff";
-import { UX2_PRE_STEP_NIGHT_FADE_MS } from "@/ux2/lib/ux2PreStepRightEnter";
+import { UX2_PRE_STEP1_BG_BLUR_OUT_MS } from "@/ux2/lib/ux2PreStepRightEnter";
 import preStepBgStyles from "@/ux2/styles/ux2PreStepRightBackground.module.css";
 import {
   UX2_PRE_STEP4_EXIT_MS,
   UX2_PRE_STEP4_TO3_ENTER_MS,
+  ux2PreStep4ExitBridging,
   ux2PreStep4ExitHoldMs,
 } from "@/ux2/lib/ux2PreStep4To3Exit";
+import { UX2_PRE_STEP3_FOREGROUND_EXIT_MS } from "@/ux2/lib/ux2PreStep3To2ForegroundExit";
+import { useUx2PreStep4ExitFade } from "@/ux2/lib/useUx2PreStep4ExitFade";
 import preStep4ExitStyles from "@/ux2/styles/ux2PreStep4To3Exit.module.css";
 import {
-  UX2_PRE_STEP2_BLOB_ENTER_DURATION_S,
+  UX2_PRE_STEP1_LEFT_INSTA_ENTER_DELAY_S,
+  ux2PreStep1LeftInstaEnterEndMs,
   ux2PreStep2AllBlobsEnterEndS,
-  ux2PreStep2BlobEnterDelayS,
 } from "@/ux2/lib/ux2PreStep2BlobEnter";
 import {
   pctPre,
   PRE_STEP_1_INSTAGRAM,
   PRE_STEP_1_PROMPT,
-  PRE_STEP_1_SEARCH,
   PRE_STEP_2_PROMPT,
   PRE_STEP_4_COCKTAIL,
   PRE_STEP_4_PROMPT,
@@ -63,7 +66,7 @@ function PreStepAmbient({
 }) {
   const gradientFadeStyle = slowGradientFade
     ? {
-        "--ux2-pre1-night-fade-s": `${UX2_PRE_STEP_NIGHT_FADE_MS / 1000}s`,
+        "--ux2-pre1-night-fade-s": `${UX2_PRE_STEP1_BG_BLUR_OUT_MS / 1000}s`,
       }
     : undefined;
 
@@ -254,6 +257,7 @@ function PreStepScene({
   preStep4PromptIn = false,
   enterInstant = false,
   exiting = false,
+  exitFadeOut = false,
   children,
 }) {
   const sceneClass =
@@ -271,12 +275,18 @@ function PreStepScene({
         )}
         {children}
         {stepKey === -4 ? (
-          <BlurFade
-            show={preStep4PromptIn}
-            className="ux2-pre-step-4-prompt pointer-events-none absolute inset-0 z-[6] overflow-visible"
-          >
-            <PreStepPrompt stepKey={-4} />
-          </BlurFade>
+          exiting ? (
+            <div className="ux2-pre-step-4-prompt pointer-events-none absolute inset-0 z-[6] overflow-visible">
+              <PreStepPrompt stepKey={-4} />
+            </div>
+          ) : (
+            <BlurFade
+              show={preStep4PromptIn}
+              className="ux2-pre-step-4-prompt pointer-events-none absolute inset-0 z-[6] overflow-visible"
+            >
+              <PreStepPrompt stepKey={-4} />
+            </BlurFade>
+          )
         ) : (
           <PreStepPrompt stepKey={stepKey} />
         )}
@@ -290,7 +300,9 @@ function PreStepScene({
   if (exiting) {
     return (
       <div
-        className={`ui-blur-fade ui-blur-fade--visible z-[7] ${sceneClass} ${preStep4ExitStyles.sceneExiting}`}
+        className={`ui-blur-fade ui-blur-fade--visible z-[7] ${sceneClass} ${preStep4ExitStyles.sceneExitLayer} ${
+          exitFadeOut ? preStep4ExitStyles.sceneExitLayerOut : ""
+        }`}
         style={{ "--ux2-pre4-exit-ms": `${UX2_PRE_STEP4_EXIT_MS}ms` }}
         aria-hidden={false}
       >
@@ -320,11 +332,30 @@ function PreStepScene({
 /** Figma 12:303 — -3 BG·닷 (검색 블롭·arc는 LeftAmbientBackground) */
 export function LeftCompanionPreStepAmbient({
   show = false,
+  exiting = false,
+  exitFadeOut = false,
   showGradient = true,
   enterSoft = false,
   enterActive = false,
 }) {
-  if (!show) {
+  const [searchBlobVisible, setSearchBlobVisible] = useState(false);
+
+  useEffect(() => {
+    if (exiting) {
+      return undefined;
+    }
+    if (!show) {
+      setSearchBlobVisible(false);
+      return undefined;
+    }
+
+    setSearchBlobVisible(false);
+    const delayMs = ux2PreStep3SearchAtVoiceDelayS() * 1000;
+    const timer = setTimeout(() => setSearchBlobVisible(true), delayMs);
+    return () => clearTimeout(timer);
+  }, [show, exiting]);
+
+  if (!show && !exiting) {
     return null;
   }
 
@@ -333,9 +364,27 @@ export function LeftCompanionPreStepAmbient({
 
   const body = (
     <PreStepAmbient showGradient={showGradient}>
-      <PreStepVoiceAndDots showVoice />
+      <PreStepVoiceAndDots
+        showVoice={exiting ? false : !searchBlobVisible}
+      />
     </PreStepAmbient>
   );
+
+  if (exiting) {
+    return (
+      <div
+        className={`${wrapClass} ${preStep4ExitStyles.sceneExitLayer} ${
+          exitFadeOut ? preStep4ExitStyles.sceneExitLayerOut : ""
+        }`}
+        style={{
+          "--ux2-pre4-exit-ms": `${UX2_PRE_STEP3_FOREGROUND_EXIT_MS}ms`,
+        }}
+        aria-hidden={false}
+      >
+        {body}
+      </div>
+    );
+  }
 
   if (enterSoft) {
     return (
@@ -365,48 +414,58 @@ export default function LeftCompanionPreStep({
   preStep4TextReady = false,
   preStep4HandoffInstant = false,
 }) {
+  const prevStepRef = useRef(step);
+  const [preStep1InstaEnterKey, setPreStep1InstaEnterKey] = useState(0);
+  const [showPreStep2Prompt, setShowPreStep2Prompt] = useState(false);
+  const [showPreStep1Prompt, setShowPreStep1Prompt] = useState(false);
+  const [holdPreStep4Exit, setHoldPreStep4Exit] = useState(false);
+
+  const bridgingPreStep4Exit =
+    holdPreStep4Exit ||
+    ux2PreStep4ExitBridging(step, prevStepRef.current);
+  const showPreStep4Layer = step === -4 || bridgingPreStep4Exit;
+  const exitingPreStep4 = bridgingPreStep4Exit && step !== -4;
+  const preStep4ExitFadeOut = useUx2PreStep4ExitFade(exitingPreStep4);
+
   const preStep4PromptIn = useUx2PreStep4TextReveal(
     step,
     preStep4TextReady,
     preStep4HandoffInstant,
+    exitingPreStep4,
   );
   const revealStep0Bg = useUx2PreStep1Handoff(step);
   const fadePreGradient = step === -1 && revealStep0Bg;
-  const prevStepRef = useRef(step);
-  const [preStep2EnterKey, setPreStep2EnterKey] = useState(0);
-  const [preStep1InstaEnterKey, setPreStep1InstaEnterKey] = useState(0);
-  const [leftSearchEnter, setLeftSearchEnter] = useState(false);
-  const [showPreStep2Prompt, setShowPreStep2Prompt] = useState(false);
-  const [holdPreStep4Exit, setHoldPreStep4Exit] = useState(false);
   /** -1까지 정적 블롭 · 0은 Ux2Step0IconMotion handoff */
-  /** -2 좌: 검색 블롭만(LeftAmbientBackground) · -1: 인스타+검색 handoff */
+  /** -2 좌 검색: Ux2LeftPreStepSearchPersist · -1: 인스타 handoff */
   const showPreStep2Layer = step === -2 || step === -1;
 
   useEffect(() => {
     const prev = prevStepRef.current;
     prevStepRef.current = step;
     if (step === -2 && prev !== -2) {
-      setPreStep2EnterKey((k) => k + 1);
-      setLeftSearchEnter(true);
       setShowPreStep2Prompt(false);
-      const searchEndS =
-        ux2PreStep2BlobEnterDelayS("leftSearch") +
-        UX2_PRE_STEP2_BLOB_ENTER_DURATION_S;
       const promptMs = ux2PreStep2AllBlobsEnterEndS() * 1000;
-      const tSearch = setTimeout(
-        () => setLeftSearchEnter(false),
-        searchEndS * 1000 + 80,
-      );
       const tPrompt = setTimeout(() => setShowPreStep2Prompt(true), promptMs);
-      return () => {
-        clearTimeout(tSearch);
-        clearTimeout(tPrompt);
-      };
+      return () => clearTimeout(tPrompt);
     }
     if (step === -1 && prev === -2) {
       setPreStep1InstaEnterKey((k) => k + 1);
-      setLeftSearchEnter(false);
       setShowPreStep2Prompt(false);
+      setShowPreStep1Prompt(false);
+      const tPrompt = setTimeout(
+        () => setShowPreStep1Prompt(true),
+        ux2PreStep1LeftInstaEnterEndMs(),
+      );
+      return () => clearTimeout(tPrompt);
+    }
+    if (step === -1 && prev !== -2 && prev !== -1) {
+      setPreStep1InstaEnterKey((k) => k + 1);
+      setShowPreStep1Prompt(false);
+      const tPrompt = setTimeout(
+        () => setShowPreStep1Prompt(true),
+        ux2PreStep1LeftInstaEnterEndMs(),
+      );
+      return () => clearTimeout(tPrompt);
     }
     if (prev === UX2_PRE_STEP_FIRST && step === -3) {
       setHoldPreStep4Exit(true);
@@ -420,11 +479,17 @@ export default function LeftCompanionPreStep({
       setHoldPreStep4Exit(false);
     }
     if (step < -2) {
-      setLeftSearchEnter(false);
       setShowPreStep2Prompt(false);
+      setShowPreStep1Prompt(false);
+    }
+    if (step !== -1) {
+      setShowPreStep1Prompt(false);
     }
     if (step === -2 && prev === -2) {
       setShowPreStep2Prompt(true);
+    }
+    if (step === -1 && prev === -1) {
+      setShowPreStep1Prompt(true);
     }
     return undefined;
   }, [step]);
@@ -433,10 +498,11 @@ export default function LeftCompanionPreStep({
     <>
       <PreStepScene
         stepKey={-4}
-        show={step === -4 || holdPreStep4Exit}
-        exiting={holdPreStep4Exit && step !== -4}
+        show={showPreStep4Layer}
+        exiting={exitingPreStep4}
+        exitFadeOut={preStep4ExitFadeOut}
         dotsOnly
-        preStep4PromptIn={preStep4PromptIn || holdPreStep4Exit}
+        preStep4PromptIn={preStep4PromptIn}
         enterInstant={preStep4HandoffInstant}
       >
         <IconBlob
@@ -454,27 +520,13 @@ export default function LeftCompanionPreStep({
             showGradient={!fadePreGradient && step !== 0}
             slowGradientFade={step === -1}
           >
-            {step === -2 || step === -1 ? (
-              <div key={`pre-step-left-search-${preStep2EnterKey}`}>
-                <Step0MatchIconBlob
-                  blobId="leftSearch"
-                  enter={leftSearchEnter}
-                  enterDelayS={ux2PreStep2BlobEnterDelayS("leftSearch")}
-                  centerX={PRE_STEP_1_SEARCH.centerX}
-                  centerY={PRE_STEP_1_SEARCH.centerY}
-                  blobSize={PRE_STEP_1_SEARCH.size}
-                  iconSrc="/figma/ux2/step0/web-search-icon.svg"
-                  iconSizePct={54}
-                />
-              </div>
-            ) : null}
             {step === -1 ? (
               <div key={`pre-step-1-left-insta-${preStep1InstaEnterKey}`}>
                 <Step0MatchIconBlob
                   key={`leftInstagram-s-1-k${preStep1InstaEnterKey}`}
                   blobId="leftInstagram"
                   enter
-                  enterDelayS={2}
+                  enterDelayS={UX2_PRE_STEP1_LEFT_INSTA_ENTER_DELAY_S}
                   centerX={PRE_STEP_1_INSTAGRAM.centerX}
                   centerY={PRE_STEP_1_INSTAGRAM.centerY}
                   blobSize={PRE_STEP_1_INSTAGRAM.size}
@@ -493,7 +545,7 @@ export default function LeftCompanionPreStep({
         <PreStepPrompt stepKey={-2} />
       </BlurFade>
       <BlurFade
-        show={step === -1}
+        show={step === -1 && showPreStep1Prompt}
         className="left-step4-ui-blur-in pointer-events-none absolute inset-0 z-[5] overflow-hidden"
       >
         <PreStepPrompt stepKey={-1} />

@@ -4,9 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import CircleUI from "@/ux2/components/CircleUI";
 import CompanionLeftBlob from "@/ux2/components/CompanionLeftBlob";
 import Ux2Minus5Stage from "@/ux2/minus5/Ux2Minus5Stage";
-import {
-  UX2_MINUS5_OVERLAY_DISSOLVE_MS,
-} from "@/ux2/lib/ux2Minus5ToMinus4Exit";
+import { UX2_MINUS5_OVERLAY_DISSOLVE_MS } from "@/ux2/lib/ux2Minus5ToMinus4Exit";
 import exitStyles from "@/ux2/styles/ux2Minus5ToMinus4Exit.module.css";
 import {
   UX2_MINUS5_STEP,
@@ -22,15 +20,25 @@ export default function DualBlobStage({
   dotsGathering = false,
   minus5Exiting = false,
   minus5HandoffShell = false,
+  minus5HandoffSettled = false,
   onMinus5ExitComplete,
 }) {
   const [overlayDissolving, setOverlayDissolving] = useState(false);
-
-  const minus5HandoffActive =
-    step === UX2_MINUS5_STEP ||
-    (step === UX2_PRE_STEP_FIRST && minus5HandoffShell);
-
   const dissolveTimerRef = useRef(null);
+
+  const isMinus5 = step === UX2_MINUS5_STEP;
+  const mainStep = isMinus5 ? UX2_PRE_STEP_FIRST : step;
+
+  const showOverlayShell = isMinus5 && (minus5Exiting || overlayDissolving);
+  const revealUnderlay =
+    isMinus5 && (minus5Exiting || overlayDissolving || minus5HandoffShell);
+  const parkUnderlayForeground = showOverlayShell && !overlayDissolving;
+
+  const preStep4HandoffInstant =
+    minus5HandoffSettled || minus5HandoffShell;
+  const preStep4TextReady =
+    minus5HandoffSettled ||
+    (mainStep === UX2_PRE_STEP_FIRST && !parkUnderlayForeground);
 
   const handleMorphEnd = useCallback(() => {
     setOverlayDissolving(true);
@@ -50,66 +58,45 @@ export default function DualBlobStage({
     [],
   );
 
-  if (minus5HandoffActive) {
-    const showMinus5Layer = step === UX2_MINUS5_STEP;
-    const showOverlay =
-      showMinus5Layer && (minus5Exiting || overlayDissolving);
-    const revealUnderlay =
-      showOverlay || (step === UX2_PRE_STEP_FIRST && minus5HandoffShell);
-    const parkUnderlayForeground = showOverlay && !overlayDissolving;
-
-    return (
-      <div className="relative w-fit max-w-full">
+  return (
+    <div className="relative w-fit max-w-full">
+      <div
+        className={
+          !isMinus5 || revealUnderlay
+            ? ""
+            : "pointer-events-none absolute inset-0 opacity-0 invisible"
+        }
+        aria-hidden={isMinus5 && !revealUnderlay}
+        style={{
+          "--ux2-m5-dissolve-ms": `${UX2_MINUS5_OVERLAY_DISSOLVE_MS}ms`,
+        }}
+      >
+        <DualBlobStageMain
+          key={DUAL_MAIN_KEY}
+          step={mainStep}
+          dotsGathering={dotsGathering}
+          preStep4TextReady={preStep4TextReady}
+          preStep4HandoffInstant={preStep4HandoffInstant}
+          parkUnderlayForeground={parkUnderlayForeground}
+        />
+      </div>
+      {isMinus5 ? (
         <div
-          className={
-            revealUnderlay
-              ? ""
-              : "pointer-events-none absolute inset-0 opacity-0 invisible"
-          }
-          aria-hidden={!revealUnderlay}
+          className={`${
+            showOverlayShell ? "pointer-events-none absolute inset-0 z-[20]" : ""
+          } ${overlayDissolving ? exitStyles.overlayShellDissolve : ""}`}
           style={{
             "--ux2-m5-dissolve-ms": `${UX2_MINUS5_OVERLAY_DISSOLVE_MS}ms`,
           }}
         >
-          <DualBlobStageMain
-            key={DUAL_MAIN_KEY}
-            step={UX2_PRE_STEP_FIRST}
-            dotsGathering={dotsGathering}
-            preStep4TextReady={!parkUnderlayForeground}
-            preStep4HandoffInstant={minus5HandoffShell}
-            parkUnderlayForeground={parkUnderlayForeground}
+          <Ux2Minus5Stage
+            exiting={minus5Exiting}
+            holdEndState={overlayDissolving}
+            onExitComplete={handleMorphEnd}
           />
         </div>
-        {showMinus5Layer ? (
-          <div
-            className={`${
-              showOverlay
-                ? "pointer-events-none absolute inset-0 z-[20]"
-                : ""
-            } ${
-              overlayDissolving ? exitStyles.overlayShellDissolve : ""
-            }`}
-            style={{
-              "--ux2-m5-dissolve-ms": `${UX2_MINUS5_OVERLAY_DISSOLVE_MS}ms`,
-            }}
-          >
-            <Ux2Minus5Stage
-              exiting={minus5Exiting}
-              holdEndState={overlayDissolving}
-              onExitComplete={handleMorphEnd}
-            />
-          </div>
-        ) : null}
-      </div>
-    );
-  }
-
-  return (
-    <DualBlobStageMain
-      step={step}
-      dotsGathering={dotsGathering}
-      preStep4TextReady={step === UX2_PRE_STEP_FIRST}
-    />
+      ) : null}
+    </div>
   );
 }
 

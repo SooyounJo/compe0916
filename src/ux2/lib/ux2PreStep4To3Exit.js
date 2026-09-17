@@ -1,5 +1,12 @@
-/** -4 → -3 — -4 전경 opacity 퇴장 후 -3 진입 (겹침 없음) */
+import { UX2_PRE_STEP_FIRST } from "@/ux2/lib/ux2FlowSteps";
+
+/** -4 → -3 — -4 전경 blur+opacity 퇴장 후 -3 진입 (겹침 없음) */
 export const UX2_PRE_STEP4_EXIT_MS = 880;
+
+/** step -3 첫 렌더 — hold state 전 -4 전경 유지 */
+export function ux2PreStep4ExitBridging(step, prevStep) {
+  return step === -3 && prevStep === UX2_PRE_STEP_FIRST;
+}
 
 /** -4 퇴장 DOM hold (transition 여유) */
 export const UX2_PRE_STEP4_EXIT_HOLD_MS = 100;

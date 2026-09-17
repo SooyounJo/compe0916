@@ -1,7 +1,4 @@
-import {
-  UX2_PRE_STEP_NIGHT_FADE_MS,
-  UX2_PRE_STEP_NIGHT_HOLD_MS,
-} from "@/ux2/lib/ux2PreStepRightEnter";
+import { ux2PreStep1HandoffVisualEndMs } from "@/ux2/lib/ux2PreStepRightEnter";
 import {
   ux2PreStep2AllBlobsEnterEndS,
 } from "@/ux2/lib/ux2PreStep2BlobEnter";
@@ -29,11 +26,53 @@ import { UX2_STEP9_RIGHT_LOADING_BEFORE_CARD_MS } from "@/ux2/lib/ux2Step9RightE
 import { UX2_STEP910_CARD_CROSSFADE_MS } from "@/ux2/lib/ux2Step910Crossfade";
 import { UX2_MINUS5_STEP } from "@/ux2/lib/ux2FlowSteps";
 
-/** 자동 재생 — 해당 단계 진입 모션 종료 후 추가 대기 */
-export const UX2_AUTO_PLAY_HOLD_AFTER_ANIM_MS = 1000;
-
 /** 3→4 — 중앙 닷 gather (CircleUI CENTER_CLUSTER_GATHER) */
 export const UX2_AUTO_PLAY_GATHER_MS = 1000;
+
+/**
+ * 자동 재생 — 단계별 총 체류(다음 단계로 넘기기까지, ms)
+ * UX2 녹화 구간 1~16 → step −5 … 10 (11은 종료 화면)
+ *
+ * | 구간 | step | 구간 길이 |
+ * |------|------|-----------|
+ * | 1 | −5 | 2.70s |
+ * | 2 | −4 | 5.82s |
+ * | 3 | −3 | 8.04s |
+ * | 4 | −2 | 4.64s (−0.5s) |
+ * | 5 | −1 | 9.70s |
+ * | 6 | 0 | 6.30s |
+ * | 7 | 1 | 5.46s |
+ * | 8 | 2 | 12.63s |
+ * | 9 | 3 | 5.72s (gather 1s 포함) |
+ * | 10 | 4 | 7.95s |
+ * | 11 | 5 | 7.16s |
+ * | 12 | 6 | 6.05s |
+ * | 13 | 7 | 5.66s |
+ * | 14 | 8 | 3.75s |
+ * | 15 | 9 | 5.10s |
+ * | 16 | 10 | 4.05s |
+ */
+export const UX2_AUTO_PLAY_STEP_TOTAL_MS = {
+  [UX2_MINUS5_STEP]: 2700,
+  [-4]: 5820,
+  [-3]: 8040,
+  [-2]: 4640,
+  [-1]: 9700,
+  0: 6300,
+  1: 5460,
+  2: 12630,
+  3: 5720,
+  4: 7950,
+  5: 7160,
+  6: 6050,
+  7: 5660,
+  8: 3750,
+  9: 5100,
+  10: 4050,
+};
+
+/** @deprecated 모션+1초 방식 — 미배정 step 폴백용 */
+export const UX2_AUTO_PLAY_HOLD_AFTER_ANIM_MS = 1000;
 
 const UI_BLUR_FADE_MS = 1000;
 const LEFT_STEP4_SCENE_MS = 550;
@@ -106,7 +145,7 @@ export function ux2AutoPlayAnimEndMs(step) {
     case -2:
       return Math.round(ux2PreStep2AllBlobsEnterEndS() * 1000);
     case -1:
-      return UX2_PRE_STEP_NIGHT_HOLD_MS + UX2_PRE_STEP_NIGHT_FADE_MS;
+      return ux2PreStep1HandoffVisualEndMs();
     case 0:
       return STEP0_TEXT_HANDOFF_MS + STEP0_ICON_HANDOFF_MS;
     case 1:
@@ -136,17 +175,22 @@ export function ux2AutoPlayAnimEndMs(step) {
   }
 }
 
-/** 자동 재생 — 다음 단계로 넘기기 전 체류 */
+/** 자동 재생 — 다음 단계로 넘기기 전 대기 (3단계는 gather 시작 시각) */
 export function ux2AutoPlayDwellMs(step) {
+  const total = UX2_AUTO_PLAY_STEP_TOTAL_MS[step];
+  if (total != null) {
+    if (step === 3) return total - UX2_AUTO_PLAY_GATHER_MS;
+    return total;
+  }
   return ux2AutoPlayAnimEndMs(step) + UX2_AUTO_PLAY_HOLD_AFTER_ANIM_MS;
 }
 
-/** 3단계 — gather 시작(모션+1초 후) */
+/** 3단계 — gather 시작 */
 export function ux2AutoPlayStep3GatherStartMs() {
   return ux2AutoPlayDwellMs(3);
 }
 
-/** 3단계 — 4로 advance (gather 포함) */
+/** 3단계 — 4로 advance (구간 9 총 길이) */
 export function ux2AutoPlayStep3AdvanceMs() {
-  return ux2AutoPlayStep3GatherStartMs() + UX2_AUTO_PLAY_GATHER_MS;
+  return UX2_AUTO_PLAY_STEP_TOTAL_MS[3];
 }

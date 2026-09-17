@@ -3,11 +3,12 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import Ux2PreStep3SearchBlob from "@/ux2/components/Ux2PreStep3SearchBlob";
 import { ux2PreStep3SearchRevealDelayMs } from "@/ux2/lib/ux2PreStep3IconEnter";
-import { UX2_PRE_STEP3_RIGHT_SEARCH } from "@/ux2/lib/ux2PreStep3SearchBlobLayout";
-import { UX2_RIGHT_ICON_FILL } from "@/ux2/lib/ux2RightIconFill";
+import { UX2_PRE_STEP3_LEFT_SEARCH } from "@/ux2/lib/ux2PreStep3SearchBlobLayout";
 
-/** -3 검색 등장 → -2에서 동일 DOM 유지(settled) → arc 블롭은 그 위 레이어 */
-export default function Ux2RightPreStepSearchPersist({ step = 0 }) {
+const LEFT_SEARCH_ICON_FILL = "#9A93AA";
+
+/** -3 검색 등장 → -2·-1에서 동일 DOM 유지(settled) */
+export default function Ux2LeftPreStepSearchPersist({ step = 0 }) {
   const [searchEnterKey, setSearchEnterKey] = useState(0);
   const [searchVisible, setSearchVisible] = useState(false);
   const prevStepRef = useRef(step);
@@ -65,19 +66,19 @@ export default function Ux2RightPreStepSearchPersist({ step = 0 }) {
   return (
     <div
       className={`pointer-events-none absolute inset-0 overflow-hidden ${
-        settled ? "z-[13]" : "z-[16]"
+        settled ? "z-[13]" : "z-[7]"
       }`}
     >
       <Ux2PreStep3SearchBlob
         show
         enterKey={searchEnterKey}
         settled={settled}
-        centerX={UX2_PRE_STEP3_RIGHT_SEARCH.centerX}
-        centerY={UX2_PRE_STEP3_RIGHT_SEARCH.centerY}
-        blobSizeCqw={UX2_PRE_STEP3_RIGHT_SEARCH.blobSizeCqw}
-        toPct={UX2_PRE_STEP3_RIGHT_SEARCH.toPct}
+        centerX={UX2_PRE_STEP3_LEFT_SEARCH.centerX}
+        centerY={UX2_PRE_STEP3_LEFT_SEARCH.centerY}
+        blobSizeCqw={UX2_PRE_STEP3_LEFT_SEARCH.blobSizeCqw}
+        toPct={UX2_PRE_STEP3_LEFT_SEARCH.toPct}
+        iconFillColor={LEFT_SEARCH_ICON_FILL}
         immediateEnter={step === -3 && !settled}
-        iconFillColor={UX2_RIGHT_ICON_FILL}
       />
     </div>
   );

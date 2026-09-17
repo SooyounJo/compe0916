@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Image from "next/image";
 import BlurFade from "@/ux2/components/BlurFade";
 import LeftCompanionAgentLayer from "@/ux2/components/LeftCompanionAgentLayer";
@@ -19,6 +19,7 @@ import LeftCompanionStep7 from "@/ux2/components/LeftCompanionStep7";
 import LeftCompanionStep8 from "@/ux2/components/LeftCompanionStep8";
 import LeftCompanionStep9 from "@/ux2/components/LeftCompanionStep9";
 import Ux2InstagramIconPersist from "@/ux2/components/Ux2InstagramIconPersist";
+import Ux2LeftPreStepSearchPersist from "@/ux2/components/Ux2LeftPreStepSearchPersist";
 import Ux2VoiceIconAtSlot from "@/ux2/components/Ux2VoiceIconAtSlot";
 import Ux2Step0IconMotion from "@/ux2/components/Ux2Step0IconMotion";
 import Ux2LeftAmbientVideo from "@/ux2/components/Ux2LeftAmbientVideo";
@@ -28,7 +29,12 @@ import step7RightEdgeGlow from "@/ux2/styles/ux2LeftStep7RightEdgeGlow.module.cs
 import { UX2_FIRST_STEP, UX2_LAST_STEP } from "@/ux2/lib/ux2FlowSteps";
 import { ux2PreStep3ArcExitTotalMs } from "@/ux2/lib/ux2PreStep3IconEnter";
 import {
+  ux2PreStep3ForegroundExitHoldMs,
+} from "@/ux2/lib/ux2PreStep3To2ForegroundExit";
+import { useUx2PreStep4ExitFade } from "@/ux2/lib/useUx2PreStep4ExitFade";
+import {
   UX2_PRE_STEP4_TO3_ENTER_MS,
+  ux2PreStep4ExitBridging,
   ux2PreStep4To3EnterStartMs,
 } from "@/ux2/lib/ux2PreStep4To3Exit";
 import preStep4ExitStyles from "@/ux2/styles/ux2PreStep4To3Exit.module.css";
@@ -61,74 +67,123 @@ export default function LeftAmbientBackground({
   preStep4HandoffInstant = false,
   preStepForegroundWrapClass = "",
 }) {
-  const prevStepRef = useRef(step);
+  const prevStepRef = useRef(null);
   const [holdAgentExit, setHoldAgentExit] = useState(false);
   const [preStep3ArcKey, setPreStep3ArcKey] = useState(0);
   const [holdPreStep3Arc, setHoldPreStep3Arc] = useState(step === -3);
-  const [preStep3ForegroundIn, setPreStep3ForegroundIn] = useState(step === -3);
+  const [preStep3ForegroundIn, setPreStep3ForegroundIn] = useState(
+    step === -3,
+  );
   const [preStep3SequentialEnter, setPreStep3SequentialEnter] = useState(false);
   const [preStep3EnterActive, setPreStep3EnterActive] = useState(false);
-  useEffect(() => {
+  const [holdPreStep3ForegroundExit, setHoldPreStep3ForegroundExit] =
+    useState(false);
+  const preStep3InTimerRef = useRef(null);
+  const arcExitTimerRef = useRef(null);
+  const foregroundExitTimerRef = useRef(null);
+  const agentExitTimerRef = useRef(null);
+
+  const pre4To3Bridging = ux2PreStep4ExitBridging(
+    step,
+    prevStepRef.current,
+  );
+  const preStep3Sequential =
+    preStep3SequentialEnter || pre4To3Bridging;
+
+  useLayoutEffect(() => {
     const prev = prevStepRef.current;
     prevStepRef.current = step;
 
-    let preStep3InTimer;
+    if (preStep3InTimerRef.current) {
+      clearTimeout(preStep3InTimerRef.current);
+      preStep3InTimerRef.current = null;
+    }
+
     if (prev === UX2_PRE_STEP_FIRST && step === -3) {
       setPreStep3SequentialEnter(true);
       setPreStep3ForegroundIn(false);
       setPreStep3EnterActive(false);
-      preStep3InTimer = setTimeout(
-        () => setPreStep3ForegroundIn(true),
-        ux2PreStep4To3EnterStartMs(),
-      );
+      setPreStep3ArcKey((k) => k + 1);
+      setHoldPreStep3Arc(true);
+      preStep3InTimerRef.current = setTimeout(() => {
+        preStep3InTimerRef.current = null;
+        setPreStep3ForegroundIn(true);
+      }, ux2PreStep4To3EnterStartMs());
     } else if (step === -3) {
-      setPreStep3SequentialEnter(false);
-      setPreStep3EnterActive(true);
-      setPreStep3ForegroundIn(true);
+      if (prev !== -3) {
+        setPreStep3ArcKey((k) => k + 1);
+        setHoldPreStep3Arc(true);
+      }
+      if (prev !== UX2_PRE_STEP_FIRST) {
+        setPreStep3SequentialEnter(false);
+        setPreStep3EnterActive(true);
+        setPreStep3ForegroundIn(true);
+      }
     } else {
       setPreStep3SequentialEnter(false);
       setPreStep3ForegroundIn(false);
       setPreStep3EnterActive(false);
+      if (step < -3) {
+        setHoldPreStep3Arc(false);
+      }
     }
 
-    if (step === -3 && prev !== -3) {
-      setPreStep3ArcKey((k) => k + 1);
-      setHoldPreStep3Arc(true);
-    }
     if (prev === -3 && step === -2) {
       setHoldPreStep3Arc(true);
-      const t = setTimeout(
-        () => setHoldPreStep3Arc(false),
-        ux2PreStep3ArcExitTotalMs(),
-      );
-      return () => {
-        clearTimeout(t);
-        if (preStep3InTimer) clearTimeout(preStep3InTimer);
-      };
+      setHoldPreStep3ForegroundExit(true);
+      if (arcExitTimerRef.current) clearTimeout(arcExitTimerRef.current);
+      arcExitTimerRef.current = setTimeout(() => {
+        arcExitTimerRef.current = null;
+        setHoldPreStep3Arc(false);
+      }, ux2PreStep3ArcExitTotalMs());
+      if (foregroundExitTimerRef.current) {
+        clearTimeout(foregroundExitTimerRef.current);
+      }
+      foregroundExitTimerRef.current = setTimeout(() => {
+        foregroundExitTimerRef.current = null;
+        setHoldPreStep3ForegroundExit(false);
+      }, ux2PreStep3ForegroundExitHoldMs());
     }
-    if (step === -3) {
-      setHoldPreStep3Arc(true);
-    } else if (step < -3) {
-      setHoldPreStep3Arc(false);
-    }
+
     if (prev === 3 && step === 4) {
       setHoldAgentExit(true);
-      const t = setTimeout(() => setHoldAgentExit(false), AGENT_EXIT_HOLD_MS);
-      return () => {
-        clearTimeout(t);
-        if (preStep3InTimer) clearTimeout(preStep3InTimer);
-      };
+      if (agentExitTimerRef.current) clearTimeout(agentExitTimerRef.current);
+      agentExitTimerRef.current = setTimeout(() => {
+        agentExitTimerRef.current = null;
+        setHoldAgentExit(false);
+      }, AGENT_EXIT_HOLD_MS);
     }
     if (step !== 4) {
       setHoldAgentExit(false);
     }
+
     return () => {
-      if (preStep3InTimer) clearTimeout(preStep3InTimer);
+      if (preStep3InTimerRef.current) {
+        clearTimeout(preStep3InTimerRef.current);
+        preStep3InTimerRef.current = null;
+      }
     };
   }, [step]);
 
+  useEffect(
+    () => () => {
+      if (arcExitTimerRef.current) clearTimeout(arcExitTimerRef.current);
+      if (foregroundExitTimerRef.current) {
+        clearTimeout(foregroundExitTimerRef.current);
+      }
+      if (agentExitTimerRef.current) clearTimeout(agentExitTimerRef.current);
+    },
+    [],
+  );
+
+  const exitingPreStep3Foreground =
+    holdPreStep3ForegroundExit && step === -2;
+  const preStep3ForegroundExitFade = useUx2PreStep4ExitFade(
+    exitingPreStep3Foreground,
+  );
+
   useEffect(() => {
-    if (!preStep3ForegroundIn || !preStep3SequentialEnter) {
+    if (!preStep3ForegroundIn || !preStep3Sequential) {
       return undefined;
     }
     setPreStep3EnterActive(false);
@@ -140,7 +195,7 @@ export default function LeftAmbientBackground({
       cancelAnimationFrame(outerRaf);
       if (innerRaf) cancelAnimationFrame(innerRaf);
     };
-  }, [preStep3ForegroundIn, preStep3SequentialEnter]);
+  }, [preStep3ForegroundIn, preStep3Sequential]);
 
   const showAgentLayer =
     step === 3 || (dotsGathering && step <= 4) || holdAgentExit;
@@ -242,13 +297,16 @@ export default function LeftAmbientBackground({
         toPct={pctCircle}
       />
 
+      <Ux2LeftPreStepSearchPersist step={step} />
       <LeftCompanionPreStepAmbient
         show={step === -3 && preStep3ForegroundIn}
-        enterSoft={preStep3SequentialEnter}
+        exiting={exitingPreStep3Foreground}
+        exitFadeOut={preStep3ForegroundExitFade}
+        enterSoft={preStep3Sequential}
         enterActive={preStep3EnterActive}
       />
       {(step === -3 && preStep3ForegroundIn) || holdPreStep3Arc ? (
-        preStep3SequentialEnter && step === -3 ? (
+        preStep3Sequential && step === -3 ? (
           <div
             className={`pointer-events-none absolute inset-0 z-[6] overflow-hidden ${preStep4ExitStyles.layerEnter} ${
               preStep3EnterActive ? preStep4ExitStyles.layerEnterActive : ""

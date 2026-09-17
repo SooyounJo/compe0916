@@ -51,3 +51,15 @@ export function ux2PreStep2AllBlobsEnterEndS() {
     0.1
   );
 }
+
+/** -1 좌 인스타 — arc 퇴장 후 blur·opacity in */
+export const UX2_PRE_STEP1_LEFT_INSTA_ENTER_DELAY_S = 2;
+
+export function ux2PreStep1LeftInstaEnterEndMs() {
+  return Math.round(
+    (UX2_PRE_STEP1_LEFT_INSTA_ENTER_DELAY_S +
+      UX2_PRE_STEP2_BLOB_ENTER_DURATION_S +
+      0.08) *
+      1000,
+  );
+}

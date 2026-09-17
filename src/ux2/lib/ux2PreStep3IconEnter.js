@@ -3,6 +3,8 @@ import {
   UX2_UX1_STEP4_ENTRY_BASE_S,
   ux2Ux1Step4StaggerDelayS,
 } from "@/ux2/lib/ux2Ux1Step45Timing";
+import { UX2_PRE_STEP_FIRST } from "@/ux2/lib/ux2FlowSteps";
+import { ux2PreStep4To3EnterStartMs } from "@/ux2/lib/ux2PreStep4To3Exit";
 
 /** -3 arc·검색·카피 — 4단계 대비 체류·모션 여유 */
 export const UX2_PRE_STEP3_MOTION_PACE = 1.28;
@@ -35,6 +37,15 @@ export function ux2PreStep3IconEnterDelayS(iconId) {
 /** Figma 12:303 — 보이스 슬롯(3시) 인터넷 검색, arc people과 동시 */
 export function ux2PreStep3SearchAtVoiceDelayS() {
   return ux2PreStep3IconEnterDelayS("people");
+}
+
+/** 우측 검색 블롭 reveal — -4→-3 순차 진입 후 좌 arc people 타이밍 */
+export function ux2PreStep3SearchRevealDelayMs(prevStep) {
+  const motionMs = ux2PreStep3SearchAtVoiceDelayS() * 1000;
+  if (prevStep === UX2_PRE_STEP_FIRST) {
+    return ux2PreStep4To3EnterStartMs() + motionMs;
+  }
+  return motionMs;
 }
 
 /** -3 우측 카피 — 검색 블롭 reveal 끝난 뒤 */

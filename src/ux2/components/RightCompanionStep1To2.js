@@ -280,6 +280,7 @@ function MorphCard({
 
 /** Figma 18:427 → 1:897 — 글래스 3장이 블롭에서 펼쳐지며 피드 카드로 모프; 3에서 피드 좌측 퇴장 */
 export default function RightCompanionStep1To2({ step = 1 }) {
+  const prevStepRef = useRef(step);
   const [holdStep3Feed, setHoldStep3Feed] = useState(false);
   const visible =
     step === 1 || step === 2 || step === 3 || holdStep3Feed;
@@ -308,6 +309,9 @@ export default function RightCompanionStep1To2({ step = 1 }) {
   }, [step]);
 
   useEffect(() => {
+    const prev = prevStepRef.current;
+    prevStepRef.current = step;
+
     if (step === 3) {
       setHoldStep3Feed(false);
       setMorphToFeed(true);
@@ -335,8 +339,11 @@ export default function RightCompanionStep1To2({ step = 1 }) {
     if (step === 4) {
       setShowStep3Overlay(false);
       setHoldStep3Feed(false);
-      setFeedExitStage(-1);
-      setMorphToFeed(false);
+      /** 3→4 — BlurFade 퇴장 중 feedExitStage 리셋 시 하단 카피·카드가 한 프레임 되살아남 */
+      if (prev !== 3) {
+        setFeedExitStage(-1);
+        setMorphToFeed(false);
+      }
       return undefined;
     }
 

@@ -26,6 +26,7 @@ export default function DualBlobExperience() {
   const [dotsGathering, setDotsGathering] = useState(false);
   const [minus5Exiting, setMinus5Exiting] = useState(false);
   const [minus5HandoffShell, setMinus5HandoffShell] = useState(false);
+  const [minus5HandoffSettled, setMinus5HandoffSettled] = useState(false);
 
   const beginMinus5ToMinus4 = useCallback(() => {
     setMinus5HandoffShell(true);
@@ -34,6 +35,8 @@ export default function DualBlobExperience() {
 
   const handleMinus5ExitComplete = useCallback(() => {
     setMinus5Exiting(false);
+    setMinus5HandoffShell(false);
+    setMinus5HandoffSettled(true);
     setActiveStep(UX2_PRE_STEP_FIRST);
   }, []);
 
@@ -57,6 +60,7 @@ export default function DualBlobExperience() {
       }
       setMinus5Exiting(false);
       setMinus5HandoffShell(false);
+      setMinus5HandoffSettled(false);
       setActiveStep(step);
     },
     [activeStep, advanceFromStep3, beginMinus5ToMinus4, minus5Exiting],
@@ -66,9 +70,16 @@ export default function DualBlobExperience() {
     setDotsGathering(false);
     setMinus5Exiting(false);
     setMinus5HandoffShell(false);
+    setMinus5HandoffSettled(false);
     setActiveStep(FIRST_STEP);
     setIsPlaying(true);
   }, []);
+
+  useEffect(() => {
+    if (activeStep !== UX2_PRE_STEP_FIRST) {
+      setMinus5HandoffSettled(false);
+    }
+  }, [activeStep]);
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -145,6 +156,7 @@ export default function DualBlobExperience() {
           dotsGathering={dotsGathering}
           minus5Exiting={minus5Exiting}
           minus5HandoffShell={minus5HandoffShell}
+          minus5HandoffSettled={minus5HandoffSettled}
           onMinus5ExitComplete={handleMinus5ExitComplete}
         />
       </main>
