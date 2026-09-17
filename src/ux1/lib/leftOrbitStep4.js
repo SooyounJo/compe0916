@@ -132,11 +132,27 @@ export const UX1_LEFT_ORBIT_STEP4_ENTER_ANIM_S = 1.45;
 export const UX1_STEP4_EXIT_ANIM_S = 1.2;
 /** 4→5: 좌 퇴장 시작 후 우 등장까지 — 좌가 먼저, 우가 따라옴 */
 export const UX1_STEP5_RIGHT_ENTER_LAG_S =
-  LEFT_ORBIT_STEP4_ENTRY_STAGGER_S * 0.85 + UX1_STEP4_EXIT_ANIM_S * 0.22;
+  LEFT_ORBIT_STEP4_ENTRY_STAGGER_S * 1.05 + UX1_STEP4_EXIT_ANIM_S * 0.32;
 
 /** 우 5 arc 등장 delay (0=wine … 2=people) — 대응 좌 퇴장 + lag */
 export function rightStep5EnterDelayS(rightStaggerIndex = 0) {
   return leftOrbitStep4StaggerDelayS(rightStaggerIndex) + UX1_STEP5_RIGHT_ENTER_LAG_S;
+}
+
+/** globals.css ux1-right-icon-step5-enter duration과 동일 */
+export const UX1_STEP5_RIGHT_ENTER_ANIM_S = 1.2;
+
+/** 우 arc 마지막(people) 등장 후 — 좌 보이스 자리 음악 아이콘 */
+export function leftStep5MusicEnterDelayS() {
+  return (
+    rightStep5EnterDelayS(2) +
+    UX1_STEP5_RIGHT_ENTER_ANIM_S * 0.72
+  );
+}
+
+/** 5단계 — Let's Party → wine, friends 텍스트 전환 */
+export function step5WineFooterDelayS() {
+  return leftStep5MusicEnterDelayS() + 0.45;
 }
 /** 4→5: 좌 arc 5개 제자리 퇴장 완료 */
 export const UX1_STEP4_TO5_EXIT_TOTAL_S =

@@ -6,6 +6,7 @@ import LeftCompanionIconArc from "./LeftCompanionIconArc";
 import LeftCompanionStep1 from "./LeftCompanionStep1";
 import LeftCompanionStep6 from "./LeftCompanionStep6";
 import LeftVoiceWineMorph from "./LeftVoiceWineMorph";
+import LeftStep5MusicIcon from "./LeftStep5MusicIcon";
 import BlurFade from "./BlurFade";
 
 const LEFT_AMBIENT_BG_VIDEO = `/video/${encodeURIComponent("백그라운드 엠비언트 영상.mp4")}`;
@@ -17,10 +18,11 @@ export default function LeftAmbientBackground({
   step = 1,
   dotsGathering = false,
 }) {
-  const showVoice = step >= 2 && step <= 4;
+  /** 5에서 4→5 전환 시 보이스→음악 morph (LeftVoiceWineMorph) */
+  const showVoice = step >= 2 && step <= 5;
   /** 2~3과 동일 펄스 — 4에서도 arc 구간 동안 유지 (3末 gather 때만 잠깐 정지) */
   const voiceActive =
-    (step >= 2 && step <= 4) && !(dotsGathering && step === 3);
+    step >= 2 && step <= 4 && !(dotsGathering && step === 3);
 
   const videoRef = useRef(null);
 
@@ -92,6 +94,8 @@ export default function LeftAmbientBackground({
       {showVoice ? (
         <LeftVoiceWineMorph step={step} voiceActive={voiceActive} />
       ) : null}
+
+      <LeftStep5MusicIcon step={step} />
     </div>
   );
 }
