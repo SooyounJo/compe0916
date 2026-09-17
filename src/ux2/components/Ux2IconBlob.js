@@ -9,6 +9,7 @@ export default function Ux2IconBlob({
   iconClassName = "",
   iconFillColor,
   emphasized = false,
+  blueTint = false,
   className = "",
   style,
 }) {
@@ -19,7 +20,9 @@ export default function Ux2IconBlob({
 
   return (
     <div
-      className={`${emphasized ? tintStyles.blobEmphasis : ""} ${className}`}
+      className={`${emphasized ? tintStyles.blobEmphasis : ""} ${
+        blueTint ? tintStyles.blobBlueTint : ""
+      } ${className}`}
       style={{
         width: `${ICON_BLOB_CQW}cqw`,
         height: `${ICON_BLOB_CQW}cqw`,

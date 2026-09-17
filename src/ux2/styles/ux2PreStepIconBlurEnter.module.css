@@ -1,0 +1,17 @@
+.enter {
+  animation: ux2PreStepIconBlurReveal 0.72s cubic-bezier(0.33, 0, 0.15, 1) both;
+  backface-visibility: hidden;
+}
+
+@keyframes ux2PreStepIconBlurReveal {
+  0% {
+    opacity: 0;
+    filter: blur(14px);
+    transform: translate(-50%, -50%) scale(0.94);
+  }
+  100% {
+    opacity: var(--ux2-pre-icon-end-opacity, 1);
+    filter: blur(0);
+    transform: translate(-50%, -50%) scale(1);
+  }
+}

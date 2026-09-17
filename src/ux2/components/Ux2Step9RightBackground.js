@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import BlurFade from "@/ux2/components/BlurFade";
+import { UX2_STEP910_CARD_CROSSFADE_MS } from "@/ux2/lib/ux2Step910Crossfade";
+import { useUx2Step910Crossfade } from "@/ux2/lib/useUx2Step910Crossfade";
 import { UX2_STEP9_RIGHT_BG } from "@/ux2/lib/ux2Step9RightLayout";
 import { UX2_STEP10_RIGHT_BG } from "@/ux2/lib/ux2Step10RightLayout";
 import crossfadeStyles from "@/ux2/styles/ux2Step910PhotoCrossfade.module.css";
@@ -11,19 +13,22 @@ export default function Ux2Step9RightBackground({
   show = false,
   step = 9,
 }) {
-  const atTenPlus = step >= 10;
+  const showTenLayer = useUx2Step910Crossfade(step);
 
   return (
     <BlurFade
       show={show}
       className="pointer-events-none absolute inset-0 z-[11] overflow-hidden rounded-full"
+      style={{
+        "--ux2-step910-crossfade-ms": `${UX2_STEP910_CARD_CROSSFADE_MS}ms`,
+      }}
     >
       <Image
         src={UX2_STEP9_RIGHT_BG}
         alt=""
         fill
         className={`object-cover object-center ${crossfadeStyles.bgLayer} ${
-          atTenPlus
+          showTenLayer
             ? crossfadeStyles.bgLayerHidden
             : crossfadeStyles.bgLayerVisible
         }`}
@@ -35,7 +40,7 @@ export default function Ux2Step9RightBackground({
         alt=""
         fill
         className={`object-cover object-center ${crossfadeStyles.bgLayer} ${
-          atTenPlus
+          showTenLayer
             ? `${crossfadeStyles.bgLayerVisible} ${crossfadeStyles.bgLayerTen}`
             : crossfadeStyles.bgLayerHidden
         }`}

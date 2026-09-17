@@ -1,34 +1,44 @@
 import { useCallback, useEffect, useState } from "react";
 import DualBlobStage from "@/ux2/components/DualBlobStage";
 import ScreenNav from "@/ux2/components/ScreenNav";
-import { UX2_FIRST_STEP, UX2_LAST_STEP } from "@/ux2/lib/ux2FlowSteps";
+import {
+  UX2_AUTO_PLAY_GATHER_MS,
+  ux2AutoPlayDwellMs,
+  ux2AutoPlayStep3AdvanceMs,
+  ux2AutoPlayStep3GatherStartMs,
+} from "@/ux2/lib/ux2AutoPlayDwell";
+import {
+  UX2_LAST_STEP,
+  UX2_MINUS5_STEP,
+  UX2_NAV_FIRST_STEP,
+  UX2_PRE_STEP_FIRST,
+} from "@/ux2/lib/ux2FlowSteps";
 
-const DEFAULT_STEP_MS = 3000;
-const GATHER_MS = 1000;
 /** step 4 진입 후 cluster GONE(1.2s)과 맞춤 */
 const GATHER_RELEASE_MS = 1280;
-const FIRST_STEP = UX2_FIRST_STEP;
+const FIRST_STEP = UX2_NAV_FIRST_STEP;
 const LAST_STEP = UX2_LAST_STEP;
 
-const STEP_DWELL_MS = {
-  [-1]: 3600,
-  0: DEFAULT_STEP_MS,
-  1: DEFAULT_STEP_MS,
-  2: DEFAULT_STEP_MS,
-  3: DEFAULT_STEP_MS,
-  4: 3200,
-  5: 5800,
-};
-
-function dwellMsForStep(step) {
-  return STEP_DWELL_MS[step] ?? DEFAULT_STEP_MS;
-}
-
-/** UX2 — -4~11단계 (UX1과 분리된 복사본 트리) */
+/** UX2 — -5~11단계 (UX1과 분리된 복사본 트리) */
 export default function DualBlobExperience() {
-  const [activeStep, setActiveStep] = useState(UX2_FIRST_STEP);
+  const [activeStep, setActiveStep] = useState(UX2_NAV_FIRST_STEP);
   const [isPlaying, setIsPlaying] = useState(false);
   const [dotsGathering, setDotsGathering] = useState(false);
+  const [minus5Exiting, setMinus5Exiting] = useState(false);
+  const [minus5HandoffShell, setMinus5HandoffShell] = useState(false);
+  const [minus5HandoffSettled, setMinus5HandoffSettled] = useState(false);
+
+  const beginMinus5ToMinus4 = useCallback(() => {
+    setMinus5HandoffShell(true);
+    setMinus5Exiting(true);
+  }, []);
+
+  const handleMinus5ExitComplete = useCallback(() => {
+    setMinus5Exiting(false);
+    setMinus5HandoffShell(false);
+    setMinus5HandoffSettled(true);
+    setActiveStep(UX2_PRE_STEP_FIRST);
+  }, []);
 
   const advanceFromStep3 = useCallback(() => {
     setActiveStep(4);
@@ -40,36 +50,64 @@ export default function DualBlobExperience() {
       setIsPlaying(false);
       if (step === 4 && activeStep === 3) {
         setDotsGathering(true);
-        setTimeout(advanceFromStep3, GATHER_MS);
+        setTimeout(advanceFromStep3, UX2_AUTO_PLAY_GATHER_MS);
         return;
       }
       setDotsGathering(false);
+      if (activeStep === UX2_MINUS5_STEP && step === UX2_PRE_STEP_FIRST) {
+        if (!minus5Exiting) beginMinus5ToMinus4();
+        return;
+      }
+      setMinus5Exiting(false);
+      setMinus5HandoffShell(false);
+      setMinus5HandoffSettled(false);
       setActiveStep(step);
     },
-    [activeStep, advanceFromStep3],
+    [activeStep, advanceFromStep3, beginMinus5ToMinus4, minus5Exiting],
   );
 
   const handleStart = useCallback(() => {
     setDotsGathering(false);
+    setMinus5Exiting(false);
+    setMinus5HandoffShell(false);
+    setMinus5HandoffSettled(false);
     setActiveStep(FIRST_STEP);
     setIsPlaying(true);
   }, []);
 
   useEffect(() => {
+    if (activeStep !== UX2_PRE_STEP_FIRST) {
+      setMinus5HandoffSettled(false);
+    }
+  }, [activeStep]);
+
+  useEffect(() => {
     if (!isPlaying) return;
+
+    if (minus5Exiting) return;
 
     if (activeStep >= LAST_STEP) {
       setIsPlaying(false);
       return;
     }
 
+    if (activeStep === UX2_MINUS5_STEP) {
+      const timer = setTimeout(
+        beginMinus5ToMinus4,
+        ux2AutoPlayDwellMs(UX2_MINUS5_STEP),
+      );
+      return () => clearTimeout(timer);
+    }
+
     if (activeStep === 3) {
-      const step3Ms = dwellMsForStep(3);
       const gatherTimer = setTimeout(
         () => setDotsGathering(true),
-        step3Ms - GATHER_MS,
+        ux2AutoPlayStep3GatherStartMs(),
       );
-      const nextTimer = setTimeout(advanceFromStep3, step3Ms);
+      const nextTimer = setTimeout(
+        advanceFromStep3,
+        ux2AutoPlayStep3AdvanceMs(),
+      );
       return () => {
         clearTimeout(gatherTimer);
         clearTimeout(nextTimer);
@@ -79,17 +117,23 @@ export default function DualBlobExperience() {
     if (activeStep === 4 || activeStep === 5) {
       const timer = setTimeout(() => {
         setActiveStep((prev) => Math.min(prev + 1, LAST_STEP));
-      }, dwellMsForStep(activeStep));
+      }, ux2AutoPlayDwellMs(activeStep));
       return () => clearTimeout(timer);
     }
 
     setDotsGathering(false);
     const timer = setTimeout(() => {
       setActiveStep((prev) => Math.min(prev + 1, LAST_STEP));
-    }, dwellMsForStep(activeStep));
+    }, ux2AutoPlayDwellMs(activeStep));
 
     return () => clearTimeout(timer);
-  }, [isPlaying, activeStep, advanceFromStep3]);
+  }, [
+    isPlaying,
+    activeStep,
+    advanceFromStep3,
+    beginMinus5ToMinus4,
+    minus5Exiting,
+  ]);
 
   return (
     <div
@@ -107,7 +151,14 @@ export default function DualBlobExperience() {
 
       <ScreenNav activeStep={activeStep} onSelect={handleSelectStep} />
       <main className="flex w-full min-w-0 flex-1 items-center justify-center overflow-x-auto px-2 sm:px-4">
-        <DualBlobStage step={activeStep} dotsGathering={dotsGathering} />
+        <DualBlobStage
+          step={activeStep}
+          dotsGathering={dotsGathering}
+          minus5Exiting={minus5Exiting}
+          minus5HandoffShell={minus5HandoffShell}
+          minus5HandoffSettled={minus5HandoffSettled}
+          onMinus5ExitComplete={handleMinus5ExitComplete}
+        />
       </main>
     </div>
   );

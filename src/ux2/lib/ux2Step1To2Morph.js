@@ -45,7 +45,23 @@ export const BLOB_ORIGIN_PCT = {
 
 /** 1단계 — 좌·중·우 글래스, 왼쪽(작음) → 슬롯 순차 등장 */
 export const STEP1_CARD_INTRO_STAGGER_MS = 260;
+/** step1-to2-cards.module.css ux2-step1-card-pop-in */
+export const STEP1_CARD_POP_IN_MS = 1120;
 export const STEP1_CARD_INTRO_SCALE = 0.34;
+
+/** 듀얼 좌 카피 — 우 글래스 3장 pop-in 종료 후 */
+export function ux2Step1RightIntroEndMs() {
+  const lastRank = Math.max(...Object.values(STEP1_CARD_INTRO_RANK));
+  return lastRank * STEP1_CARD_INTRO_STAGGER_MS + STEP1_CARD_POP_IN_MS + 100;
+}
+
+/** 2단계 좌 텍스트 blur-in (ux2Step1LeftTextIn.module.css) */
+export const UX2_STEP2_LEFT_TEXT_REVEAL_MS = 880;
+
+/** 2단계 — 좌 카피 전환 후 우 emerge·feed morph */
+export function ux2Step2RightMorphDelayMs() {
+  return UX2_STEP2_LEFT_TEXT_REVEAL_MS + 90;
+}
 
 /** 카드별 시작 오프셋(cqw) — 우측일수록 더 왼쪽 밖에서 진입 */
 export const STEP1_CARD_INTRO_SHIFT_CQW = {

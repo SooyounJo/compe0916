@@ -3,10 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import BlurFade from "@/ux2/components/BlurFade";
-import {
-  ux2Step5LeftExitCompleteS,
-  UX2_STEP5_GAP_AFTER_LEFT_S,
-} from "@/ux2/lib/ux2Step4To5CrossHandoff";
+import { ux2Step5DualLeftCameraDelayS } from "@/ux2/lib/ux2Step45DualTiming";
 import {
   pctLeft5,
   sizeCqwLeft5,
@@ -34,7 +31,7 @@ export default function LeftCompanionStep5({ show = false }) {
     setCameraVisible(false);
     const t = setTimeout(
       () => setCameraVisible(true),
-      (ux2Step5LeftExitCompleteS() + UX2_STEP5_GAP_AFTER_LEFT_S) * 1000,
+      ux2Step5DualLeftCameraDelayS() * 1000,
     );
     return () => clearTimeout(t);
   }, [show]);

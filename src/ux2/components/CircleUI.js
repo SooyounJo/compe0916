@@ -2,8 +2,9 @@ import Image from "next/image";
 import { AgentDotsContinuity } from "@/ux2/components/AgentDots";
 import { AgentBlobShell } from "@/components/AgentBlobCluster";
 import BlurFade from "@/components/BlurFade";
-import VoiceMusicSlot from "@/components/VoiceMusicSlot";
+import VoiceMusicSlot from "@/ux2/components/VoiceMusicSlot";
 import PartyFooter from "@/ux2/components/PartyFooter";
+import Ux2RightStep4CameraLayer from "@/ux2/components/Ux2RightStep4CameraLayer";
 import RightCompanionStep0 from "@/ux2/components/RightCompanionStep0";
 import RightCompanionStep1To2 from "@/ux2/components/RightCompanionStep1To2";
 import RightCompanionStep4 from "@/ux2/components/RightCompanionStep4";
@@ -15,17 +16,24 @@ import PartyNightBackground from "@/components/PartyNightBackground";
 import Ux2CenterHalftoneExpand from "@/ux2/components/Ux2CenterHalftoneExpand";
 import RightCompanionStep6 from "@/ux2/components/RightCompanionStep6";
 import Ux2PreStepRightBackground from "@/ux2/components/Ux2PreStepRightBackground";
+import RightCompanionPreStep2 from "@/ux2/components/RightCompanionPreStep2";
+import RightCompanionPreStep3 from "@/ux2/components/RightCompanionPreStep3";
+import RightCompanionPreStep4 from "@/ux2/components/RightCompanionPreStep4";
 import RightCompanionPreStepIcons from "@/ux2/components/RightCompanionPreStepIcons";
+import Ux2RightPreStepSearchPersist from "@/ux2/components/Ux2RightPreStepSearchPersist";
+import Ux2PreStepRightGenerate from "@/ux2/components/Ux2PreStepRightGenerate";
 import Ux2Step7RightBackground from "@/ux2/components/Ux2Step7RightBackground";
 import RightCompanionStep8 from "@/ux2/components/RightCompanionStep8";
 import RightCompanionStep9 from "@/ux2/components/RightCompanionStep9";
 import Ux2Step9RightBackground from "@/ux2/components/Ux2Step9RightBackground";
 import DotGridAmbient from "@/ux2/components/DotGridAmbient";
+import Ux2Ux1Step8CircleLoadingDots from "@/ux2/components/Ux2Ux1Step8CircleLoadingDots";
 import WeatherBackground from "@/ux2/components/WeatherBackground";
 import Ux2InstagramIconPersist from "@/ux2/components/Ux2InstagramIconPersist";
 import Ux2Step0IconMotion from "@/ux2/components/Ux2Step0IconMotion";
 import Ux2VoiceIconAtSlot from "@/ux2/components/Ux2VoiceIconAtSlot";
 import { pctCircleRight, STEP0_RIGHT_ROW } from "@/ux2/lib/ux2Step0Layout";
+import { UX2_RIGHT_ICON_FILL } from "@/ux2/lib/ux2RightIconFill";
 import cardStyles from "@/ux2/styles/step1-to2-cards.module.css";
 
 const RIGHT_ROW = STEP0_RIGHT_ROW;
@@ -50,6 +58,9 @@ export default function CircleUI({
   rootClassName = "",
   showIgPersist = false,
   onIgSlotReady,
+  preStep4TextReady = false,
+  preStep4HandoffInstant = false,
+  preStepForegroundWrapClass = "",
 }) {
   /** 듀얼 레이아웃 우측 원은 에이전트 UI를 풀 스케일로 */
   const isCompact = !dualRight && step >= 2 && step < 6;
@@ -112,7 +123,24 @@ export default function CircleUI({
         <WeatherBackground step={step} dualInnerGlow={dualRight} />
       </BlurFade>
       {dualRight ? <Ux2PreStepRightBackground step={step} /> : null}
+      {dualRight ? <Ux2PreStepRightGenerate step={step} /> : null}
+      {dualRight ? (
+        <div
+          className={`pointer-events-none absolute inset-0 z-[14] ${
+            preStepForegroundWrapClass || ""
+          }`.trim()}
+        >
+          <RightCompanionPreStep4
+            step={step}
+            preStep4TextReady={preStep4TextReady}
+            preStep4HandoffInstant={preStep4HandoffInstant}
+          />
+        </div>
+      ) : null}
+      {dualRight ? <RightCompanionPreStep3 step={step} /> : null}
+      {dualRight ? <RightCompanionPreStep2 step={step} /> : null}
       {dualRight ? <RightCompanionPreStepIcons step={step} /> : null}
+      {dualRight ? <Ux2RightPreStepSearchPersist step={step} /> : null}
       <BlurFade
         show={showWeatherRings}
         className="pointer-events-none absolute inset-0 origin-center scale-[1.12]"
@@ -154,9 +182,16 @@ export default function CircleUI({
         className="pointer-events-none absolute inset-0 z-[28]"
       >
         {step >= 5 && (dualRight ? step <= 7 : true) ? (
-          <DotGridAmbient step={step} />
+          dualRight && step === 7 ? null : (
+            <DotGridAmbient step={step} />
+          )
         ) : null}
       </BlurFade>
+      {dualRight && step === -1 ? (
+        <div className="pointer-events-none absolute left-1/2 top-1/2 z-[38] -translate-x-1/2 -translate-y-1/2">
+          <Ux2Ux1Step8CircleLoadingDots white />
+        </div>
+      ) : null}
       {dualRight && step >= 6 ? null : <PartyNightScreen step={step} />}
 
       {dualRight ? (
@@ -172,7 +207,7 @@ export default function CircleUI({
             onSettled={onIgSlotReady}
             handoffMode="opacity"
             instagramAtOrigin={false}
-            iconFillColor="#FFFFFF"
+            iconFillColor={UX2_RIGHT_ICON_FILL}
             emphasized
           />
           <Ux2InstagramIconPersist
@@ -181,11 +216,12 @@ export default function CircleUI({
             slotCenterY={RIGHT_SLOT_Y}
             blobSizeCqw={RIGHT_BLOB_CQW}
             toPct={pctCircleRight}
+            iconFillColor={UX2_RIGHT_ICON_FILL}
             emphasized
             className={step === 1 ? cardStyles.instagramCard1Glow : ""}
           />
           <Ux2VoiceIconAtSlot
-            show={step === 3 || (step === 4 && dotsGathering)}
+            show={step === 3}
             slotCenterX={RIGHT_SLOT_X}
             slotCenterY={RIGHT_SLOT_Y}
             iconSizeCqw={RIGHT_BLOB_CQW * 0.58}
@@ -196,7 +232,7 @@ export default function CircleUI({
 
       <RightCompanionStep0 show={step === 0 && dualRight} />
       {dualRight ? <RightCompanionStep1To2 step={step} /> : null}
-      {dualRight ? <RightCompanionStep4 show={step === 4} /> : null}
+      {dualRight && step === 4 ? <RightCompanionStep4 show /> : null}
       {dualRight && step >= 4 && step <= 6 ? (
         <RightCompanionStep5 show={step === 5 || step === 6} step={step} />
       ) : null}
@@ -352,6 +388,8 @@ export default function CircleUI({
 
         </BlurFade>
       </div>
+
+      {dualRight ? <Ux2RightStep4CameraLayer step={step} /> : null}
 
       <PartyFooter step={step} dualRight={dualRight} />
     </div>

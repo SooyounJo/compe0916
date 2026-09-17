@@ -1,0 +1,130 @@
+.leftText {
+  opacity: 1;
+  transition: opacity var(--ux2-m5-text-ms, 720ms) var(--ux2-m5-ease, cubic-bezier(0.33, 0, 0.15, 1));
+}
+
+.leftVoice {
+  opacity: 1;
+  transition: opacity var(--ux2-m5-voice-ms, 640ms) var(--ux2-m5-ease, cubic-bezier(0.33, 0, 0.15, 1));
+}
+
+.leftDots {
+  opacity: 0;
+  transition: opacity var(--ux2-m5-dots-ms, 920ms) var(--ux2-m5-ease, cubic-bezier(0.33, 0, 0.15, 1));
+  transition-delay: 120ms;
+}
+
+.leftExiting .leftText,
+.leftExiting .leftVoice {
+  opacity: 0;
+}
+
+.leftExiting .leftDots {
+  opacity: 1;
+}
+
+.leftCocktail {
+  opacity: 0;
+  filter: blur(12px);
+  transition:
+    opacity var(--ux2-m5-cocktail-ms, 900ms) var(--ux2-m5-ease, cubic-bezier(0.33, 0, 0.15, 1)),
+    filter var(--ux2-m5-cocktail-ms, 900ms) var(--ux2-m5-ease, cubic-bezier(0.33, 0, 0.15, 1));
+  transition-delay: 200ms;
+}
+
+.leftExiting .leftCocktail {
+  opacity: 1;
+  filter: blur(0);
+}
+
+.rightCocktail {
+  opacity: 0;
+  filter: blur(12px);
+  transition:
+    opacity var(--ux2-m5-cocktail-ms, 900ms) var(--ux2-m5-ease, cubic-bezier(0.33, 0, 0.15, 1)),
+    filter var(--ux2-m5-cocktail-ms, 900ms) var(--ux2-m5-ease, cubic-bezier(0.33, 0, 0.15, 1));
+  transition-delay: 220ms;
+}
+
+.rightExiting .rightCocktail {
+  opacity: 1;
+  filter: blur(0);
+}
+
+.overlayShellDissolve {
+  opacity: 0;
+  transition: opacity var(--ux2-m5-dissolve-ms, 520ms) var(--ux2-m5-ease, cubic-bezier(0.33, 0, 0.15, 1));
+  pointer-events: none;
+}
+
+/** dissolve — 언더레이 -4 아이콘과 이중 노출·깜빡임 방지 */
+.overlayShellDissolve .leftCocktail,
+.overlayShellDissolve .rightCocktail,
+.overlayShellDissolve .leftDots {
+  opacity: 0 !important;
+  filter: none !important;
+  transition: opacity 80ms linear;
+}
+
+/** morph 중 -4 전경 DOM 유지 · blur-in 재트리거 방지 */
+.handoffForegroundParked {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.leftMinus4Bg {
+  opacity: 0;
+  filter: blur(10px);
+  transition:
+    opacity var(--ux2-m5-left-bg-ms, 1320ms) var(--ux2-m5-ease, cubic-bezier(0.33, 0, 0.15, 1)),
+    filter var(--ux2-m5-left-bg-ms, 1320ms) var(--ux2-m5-ease, cubic-bezier(0.33, 0, 0.15, 1));
+}
+
+.leftMinus5BgStack {
+  opacity: 1;
+  filter: blur(0);
+  transition:
+    opacity var(--ux2-m5-left-bg-ms, 1320ms) var(--ux2-m5-ease, cubic-bezier(0.33, 0, 0.15, 1)),
+    filter var(--ux2-m5-left-bg-ms, 1320ms) var(--ux2-m5-ease, cubic-bezier(0.33, 0, 0.15, 1));
+}
+
+.leftExiting .leftMinus4Bg {
+  opacity: 1;
+  filter: blur(0);
+}
+
+.leftExiting .leftMinus5BgStack {
+  opacity: 0;
+  filter: blur(12px);
+}
+
+.rightMinus4Bg {
+  opacity: 0;
+  transition: opacity var(--ux2-m5-right-bg-ms, 1320ms) var(--ux2-m5-ease, cubic-bezier(0.33, 0, 0.15, 1));
+}
+
+.rightMinus5Stack {
+  opacity: 1;
+  filter: blur(0);
+  transition:
+    opacity var(--ux2-m5-right-fg-ms, 980ms) var(--ux2-m5-ease, cubic-bezier(0.33, 0, 0.15, 1)),
+    filter var(--ux2-m5-right-blur-ms, 1180ms) var(--ux2-m5-ease, cubic-bezier(0.33, 0, 0.15, 1));
+}
+
+.rightExiting .rightMinus4Bg {
+  opacity: 1;
+}
+
+.rightExiting .rightMinus5Stack {
+  opacity: 0;
+  filter: blur(14px);
+}
+
+.overlayRoot {
+  transition: opacity var(--ux2-m5-overlay-fade-ms, 420ms) var(--ux2-m5-ease, cubic-bezier(0.33, 0, 0.15, 1));
+}
+
+.overlayFadeOut {
+  opacity: 0;
+}

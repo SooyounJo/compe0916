@@ -1,7 +1,7 @@
 "use client";
 
 import BlurFade from "@/ux2/components/BlurFade";
-import Ux2LeftCenterLoadingDots from "@/ux2/components/Ux2LeftCenterLoadingDots";
+import Ux2Ux1Step7CenterLoadingDots from "@/ux2/components/Ux2Ux1Step7CenterLoadingDots";
 import {
   pctLeft9,
   sizeCqwLeft9,
@@ -34,7 +34,7 @@ export default function LeftCompanionStep9({ show = false }) {
           height: `${sizeCqwLeft9(STEP9_LEFT_DOTS.height)}%`,
         }}
       >
-        <Ux2LeftCenterLoadingDots />
+        <Ux2Ux1Step7CenterLoadingDots />
       </div>
 
       <div

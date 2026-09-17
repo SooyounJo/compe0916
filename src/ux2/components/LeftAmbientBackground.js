@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Image from "next/image";
 import BlurFade from "@/ux2/components/BlurFade";
 import LeftCompanionAgentLayer from "@/ux2/components/LeftCompanionAgentLayer";
@@ -19,6 +19,7 @@ import LeftCompanionStep7 from "@/ux2/components/LeftCompanionStep7";
 import LeftCompanionStep8 from "@/ux2/components/LeftCompanionStep8";
 import LeftCompanionStep9 from "@/ux2/components/LeftCompanionStep9";
 import Ux2InstagramIconPersist from "@/ux2/components/Ux2InstagramIconPersist";
+import Ux2LeftPreStepSearchPersist from "@/ux2/components/Ux2LeftPreStepSearchPersist";
 import Ux2VoiceIconAtSlot from "@/ux2/components/Ux2VoiceIconAtSlot";
 import Ux2Step0IconMotion from "@/ux2/components/Ux2Step0IconMotion";
 import Ux2LeftAmbientVideo from "@/ux2/components/Ux2LeftAmbientVideo";
@@ -26,6 +27,18 @@ import Ux2Step4IconPrefetch from "@/ux2/components/Ux2Step4IconPrefetch";
 import step0EdgeGlow from "@/ux2/styles/ux2LeftStep0EdgeGlow.module.css";
 import step7RightEdgeGlow from "@/ux2/styles/ux2LeftStep7RightEdgeGlow.module.css";
 import { UX2_FIRST_STEP, UX2_LAST_STEP } from "@/ux2/lib/ux2FlowSteps";
+import { ux2PreStep3ArcExitTotalMs } from "@/ux2/lib/ux2PreStep3IconEnter";
+import {
+  ux2PreStep3ForegroundExitHoldMs,
+} from "@/ux2/lib/ux2PreStep3To2ForegroundExit";
+import { useUx2PreStep4ExitFade } from "@/ux2/lib/useUx2PreStep4ExitFade";
+import {
+  UX2_PRE_STEP4_TO3_ENTER_MS,
+  ux2PreStep4ExitBridging,
+  ux2PreStep4To3EnterStartMs,
+} from "@/ux2/lib/ux2PreStep4To3Exit";
+import preStep4ExitStyles from "@/ux2/styles/ux2PreStep4To3Exit.module.css";
+import { UX2_PRE_STEP_FIRST } from "@/ux2/lib/ux2FlowSteps";
 import {
   centerOf,
   pctCircle,
@@ -50,23 +63,139 @@ export default function LeftAmbientBackground({
   dotsGathering = false,
   showIgPersist = false,
   onIgSlotReady,
+  preStep4TextReady = false,
+  preStep4HandoffInstant = false,
+  preStepForegroundWrapClass = "",
 }) {
-  const prevStepRef = useRef(step);
+  const prevStepRef = useRef(null);
   const [holdAgentExit, setHoldAgentExit] = useState(false);
+  const [preStep3ArcKey, setPreStep3ArcKey] = useState(0);
+  const [holdPreStep3Arc, setHoldPreStep3Arc] = useState(step === -3);
+  const [preStep3ForegroundIn, setPreStep3ForegroundIn] = useState(
+    step === -3,
+  );
+  const [preStep3SequentialEnter, setPreStep3SequentialEnter] = useState(false);
+  const [preStep3EnterActive, setPreStep3EnterActive] = useState(false);
+  const [holdPreStep3ForegroundExit, setHoldPreStep3ForegroundExit] =
+    useState(false);
+  const preStep3InTimerRef = useRef(null);
+  const arcExitTimerRef = useRef(null);
+  const foregroundExitTimerRef = useRef(null);
+  const agentExitTimerRef = useRef(null);
 
-  useEffect(() => {
+  const pre4To3Bridging = ux2PreStep4ExitBridging(
+    step,
+    prevStepRef.current,
+  );
+  const preStep3Sequential =
+    preStep3SequentialEnter || pre4To3Bridging;
+
+  useLayoutEffect(() => {
     const prev = prevStepRef.current;
     prevStepRef.current = step;
+
+    if (preStep3InTimerRef.current) {
+      clearTimeout(preStep3InTimerRef.current);
+      preStep3InTimerRef.current = null;
+    }
+
+    if (prev === UX2_PRE_STEP_FIRST && step === -3) {
+      setPreStep3SequentialEnter(true);
+      setPreStep3ForegroundIn(false);
+      setPreStep3EnterActive(false);
+      setPreStep3ArcKey((k) => k + 1);
+      setHoldPreStep3Arc(true);
+      preStep3InTimerRef.current = setTimeout(() => {
+        preStep3InTimerRef.current = null;
+        setPreStep3ForegroundIn(true);
+      }, ux2PreStep4To3EnterStartMs());
+    } else if (step === -3) {
+      if (prev !== -3) {
+        setPreStep3ArcKey((k) => k + 1);
+        setHoldPreStep3Arc(true);
+      }
+      if (prev !== UX2_PRE_STEP_FIRST) {
+        setPreStep3SequentialEnter(false);
+        setPreStep3EnterActive(true);
+        setPreStep3ForegroundIn(true);
+      }
+    } else {
+      setPreStep3SequentialEnter(false);
+      setPreStep3ForegroundIn(false);
+      setPreStep3EnterActive(false);
+      if (step < -3) {
+        setHoldPreStep3Arc(false);
+      }
+    }
+
+    if (prev === -3 && step === -2) {
+      setHoldPreStep3Arc(true);
+      setHoldPreStep3ForegroundExit(true);
+      if (arcExitTimerRef.current) clearTimeout(arcExitTimerRef.current);
+      arcExitTimerRef.current = setTimeout(() => {
+        arcExitTimerRef.current = null;
+        setHoldPreStep3Arc(false);
+      }, ux2PreStep3ArcExitTotalMs());
+      if (foregroundExitTimerRef.current) {
+        clearTimeout(foregroundExitTimerRef.current);
+      }
+      foregroundExitTimerRef.current = setTimeout(() => {
+        foregroundExitTimerRef.current = null;
+        setHoldPreStep3ForegroundExit(false);
+      }, ux2PreStep3ForegroundExitHoldMs());
+    }
+
     if (prev === 3 && step === 4) {
       setHoldAgentExit(true);
-      const t = setTimeout(() => setHoldAgentExit(false), AGENT_EXIT_HOLD_MS);
-      return () => clearTimeout(t);
+      if (agentExitTimerRef.current) clearTimeout(agentExitTimerRef.current);
+      agentExitTimerRef.current = setTimeout(() => {
+        agentExitTimerRef.current = null;
+        setHoldAgentExit(false);
+      }, AGENT_EXIT_HOLD_MS);
     }
     if (step !== 4) {
       setHoldAgentExit(false);
     }
-    return undefined;
+
+    return () => {
+      if (preStep3InTimerRef.current) {
+        clearTimeout(preStep3InTimerRef.current);
+        preStep3InTimerRef.current = null;
+      }
+    };
   }, [step]);
+
+  useEffect(
+    () => () => {
+      if (arcExitTimerRef.current) clearTimeout(arcExitTimerRef.current);
+      if (foregroundExitTimerRef.current) {
+        clearTimeout(foregroundExitTimerRef.current);
+      }
+      if (agentExitTimerRef.current) clearTimeout(agentExitTimerRef.current);
+    },
+    [],
+  );
+
+  const exitingPreStep3Foreground =
+    holdPreStep3ForegroundExit && step === -2;
+  const preStep3ForegroundExitFade = useUx2PreStep4ExitFade(
+    exitingPreStep3Foreground,
+  );
+
+  useEffect(() => {
+    if (!preStep3ForegroundIn || !preStep3Sequential) {
+      return undefined;
+    }
+    setPreStep3EnterActive(false);
+    let innerRaf = 0;
+    const outerRaf = requestAnimationFrame(() => {
+      innerRaf = requestAnimationFrame(() => setPreStep3EnterActive(true));
+    });
+    return () => {
+      cancelAnimationFrame(outerRaf);
+      if (innerRaf) cancelAnimationFrame(innerRaf);
+    };
+  }, [preStep3ForegroundIn, preStep3Sequential]);
 
   const showAgentLayer =
     step === 3 || (dotsGathering && step <= 4) || holdAgentExit;
@@ -161,21 +290,55 @@ export default function LeftAmbientBackground({
         emphasized
       />
       <Ux2VoiceIconAtSlot
-        show={step === 3 || (step === 4 && dotsGathering)}
+        show={step === 3}
         slotCenterX={SEARCH_SLOT.x}
         slotCenterY={SEARCH_SLOT.y}
         iconSizeCqw={LEFT_BLOB_CQW * 0.58}
         toPct={pctCircle}
       />
 
-      <LeftCompanionPreStepAmbient show={step === -3} />
-      <BlurFade
-        show={step === -3}
-        className="left-step4-ui-blur-in pointer-events-none absolute inset-0 z-[6] overflow-hidden"
+      <Ux2LeftPreStepSearchPersist step={step} />
+      <LeftCompanionPreStepAmbient
+        show={step === -3 && preStep3ForegroundIn}
+        exiting={exitingPreStep3Foreground}
+        exitFadeOut={preStep3ForegroundExitFade}
+        enterSoft={preStep3Sequential}
+        enterActive={preStep3EnterActive}
+      />
+      {(step === -3 && preStep3ForegroundIn) || holdPreStep3Arc ? (
+        preStep3Sequential && step === -3 ? (
+          <div
+            className={`pointer-events-none absolute inset-0 z-[6] overflow-hidden ${preStep4ExitStyles.layerEnter} ${
+              preStep3EnterActive ? preStep4ExitStyles.layerEnterActive : ""
+            }`}
+            style={{ "--ux2-pre4-enter-ms": `${UX2_PRE_STEP4_TO3_ENTER_MS}ms` }}
+          >
+            <LeftCompanionIconArc
+              key={`ux2-pre-step-3-arc-${preStep3ArcKey}`}
+              step={-3}
+            />
+          </div>
+        ) : (
+          <div className="pointer-events-none absolute inset-0 z-[6] overflow-hidden">
+            <LeftCompanionIconArc
+              key={`ux2-pre-step-3-arc-${preStep3ArcKey}`}
+              step={step === -3 ? -3 : -2}
+              forcePreStep3Exit={holdPreStep3Arc && step === -2}
+            />
+          </div>
+        )
+      ) : null}
+      <div
+        className={`pointer-events-none absolute inset-0 ${
+          preStepForegroundWrapClass || ""
+        }`.trim()}
       >
-        <LeftCompanionIconArc step={-3} />
-      </BlurFade>
-      <LeftCompanionPreStep step={step} />
+        <LeftCompanionPreStep
+          step={step}
+          preStep4TextReady={preStep4TextReady}
+          preStep4HandoffInstant={preStep4HandoffInstant}
+        />
+      </div>
       <LeftCompanionStep0 show={step === 0} />
       <LeftCompanionStep1 show={step === 1} />
       <LeftCompanionStep2 show={step === 2} />

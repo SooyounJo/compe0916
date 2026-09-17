@@ -2,8 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import BlurFade from "@/ux2/components/BlurFade";
-import { UX2_FIRST_STEP } from "@/ux2/lib/ux2FlowSteps";
-import { ux2IsPreStep } from "@/ux2/lib/ux2FlowSteps";
+import { UX2_PRE_STEP_FIRST, ux2IsPreStep } from "@/ux2/lib/ux2FlowSteps";
 
 export const UX2_PRE_STEP_NIGHT_VIDEO = "/video/ux2-pre-step-night.mp4";
 
@@ -14,7 +13,7 @@ export default function Ux2LeftPreStepNightVideo({ step = 0 }) {
   const show = ux2IsPreStep(step);
 
   useEffect(() => {
-    if (show || step === UX2_FIRST_STEP) {
+    if (show || step === UX2_PRE_STEP_FIRST) {
       setLatched(true);
     }
   }, [show, step]);

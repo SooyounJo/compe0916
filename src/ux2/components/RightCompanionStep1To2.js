@@ -14,15 +14,16 @@ import {
   STEP1_CARD_INTRO_SHIFT_CQW,
   STEP1_CARD_INTRO_STAGGER_MS,
   step2SlotRect,
+  ux2Step2RightMorphDelayMs,
 } from "@/ux2/lib/ux2Step1To2Morph";
 import { pctInCircle } from "@/ux2/lib/ux2Step2RightFeed";
 import RightCompanionStep3Overlay from "@/ux2/components/RightCompanionStep3Overlay";
 import cardStyles from "@/ux2/styles/step1-to2-cards.module.css";
 
-const STEP3_FEED_EXIT_DELAY_MS = 120;
+const STEP3_FEED_EXIT_DELAY_MS = 140;
 /** 화면 좌→중→우 슬롯 순차 퇴장 간격 */
-const STEP3_EXIT_STAGGER_MS = 420;
-const STEP3_CARD_EXIT_MS = 1050;
+const STEP3_EXIT_STAGGER_MS = 540;
+const STEP3_CARD_EXIT_MS = 1320;
 const STEP3_OVERLAY_IN_MS =
   STEP3_FEED_EXIT_DELAY_MS +
   STEP3_EXIT_STAGGER_MS * 2 +
@@ -279,6 +280,7 @@ function MorphCard({
 
 /** Figma 18:427 → 1:897 — 글래스 3장이 블롭에서 펼쳐지며 피드 카드로 모프; 3에서 피드 좌측 퇴장 */
 export default function RightCompanionStep1To2({ step = 1 }) {
+  const prevStepRef = useRef(step);
   const [holdStep3Feed, setHoldStep3Feed] = useState(false);
   const visible =
     step === 1 || step === 2 || step === 3 || holdStep3Feed;
@@ -300,7 +302,16 @@ export default function RightCompanionStep1To2({ step = 1 }) {
     }
   }, [step]);
 
+  useLayoutEffect(() => {
+    if (step !== 3) {
+      setShowStep3Overlay(false);
+    }
+  }, [step]);
+
   useEffect(() => {
+    const prev = prevStepRef.current;
+    prevStepRef.current = step;
+
     if (step === 3) {
       setHoldStep3Feed(false);
       setMorphToFeed(true);
@@ -328,8 +339,11 @@ export default function RightCompanionStep1To2({ step = 1 }) {
     if (step === 4) {
       setShowStep3Overlay(false);
       setHoldStep3Feed(false);
-      setFeedExitStage(-1);
-      setMorphToFeed(false);
+      /** 3→4 — BlurFade 퇴장 중 feedExitStage 리셋 시 하단 카피·카드가 한 프레임 되살아남 */
+      if (prev !== 3) {
+        setFeedExitStage(-1);
+        setMorphToFeed(false);
+      }
       return undefined;
     }
 
@@ -339,14 +353,18 @@ export default function RightCompanionStep1To2({ step = 1 }) {
 
     if (step === 2) {
       setMorphToFeed(false);
-      setEmergeFromBlob(true);
-      const emergeId = requestAnimationFrame(() => {
+      setEmergeFromBlob(false);
+      const delayMs = ux2Step2RightMorphDelayMs();
+      const startTimer = setTimeout(() => {
+        setEmergeFromBlob(true);
         requestAnimationFrame(() => {
-          setEmergeFromBlob(false);
-          setMorphToFeed(true);
+          requestAnimationFrame(() => {
+            setEmergeFromBlob(false);
+            setMorphToFeed(true);
+          });
         });
-      });
-      return () => cancelAnimationFrame(emergeId);
+      }, delayMs);
+      return () => clearTimeout(startTimer);
     }
     setMorphToFeed(false);
     setEmergeFromBlob(false);
@@ -468,9 +486,9 @@ export default function RightCompanionStep1To2({ step = 1 }) {
         </BlurFade>
       </div>
 
-      <RightCompanionStep3Overlay
-        show={step === 3 && showStep3Overlay}
-      />
+      {step === 3 ? (
+        <RightCompanionStep3Overlay show={showStep3Overlay} />
+      ) : null}
     </BlurFade>
   );
 }

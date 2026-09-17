@@ -2,6 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import Ux2Ux1Step7CenterLoadingDots from "@/ux2/components/Ux2Ux1Step7CenterLoadingDots";
+import { UX2_STEP9_RIGHT_LOADING_BEFORE_CARD_MS } from "@/ux2/lib/ux2Step9RightEnter";
+import { UX2_STEP910_CARD_CROSSFADE_MS } from "@/ux2/lib/ux2Step910Crossfade";
+import { useUx2Step910Crossfade } from "@/ux2/lib/useUx2Step910Crossfade";
 import exitStyles from "@/ux2/styles/ux2Step11RightExit.module.css";
 import enterStyles from "@/ux2/styles/ux2Step9RightCardEnter.module.css";
 import {
@@ -23,10 +27,30 @@ export default function RightCompanionStep9({
   exitDown = false,
   cardSlideFromLeft = false,
 }) {
-  const atTenPlus = flowStep >= 10;
+  const showTenCard = useUx2Step910Crossfade(flowStep);
+  const isStep9Entry = flowStep === 9;
+  const crossfadeVars = {
+    "--ux2-step910-crossfade-ms": `${UX2_STEP910_CARD_CROSSFADE_MS}ms`,
+    "--ux2-step910-chrome-ms": `${Math.round(UX2_STEP910_CARD_CROSSFADE_MS * 0.78)}ms`,
+  };
   const card = STEP9_RIGHT_MEMORY_CARD;
+  const [cardsReady, setCardsReady] = useState(!isStep9Entry);
   const [sinkActive, setSinkActive] = useState(false);
   const [slideActive, setSlideActive] = useState(false);
+
+  useEffect(() => {
+    if (!show || !isStep9Entry) {
+      setCardsReady(!isStep9Entry);
+      return undefined;
+    }
+
+    setCardsReady(false);
+    const timer = setTimeout(
+      () => setCardsReady(true),
+      UX2_STEP9_RIGHT_LOADING_BEFORE_CARD_MS,
+    );
+    return () => clearTimeout(timer);
+  }, [show, isStep9Entry]);
 
   useEffect(() => {
     if (!show || !exitDown) {
@@ -45,7 +69,7 @@ export default function RightCompanionStep9({
   }, [show, exitDown]);
 
   useEffect(() => {
-    if (!show || !cardSlideFromLeft) {
+    if (!show || !cardSlideFromLeft || !cardsReady) {
       setSlideActive(false);
       return undefined;
     }
@@ -58,7 +82,7 @@ export default function RightCompanionStep9({
       cancelAnimationFrame(outerId);
       cancelAnimationFrame(innerId);
     };
-  }, [show, cardSlideFromLeft]);
+  }, [show, cardSlideFromLeft, cardsReady]);
 
   if (!show) {
     return null;
@@ -76,14 +100,15 @@ export default function RightCompanionStep9({
           width: `${sizeCqwRight9(card.width)}%`,
           height: `${sizeCqwRight9(card.height)}%`,
           borderRadius: `${card.radiusCqw}cqw`,
+          ...crossfadeVars,
         }}
       >
         <Image
           src={UX2_STEP9_MEMORY_CARD_PHOTO}
           alt=""
           fill
-          className={`object-cover object-center scale-[1.06] ${crossfadeStyles.cardPhoto} ${
-            atTenPlus
+          className={`object-cover object-center scale-[1.06] ${crossfadeStyles.cardPhotoLayer} ${crossfadeStyles.cardPhotoNine} ${
+            showTenCard
               ? crossfadeStyles.cardPhotoHidden
               : crossfadeStyles.cardPhotoVisible
           }`}
@@ -93,8 +118,8 @@ export default function RightCompanionStep9({
           src={UX2_STEP10_MEMORY_CARD_PHOTO}
           alt=""
           fill
-          className={`object-cover object-center ${crossfadeStyles.cardPhoto} ${
-            atTenPlus
+          className={`object-cover object-center ${crossfadeStyles.cardPhotoLayer} ${crossfadeStyles.cardPhotoTen} ${
+            showTenCard
               ? crossfadeStyles.cardPhotoVisible
               : crossfadeStyles.cardPhotoHidden
           }`}
@@ -105,7 +130,7 @@ export default function RightCompanionStep9({
       <>
         <p
           className={`absolute whitespace-nowrap text-[2.24cqw] font-bold leading-none text-white ${crossfadeStyles.cardChrome} ${
-            atTenPlus
+            showTenCard
               ? crossfadeStyles.cardChromeHidden
               : crossfadeStyles.cardChromeVisible
           }`}
@@ -114,14 +139,14 @@ export default function RightCompanionStep9({
             top: `${pctRight9(STEP9_RIGHT_CARD_TITLE.top)}%`,
             textShadow: "0 2px 12px rgba(0,0,0,0.35)",
           }}
-          aria-hidden={atTenPlus}
+          aria-hidden={showTenCard}
         >
           Wine party with my BF
         </p>
 
         <div
           className={`absolute -translate-x-1/2 -translate-y-1/2 ${crossfadeStyles.cardChrome} ${
-            atTenPlus
+            showTenCard
               ? crossfadeStyles.cardChromeHidden
               : crossfadeStyles.cardChromeVisible
           }`}
@@ -131,7 +156,7 @@ export default function RightCompanionStep9({
             width: `${sizeCqwRight9(STEP9_RIGHT_HEART.size)}%`,
             height: `${sizeCqwRight9(STEP9_RIGHT_HEART.size)}%`,
           }}
-          aria-hidden={atTenPlus}
+          aria-hidden={showTenCard}
         >
           <Image
             src="/figma/ux2/step2/59df8.svg"
@@ -144,7 +169,7 @@ export default function RightCompanionStep9({
 
         <div
           className={`absolute -translate-x-1/2 -translate-y-1/2 ${crossfadeStyles.cardChrome} ${
-            atTenPlus
+            showTenCard
               ? crossfadeStyles.cardChromeHidden
               : crossfadeStyles.cardChromeVisible
           }`}
@@ -154,7 +179,7 @@ export default function RightCompanionStep9({
             width: `${sizeCqwRight9(STEP9_RIGHT_BOOKMARK.size)}%`,
             height: `${sizeCqwRight9(STEP9_RIGHT_BOOKMARK.size)}%`,
           }}
-          aria-hidden={atTenPlus}
+          aria-hidden={showTenCard}
         >
           <Image
             src="/figma/ux2/step2/52235.svg"
@@ -170,17 +195,24 @@ export default function RightCompanionStep9({
 
   return (
     <div className="pointer-events-none absolute inset-0 z-[14] overflow-hidden">
-      {cardSlideFromLeft ? (
-        <div
-          className={`absolute inset-0 ${enterStyles.cardGroup} ${
-            slideActive ? enterStyles.cardGroupActive : ""
-          }`}
-        >
-          {cardCluster}
+      {isStep9Entry && !cardsReady ? (
+        <div className="pointer-events-none absolute left-1/2 top-1/2 z-[16] -translate-x-1/2 -translate-y-1/2">
+          <Ux2Ux1Step7CenterLoadingDots white />
         </div>
-      ) : (
-        cardCluster
-      )}
+      ) : null}
+      {cardsReady ? (
+        cardSlideFromLeft ? (
+          <div
+            className={`absolute inset-0 ${enterStyles.cardGroup} ${
+              slideActive ? enterStyles.cardGroupActive : ""
+            }`}
+          >
+            {cardCluster}
+          </div>
+        ) : (
+          cardCluster
+        )
+      ) : null}
     </div>
   );
 }

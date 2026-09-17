@@ -1,5 +1,24 @@
-.nightVideo.ui-blur-fade {
+/** -1 우 night — opacity out + 약한 blur (교체는 짧게) */
+.nightVideoLayer {
   transition:
-    opacity 2.45s cubic-bezier(0.33, 0, 0.15, 1),
-    filter 2.45s cubic-bezier(0.33, 0, 0.15, 1);
+    opacity var(--ux2-pre1-night-fade-s, 1.69s)
+      cubic-bezier(0.33, 0, 0.15, 1),
+    filter var(--ux2-pre1-night-fade-s, 1.69s)
+      cubic-bezier(0.33, 0, 0.15, 1);
+  will-change: opacity, filter;
+}
+
+.nightVideoFading {
+  opacity: 0 !important;
+  filter: blur(11px) !important;
+}
+
+/** -1 좌 pre-step gradient 퇴장 — night와 동일 duration · blur 퇴장 없음 */
+.ux2PreStep1SlowBlur.ui-blur-fade {
+  transition: opacity var(--ux2-pre1-night-fade-s, 7.96s)
+    cubic-bezier(0.33, 0, 0.15, 1);
+}
+
+.ux2PreStep1SlowBlur.ui-blur-fade--hidden {
+  filter: blur(0);
 }
