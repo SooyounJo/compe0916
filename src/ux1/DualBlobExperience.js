@@ -4,7 +4,7 @@ import ScreenNav from "@/ux1/components/ScreenNav";
 import { UX1_STEP4_DWELL_MS } from "@/ux1/lib/leftOrbitStep4";
 
 const DEFAULT_STEP_MS = 3000;
-const GATHER_MS = 1000;
+const GATHER_MS = 1500;
 const LAST_STEP = 6;
 
 const STEP_DWELL_MS = {
@@ -27,7 +27,7 @@ export default function DualBlobExperience() {
 
   const advanceFromStep3 = useCallback(() => {
     setActiveStep(4);
-    setTimeout(() => setDotsGathering(false), 700);
+    setTimeout(() => setDotsGathering(false), 1100);
   }, []);
 
   const handleSelectStep = useCallback(

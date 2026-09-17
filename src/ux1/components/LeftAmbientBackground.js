@@ -89,7 +89,7 @@ export default function LeftAmbientBackground({
 
       <LeftCompanionIconArc step={step} />
 
-      <LeftCompanionStep6 show={step >= 6} />
+      <LeftCompanionStep6 show={step >= 6} step={step} />
 
       {showVoice ? (
         <LeftVoiceWineMorph step={step} voiceActive={voiceActive} />

@@ -19,8 +19,8 @@ const T = "duration-1000 ease-in-out transition-all";
 const CENTER_CLUSTER_EASE =
   "ease-[cubic-bezier(0.33,0,0.15,1)] transition-[transform,opacity,filter]";
 const CENTER_CLUSTER_IDLE = `scale-100 opacity-100 blur-0 duration-[900ms] ${CENTER_CLUSTER_EASE}`;
-const CENTER_CLUSTER_GATHER = `scale-[0.94] opacity-[0.88] blur-[2px] duration-[1000ms] ${CENTER_CLUSTER_EASE}`;
-const CENTER_CLUSTER_GONE = `scale-[0.92] opacity-0 blur-[8px] duration-[1500ms] ${CENTER_CLUSTER_EASE}`;
+const CENTER_CLUSTER_GATHER = `scale-100 opacity-0 duration-[1600ms] transition-opacity ease-[cubic-bezier(0.33,0,0.15,1)]`;
+const CENTER_CLUSTER_GONE = `scale-100 opacity-0 duration-[1500ms] transition-opacity ease-[cubic-bezier(0.33,0,0.15,1)]`;
 /** 2~6: Figma 에이전트 UI 축소 (1번은 풀 비율) */
 const COMPACT_UI_SCALE = 0.46;
 
@@ -115,10 +115,10 @@ export default function CircleUI({
 
       <VoiceMusicSlot step={step} dotsGathering={dotsGathering} />
 
-      {dualRight && (step === 4 || step === 5) ? (
+      {dualRight && (step === 4 || step === 5 || step === 6) ? (
         <div
           className={`right-step4-music-icon${
-            step === 5 ? " right-step4-music-icon--settled" : ""
+            step >= 5 ? " right-step4-music-icon--settled" : ""
           }`}
           style={
             step === 4
@@ -165,6 +165,7 @@ export default function CircleUI({
               <AgentDotsContinuity
                 step={dotsPhase}
                 gathering={dotsGathering}
+                exiting={centerClusterExit}
                 step1White
               />
             </div>

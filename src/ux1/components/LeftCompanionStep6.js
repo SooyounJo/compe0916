@@ -1,8 +1,14 @@
-import Image from "next/image";
-import BlurFade from "./BlurFade";
-import { AgentDotsContinuity } from "./AgentDots";
+"use client";
 
-const F = 1879;
+import { useLayoutEffect, useRef, useState } from "react";
+import { AgentDotsContinuity } from "./AgentDots";
+import {
+  UX1_STEP6_LEFT_DOTS_ENTER_DELAY_S,
+  UX1_STEP6_LEFT_TEXT_ENTER_DELAY_S,
+} from "../lib/leftOrbitStep4";
+
+const FOOTER_TEXT_CLASS =
+  "font-doto absolute bottom-[11%] left-1/2 z-30 w-full -translate-x-1/2 px-4 text-center text-[4.65cqw] font-black leading-none tracking-[-0.04em]";
 
 const TEXT_STYLE = {
   backgroundImage:
@@ -13,62 +19,58 @@ const TEXT_STYLE = {
   textShadow: "0 4px 73px rgba(255,255,255,0.45)",
 };
 
-/** Figma [17:1723](https://www.figma.com/design/BeRQvUjf5ci89pXVH3bry5/Untitled?node-id=17-1723) */
-export default function LeftCompanionStep6({ show = false }) {
+/** 6단계 — 로딩 닷·텍스트 fade-in */
+export default function LeftCompanionStep6({ show = false, step = 6 }) {
+  const [entering, setEntering] = useState(false);
+  const prevStepRef = useRef(null);
+
+  useLayoutEffect(() => {
+    const prevStep = prevStepRef.current;
+    prevStepRef.current = step;
+
+    if (show && step === 6 && prevStep === 5) {
+      setEntering(true);
+      return undefined;
+    }
+
+    setEntering(false);
+    return undefined;
+  }, [show, step]);
+
   if (!show) return null;
 
-  const dotsTop = `${((912 + 55.767 / 2) / F) * 100}%`;
-  const musicLeft = `${((939.5 + 699.13) / F) * 100}%`;
-  const musicTop = `${((809 + 275.75 / 2) / F) * 100}%`;
-  const musicSizeCqw = (275.75 / F) * 100;
-  const textTop = `${(1408 / F) * 100}%`;
+  const dotsMotion = entering
+    ? "ux1-left-step6-fade-in"
+    : "ux1-left-step6-fade-in--settled";
+  const textMotion = entering
+    ? "ux1-left-step6-fade-in"
+    : "ux1-left-step6-fade-in--settled";
 
   return (
-    <BlurFade
-      show={show}
-      className="party-night-foreground pointer-events-none absolute inset-0 z-[5]"
-    >
+    <div className="party-night-foreground pointer-events-none absolute inset-0 z-[5]">
       <div
-        className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2"
-        style={{ top: dotsTop }}
+        className={`absolute left-1/2 top-1/2 z-[3] -translate-x-1/2 -translate-y-1/2 ${dotsMotion}`}
+        style={{
+          animationDelay: entering
+            ? `${UX1_STEP6_LEFT_DOTS_ENTER_DELAY_S}s`
+            : undefined,
+        }}
       >
         <AgentDotsContinuity step={1} gathering={false} />
       </div>
 
       <div
-        className="absolute -translate-x-1/2 -translate-y-1/2"
+        className={`${FOOTER_TEXT_CLASS} ${textMotion}`}
         style={{
-          left: musicLeft,
-          top: musicTop,
-          width: `${musicSizeCqw}cqw`,
-          height: `${musicSizeCqw}cqw`,
+          ...TEXT_STYLE,
+          animationDelay: entering
+            ? `${UX1_STEP6_LEFT_TEXT_ENTER_DELAY_S}s`
+            : undefined,
         }}
-      >
-        <div className="relative h-full w-full">
-          <Image
-            src="/figma/left-orbit/step6-music-blob.svg"
-            alt=""
-            fill
-            className="object-contain"
-            sizes="18vw"
-          />
-          <Image
-            src="/figma/left-orbit/step6-music-note.svg"
-            alt=""
-            width={88}
-            height={88}
-            className="absolute left-1/2 top-1/2 h-[31%] w-[31%] -translate-x-1/2 -translate-y-1/2 object-contain"
-          />
-        </div>
-      </div>
-
-      <div
-        className="font-doto absolute left-1/2 w-full -translate-x-1/2 px-4 text-center text-[4.79cqw] font-black leading-none tracking-[-0.04em]"
-        style={{ top: textTop, ...TEXT_STYLE }}
       >
         <p className="mb-0 leading-none">Home party</p>
         <p className="leading-none">music for you</p>
       </div>
-    </BlurFade>
+    </div>
   );
 }
