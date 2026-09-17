@@ -1,17 +1,48 @@
-/** 5·6번 궤도 아이콘 — Figma 17:1656 + inset (Party 6 좌측과 동일 기준) */
-export const ORBIT_INSET = 0.84;
-export const ORBIT_CENTER = { x: 50, y: 50 };
+/**
+ * UX1 5단계 우측 arc
+ * - 사람: 12시 정중앙 (0°) 기준
+ * - 음악: 4단계 고정 (270°) — globals.css .right-step4-music-icon
+ * - 와인·버거: 270°→0° 사이 30° 등간격
+ */
+const STEP5_ARC_R = 39.2;
 
-export function insetOrbitPosition(leftPct, topPct) {
-  const { x, y } = ORBIT_CENTER;
+/** 4단계 음악 센터 = 270° */
+export const STEP5_MUSIC_ARC_DEG = 270;
+/** 사람 = 12시 정중앙 */
+export const STEP5_PEOPLE_ARC_DEG = 0;
+
+const STEP5_ARC_SPAN_DEG = STEP5_PEOPLE_ARC_DEG + 360 - STEP5_MUSIC_ARC_DEG;
+const STEP5_ARC_STEP_DEG = STEP5_ARC_SPAN_DEG / 3;
+
+export const STEP5_WINE_ARC_DEG = STEP5_MUSIC_ARC_DEG + STEP5_ARC_STEP_DEG;
+export const STEP5_BURGER_ARC_DEG = STEP5_MUSIC_ARC_DEG + STEP5_ARC_STEP_DEG * 2;
+
+function step5ArcPosition(degFromNorth) {
+  const rad = (degFromNorth * Math.PI) / 180;
   return {
-    left: `${x + (leftPct - x) * ORBIT_INSET}%`,
-    top: `${y + (topPct - y) * ORBIT_INSET}%`,
+    left: `${50 + STEP5_ARC_R * Math.sin(rad)}%`,
+    top: `${50 - STEP5_ARC_R * Math.cos(rad)}%`,
   };
 }
 
+/** 4→5 등장 stagger — arc 하단→상단 (와인 → 버거 → 사람) */
+export const RIGHT_STEP5_STAGGER_INDEX = {
+  wine: 0,
+  burger: 1,
+  people: 2,
+};
+
 export const ORBIT_WINE = {
-  sizeCqw: 13.47,
-  /** Figma 12.23% / 50% → 좌측 하단 arc (top 아래로) */
-  ...insetOrbitPosition(12.23, 58),
+  sizeCqw: 14,
+  ...step5ArcPosition(STEP5_WINE_ARC_DEG),
+};
+
+export const ORBIT_BURGER = {
+  sizeCqw: 14,
+  ...step5ArcPosition(STEP5_BURGER_ARC_DEG),
+};
+
+export const ORBIT_PEOPLE = {
+  sizeCqw: 14,
+  ...step5ArcPosition(STEP5_PEOPLE_ARC_DEG),
 };

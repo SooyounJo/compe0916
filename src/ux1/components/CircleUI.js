@@ -11,6 +11,8 @@ import PartyNightScreen from "./PartyNightScreen";
 import PartyNightBackground from "./PartyNightBackground";
 import DotGridAmbient from "./DotGridAmbient";
 import WeatherBackground from "./WeatherBackground";
+import RightStep4MusicIcon from "./RightStep4MusicIcon";
+import { UX1_STEP4_RIGHT_REVEAL_DELAY_S } from "../lib/leftOrbitStep4";
 
 const T = "duration-1000 ease-in-out transition-all";
 /** 3→4: gather(3末) → 4에서 블롭·닷 함께 축소 */
@@ -18,7 +20,7 @@ const CENTER_CLUSTER_EASE =
   "ease-[cubic-bezier(0.33,0,0.15,1)] transition-[transform,opacity,filter]";
 const CENTER_CLUSTER_IDLE = `scale-100 opacity-100 blur-0 duration-[900ms] ${CENTER_CLUSTER_EASE}`;
 const CENTER_CLUSTER_GATHER = `scale-[0.94] opacity-[0.88] blur-[2px] duration-[1000ms] ${CENTER_CLUSTER_EASE}`;
-const CENTER_CLUSTER_GONE = `scale-[0] opacity-0 blur-[10px] duration-[1200ms] ${CENTER_CLUSTER_EASE}`;
+const CENTER_CLUSTER_GONE = `scale-[0.92] opacity-0 blur-[8px] duration-[1500ms] ${CENTER_CLUSTER_EASE}`;
 /** 2~6: Figma 에이전트 UI 축소 (1번은 풀 비율) */
 const COMPACT_UI_SCALE = 0.46;
 
@@ -38,8 +40,9 @@ export default function CircleUI({
 
   /** 1→2→3 같은 닷 DOM — BlurFade 제외 */
   const dotsPhase = step <= 1 ? 1 : step <= 3 ? step : 3;
-  const centerClusterGather = dotsGathering && step === 3;
-  const centerClusterExit = step >= 4;
+  /** 3末 gather → 4初까지 이어져 급격한 전환 방지 */
+  const centerClusterGather = dotsGathering && step <= 4;
+  const centerClusterExit = step >= 4 && !dotsGathering;
   const showCenterDots = step <= 4 || dotsGathering;
   /** 2에서 미리 마운트(숨김) → 3에서 닷 크기에서 블롭으로 연속 확대 */
   const showCenterBlobShell =
@@ -48,16 +51,22 @@ export default function CircleUI({
   const dotsLayerVisible = step <= 4 || dotsGathering;
 
   const BLOB_SHELL_REVEAL =
-    "origin-center transition-[transform,opacity,filter] duration-[1000ms] ease-[cubic-bezier(0.33,0,0.15,1)]";
-  const blobShellRevealClass = shellLit
-    ? "scale-100 opacity-100 blur-0"
-    : "scale-[0.38] opacity-0 blur-[8px] pointer-events-none";
+    "origin-center transition-[transform,opacity,filter] duration-[1500ms] ease-[cubic-bezier(0.33,0,0.15,1)]";
+  const blobShellRevealClass = centerClusterExit
+    ? "scale-[0.94] opacity-0 blur-[6px]"
+    : shellLit
+      ? "scale-100 opacity-100 blur-0"
+      : "scale-[0.38] opacity-0 blur-[8px] pointer-events-none";
 
   const clusterMotionClass = centerClusterExit
     ? CENTER_CLUSTER_GONE
     : centerClusterGather
       ? CENTER_CLUSTER_GATHER
       : CENTER_CLUSTER_IDLE;
+
+  const blobShellVisible = shellLit && !centerClusterExit;
+  const blobShellPulse =
+    step === 3 && shellLit && !dotsGathering && !centerClusterExit;
 
   return (
     <div
@@ -106,6 +115,22 @@ export default function CircleUI({
 
       <VoiceMusicSlot step={step} dotsGathering={dotsGathering} />
 
+      {dualRight && (step === 4 || step === 5) ? (
+        <div
+          className={`right-step4-music-icon${
+            step === 5 ? " right-step4-music-icon--settled" : ""
+          }`}
+          style={
+            step === 4
+              ? { animationDelay: `${UX1_STEP4_RIGHT_REVEAL_DELAY_S}s` }
+              : undefined
+          }
+          aria-hidden
+        >
+          <RightStep4MusicIcon />
+        </div>
+      ) : null}
+
       {/* 5~6 궤도·와인 — Figma cqw(원 전체), compact(0.46) 밖 */}
       <IconOrbitCarousel step={step} />
       <OrbitWinePersist step={step} />
@@ -129,12 +154,9 @@ export default function CircleUI({
               className={`pointer-events-none absolute left-1/2 top-1/2 z-0 -translate-x-1/2 -translate-y-1/2 ${BLOB_SHELL_REVEAL} ${blobShellRevealClass}`}
             >
               <AgentBlobShell
-                active={
-                  shellLit &&
-                  step === 3 &&
-                  !dotsGathering &&
-                  !centerClusterExit
-                }
+                active={blobShellPulse}
+                visible={blobShellVisible}
+                fading={centerClusterExit}
               />
             </div>
           ) : null}

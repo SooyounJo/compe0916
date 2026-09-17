@@ -390,28 +390,58 @@
   }
 }
 
-/* UX1 좌측 4단계: 각자의 자리에서 좌측 끝에 있는 작은 아이콘부터 스르륵 순서대로 나타남 */
+/* UX1 좌측 4단계: 우측 음악 아이콘과 동일한 스르륵 등장 */
 .ux1-left-icon-orbit-enter-arc {
+  left: var(--orbit-end-left);
+  top: var(--orbit-end-top);
   animation-name: ux1-left-icon-arc-enter;
-  animation-duration: 0.9s;
-  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  animation-duration: 1.45s;
+  animation-timing-function: cubic-bezier(0.33, 0, 0.15, 1);
   animation-fill-mode: both;
+  backface-visibility: hidden;
+  will-change: transform, opacity, filter;
 }
 
 @keyframes ux1-left-icon-arc-enter {
   0% {
-    left: var(--orbit-end-left);
-    top: var(--orbit-end-top);
-    transform: translate(-50%, -50%) scale(0.6);
+    transform: translate(-50%, calc(-50% + 6%)) scale(0.7);
     opacity: 0;
-    filter: blur(6px);
+    filter: blur(10px);
+  }
+  60% {
+    transform: translate(-50%, -50%) scale(1.05);
+    opacity: 1;
+    filter: blur(2px);
   }
   100% {
-    left: var(--orbit-end-left);
-    top: var(--orbit-end-top);
     transform: translate(-50%, -50%) scale(1);
     opacity: var(--orbit-end-opacity, 1);
     filter: blur(0);
+  }
+}
+
+/* UX1 4→5: 제자리에서 좌→우 순차 퇴장 (blur 제외 — GPU 부하·끊김 방지) */
+.ux1-left-icon-orbit-exit-arc {
+  left: var(--orbit-end-left);
+  top: var(--orbit-end-top);
+  transform: translate3d(-50%, -50%, 0) scale(1);
+  opacity: var(--orbit-end-opacity, 1);
+  animation-name: ux1-left-icon-arc-exit;
+  animation-duration: 1.2s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  animation-fill-mode: forwards;
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+
+@keyframes ux1-left-icon-arc-exit {
+  0% {
+    transform: translate3d(-50%, -50%, 0) scale(1);
+    opacity: var(--orbit-end-opacity, 1);
+  }
+  100% {
+    transform: translate3d(-50%, calc(-50% + 5%), 0) scale(0.82);
+    opacity: 0;
   }
 }
 
@@ -541,8 +571,76 @@
   transition-duration: 1.35s, 1.35s;
 }
 
-.party-footer-party-in.ui-blur-fade--visible {
-  transition-delay: 0.5s, 0.5s;
+.party-footer-wine-in.ui-blur-fade {
+  transition-duration: 1.2s, 1.2s;
+}
+
+/* 4번: Let's Party 텍스트 그라데이션이 좌우로 빛나듯 이동 */
+.party-footer-text {
+  background-image: linear-gradient(90deg, #75002d 0%, #383645 55%, #22166d 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 4px 73px rgba(255, 255, 255, 0.45);
+}
+
+.party-footer-text-shimmer {
+  background-size: 220% 100%;
+  background-position: 0% 50%;
+  animation: party-footer-text-shimmer 4s ease-in-out infinite;
+}
+
+@keyframes party-footer-text-shimmer {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* 4번: 우측 원 음악 아이콘 스르륵 등장 — 2~3 보이스 슬롯 자리 */
+.right-step4-music-icon {
+  position: absolute;
+  z-index: 26;
+  left: 10.8%;
+  top: 50%;
+  /* 블롭 SVG 여백(원 지름 = 박스의 61.7%) 보정 — 좌측 people 원과 동일 지름 */
+  width: 20.8%;
+  height: 20.8%;
+  transform-origin: center center;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.8);
+  will-change: transform, opacity, filter;
+  animation: right-step4-music-icon-in 1.45s cubic-bezier(0.33, 0, 0.15, 1) forwards;
+}
+
+@keyframes right-step4-music-icon-in {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -44%) scale(0.7);
+    filter: blur(10px);
+  }
+  60% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.05);
+    filter: blur(2px);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+    filter: blur(0);
+  }
+}
+
+/* 5단계 — 4에서 등장한 음악 아이콘 그대로 유지 */
+.right-step4-music-icon--settled {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+  filter: blur(0);
+  animation: none;
+  will-change: auto;
 }
 
 /* 1~5: weather-bg — blur는 wrapper (video 직접 filter 시 재생/렌더 깨짐) */
@@ -813,6 +911,31 @@
   opacity: 1;
 }
 
+/* UX1 4→5: 좌 arc 퇴장과 동시 stagger — 우측 아이콘 순차 등장 */
+.ux1-right-icon-step5-enter {
+  left: var(--orbit-end-left);
+  top: var(--orbit-end-top);
+  transform: translate3d(-50%, calc(-50% + 5%), 0) scale(0.82);
+  opacity: 0;
+  animation-name: ux1-right-icon-step5-enter;
+  animation-duration: 1.2s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  animation-fill-mode: both;
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+
+@keyframes ux1-right-icon-step5-enter {
+  0% {
+    transform: translate3d(-50%, calc(-50% + 5%), 0) scale(0.82);
+    opacity: 0;
+  }
+  100% {
+    transform: translate3d(-50%, -50%, 0) scale(1);
+    opacity: 1;
+  }
+}
+
 .icon-orbit-trail {
   pointer-events: none;
 }
@@ -1037,6 +1160,71 @@ body {
   z-index: 8;
   transform: translateY(-50%);
   opacity: 0.92;
+}
+
+/* UX1 5단계 — 보이스 슬롯 음악 (우 .right-step4-music-icon 과 동일 지름) */
+.left-step5-music-icon {
+  right: 11.5%;
+  width: 20.8%;
+  height: 20.8%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9;
+  opacity: 0.92;
+  transform: translate(50%, -50%);
+}
+
+.left-step5-music-icon--settled {
+  opacity: 1;
+  transform: translate(50%, -50%) scale(1);
+}
+
+.ux1-left-step5-music-enter {
+  opacity: 0;
+  transform: translate(50%, calc(-50% + 5%)) scale(0.82);
+  animation-name: ux1-left-step5-music-enter;
+  animation-duration: 1.2s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  animation-fill-mode: both;
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+
+@keyframes ux1-left-step5-music-enter {
+  0% {
+    opacity: 0;
+    transform: translate(50%, calc(-50% + 5%)) scale(0.82);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(50%, -50%) scale(1);
+  }
+}
+
+/* UX1 5단계 — 보이스(스피커) → 음악 크로스페이드 */
+.left-step5-voice-morph-out__inner {
+  opacity: 1;
+  transform: scale(1);
+  filter: blur(0);
+  animation-name: left-step5-voice-morph-out;
+  animation-duration: 1.2s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  animation-fill-mode: forwards;
+  animation-delay: var(--left-step5-voice-out-delay, 0s);
+}
+
+@keyframes left-step5-voice-morph-out {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.82);
+    filter: blur(4px);
+  }
 }
 
 .left-ambient__voice::before {
