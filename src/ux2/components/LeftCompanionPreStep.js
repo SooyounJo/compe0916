@@ -1,18 +1,21 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import BlurFade from "@/ux2/components/BlurFade";
 import Ux2IconBlob from "@/ux2/components/Ux2IconBlob";
+import Ux2PreStepBlobReveal from "@/ux2/components/Ux2PreStepBlobReveal";
 import Ux2LeftCenterLoadingDots from "@/ux2/components/Ux2LeftCenterLoadingDots";
 import { pctCircle, STEP0_SEARCH_BLOB } from "@/ux2/lib/ux2Step0Layout";
 import { LEFT_TEXT_GRADIENT } from "@/ux2/lib/ux2Step1Layout";
 import { UX2_PRE_STEP_PROMPTS } from "@/ux2/lib/ux2PreStepCopy";
+import { useUx2PreStep1Handoff } from "@/ux2/lib/ux2PreStep1Handoff";
 import {
   pctPre,
   PRE_STEP_1_INSTAGRAM,
   PRE_STEP_1_PROMPT,
+  PRE_STEP_1_SEARCH,
   PRE_STEP_2_PROMPT,
-  PRE_STEP_2_SEARCH,
   PRE_STEP_4_COCKTAIL,
   PRE_STEP_4_PROMPT,
   PRE_STEP_DOTS,
@@ -20,6 +23,7 @@ import {
   PRE_STEP_VOICE,
   sizeCqwPre,
 } from "@/ux2/lib/ux2PreStepLayout";
+import { ux2PreStep2LeftSearchDelayS } from "@/ux2/lib/ux2PreStep2BlobEnter";
 
 const GRADIENT_TEXT = {
   backgroundImage: LEFT_TEXT_GRADIENT,
@@ -37,67 +41,91 @@ const PURPLE_TEXT = {
   textShadow: "0 4px 73px rgba(255,255,255,0.8)",
 };
 
-function PreStepAmbient({ children }) {
+function PreStepAmbient({ children, showGradient = true }) {
   return (
     <>
-      <div
-        className="absolute inset-0 opacity-[0.42] mix-blend-soft-light"
-        style={{ background: PRE_STEP_GRADIENT }}
-        aria-hidden
-      />
+      <BlurFade
+        show={showGradient}
+        className="left-step4-ui-blur-in pointer-events-none absolute inset-0 overflow-hidden"
+      >
+        <div
+          className="absolute inset-0 opacity-[0.42] mix-blend-soft-light"
+          style={{ background: PRE_STEP_GRADIENT }}
+          aria-hidden
+        />
+      </BlurFade>
       {children}
     </>
   );
 }
 
-function PreStepVoiceAndDots() {
+function PreStepCenterDots() {
+  return (
+    <div
+      className="absolute left-1/2 -translate-x-1/2"
+      style={{
+        top: `${pctPre(PRE_STEP_DOTS.top)}%`,
+        width: `${sizeCqwPre(PRE_STEP_DOTS.width)}%`,
+        height: `${sizeCqwPre(PRE_STEP_DOTS.height)}%`,
+      }}
+    >
+      <Ux2LeftCenterLoadingDots />
+    </div>
+  );
+}
+
+function PreStepVoiceAndDots({ showCenterDots = true, showVoice = true }) {
   const voiceSize = sizeCqwPre(PRE_STEP_VOICE.size);
   return (
     <>
-      <div
-        className="absolute left-1/2 -translate-x-1/2"
-        style={{
-          top: `${pctPre(PRE_STEP_DOTS.top)}%`,
-          width: `${sizeCqwPre(PRE_STEP_DOTS.width)}%`,
-          height: `${sizeCqwPre(PRE_STEP_DOTS.height)}%`,
-        }}
-      >
-        <Ux2LeftCenterLoadingDots />
-      </div>
-      <div
-        className="absolute -translate-x-1/2 -translate-y-1/2"
-        style={{
-          left: `${pctPre(PRE_STEP_VOICE.centerX)}%`,
-          top: `${pctPre(PRE_STEP_VOICE.centerY)}%`,
-          width: `${voiceSize}%`,
-          height: `${voiceSize}%`,
-        }}
-      >
-        <Image
-          src="/figma/ux2/step0/voice-recorder.svg"
-          alt=""
-          fill
-          className="object-contain drop-shadow-[0_4px_24px_rgba(255,255,255,0.4)]"
-          sizes="14vw"
-        />
-      </div>
+      {showCenterDots ? <PreStepCenterDots /> : null}
+      {showVoice ? (
+        <div
+          className="absolute -translate-x-1/2 -translate-y-1/2"
+          style={{
+            left: `${pctPre(PRE_STEP_VOICE.centerX)}%`,
+            top: `${pctPre(PRE_STEP_VOICE.centerY)}%`,
+            width: `${voiceSize}%`,
+            height: `${voiceSize}%`,
+          }}
+        >
+          <Image
+            src="/figma/ux2/step0/voice-recorder.svg"
+            alt=""
+            fill
+            className="object-contain drop-shadow-[0_4px_24px_rgba(255,255,255,0.4)]"
+            sizes="14vw"
+          />
+        </div>
+      ) : null}
     </>
   );
 }
 
-const STEP0_LEFT_BLOB_CQW = pctCircle(STEP0_SEARCH_BLOB.size);
 const STEP0_LEFT_ICON_FILL = "#9A93AA";
 
 /** 0단계 Ux2Step0IconMotion과 동일 블롭·glyph 비율 */
-function Step0MatchIconBlob({ centerX, centerY, iconSrc, iconSizePct }) {
+function Step0MatchIconBlob({
+  centerX,
+  centerY,
+  iconSrc,
+  iconSizePct,
+  blobId,
+  enter = false,
+  enterDelayS,
+  blobSize = STEP0_SEARCH_BLOB.size,
+}) {
+  const blobCqw = pctCircle(blobSize);
   return (
-    <div
-      className="absolute -translate-x-1/2 -translate-y-1/2"
+    <Ux2PreStepBlobReveal
+      blobId={blobId}
+      enter={enter}
+      enterDelayS={enterDelayS}
       style={{
         left: `${pctPre(centerX)}%`,
         top: `${pctPre(centerY)}%`,
-        width: `${STEP0_LEFT_BLOB_CQW}cqw`,
-        height: `${STEP0_LEFT_BLOB_CQW}cqw`,
+        width: `${blobCqw}cqw`,
+        height: `${blobCqw}cqw`,
       }}
     >
       <Ux2IconBlob
@@ -107,7 +135,7 @@ function Step0MatchIconBlob({ centerX, centerY, iconSrc, iconSizePct }) {
         emphasized
         style={{ width: "100%", height: "100%" }}
       />
-    </div>
+    </Ux2PreStepBlobReveal>
   );
 }
 
@@ -193,14 +221,30 @@ function PreStepPrompt({ stepKey }) {
   return null;
 }
 
-function PreStepScene({ stepKey, show = false, children }) {
+function PreStepScene({
+  stepKey,
+  show = false,
+  showGradient = true,
+  showVoice = true,
+  showCenterDots = true,
+  /** -4: 가운데 닷만 (보이스 슬롯 미사용) */
+  dotsOnly = false,
+  children,
+}) {
   return (
     <BlurFade
       show={show}
       className="left-step4-ui-blur-in pointer-events-none absolute inset-0 z-[5] overflow-hidden"
     >
-      <PreStepAmbient>
-        <PreStepVoiceAndDots />
+      <PreStepAmbient showGradient={showGradient}>
+        {dotsOnly ? (
+          <PreStepCenterDots />
+        ) : (
+          <PreStepVoiceAndDots
+            showCenterDots={showCenterDots}
+            showVoice={showVoice}
+          />
+        )}
         {children}
         <PreStepPrompt stepKey={stepKey} />
       </PreStepAmbient>
@@ -208,15 +252,15 @@ function PreStepScene({ stepKey, show = false, children }) {
   );
 }
 
-/** Figma 12:303 — -3 BG·닷·보이스 (arc는 IconArc) */
-export function LeftCompanionPreStepAmbient({ show = false }) {
+/** Figma 12:303 — -3 BG·닷 (검색 블롭·arc는 LeftAmbientBackground) */
+export function LeftCompanionPreStepAmbient({ show = false, showGradient = true }) {
   return (
     <BlurFade
       show={show}
       className="left-step4-ui-blur-in pointer-events-none absolute inset-0 z-[4] overflow-hidden"
     >
-      <PreStepAmbient>
-        <PreStepVoiceAndDots />
+      <PreStepAmbient showGradient={showGradient}>
+        <PreStepVoiceAndDots showVoice />
       </PreStepAmbient>
     </BlurFade>
   );
@@ -224,9 +268,29 @@ export function LeftCompanionPreStepAmbient({ show = false }) {
 
 /** Figma 1:572 / 12:496 / 12:691 — -4·-2·-1 (-3은 arc·ambient) BlurFade 교차 */
 export default function LeftCompanionPreStep({ step = 0 }) {
+  const revealStep0Bg = useUx2PreStep1Handoff(step);
+  const fadePreGradient = step === -1 && revealStep0Bg;
+  const prevStepRef = useRef(step);
+  const [preStep2EnterKey, setPreStep2EnterKey] = useState(0);
+  const [preStep1InstaEnterKey, setPreStep1InstaEnterKey] = useState(0);
+  /** -1까지 정적 블롭 · 0은 Ux2Step0IconMotion handoff */
+  /** -2·-1 좌: 0 handoff 슬롯(검색·인스타) 동일 · -2는 정착만 */
+  const showPreStep12BlobLayer = step === -2 || step === -1;
+
+  useEffect(() => {
+    const prev = prevStepRef.current;
+    prevStepRef.current = step;
+    if (step === -2 && prev !== -2) {
+      setPreStep2EnterKey((k) => k + 1);
+    }
+    if (step === -1 && prev === -2) {
+      setPreStep1InstaEnterKey((k) => k + 1);
+    }
+  }, [step]);
+
   return (
     <>
-      <PreStepScene stepKey={-4} show={step === -4}>
+      <PreStepScene stepKey={-4} show={step === -4} dotsOnly>
         <IconBlob
           centerX={PRE_STEP_4_COCKTAIL.centerX}
           centerY={PRE_STEP_4_COCKTAIL.centerY}
@@ -235,27 +299,51 @@ export default function LeftCompanionPreStep({ step = 0 }) {
         />
       </PreStepScene>
 
-      {/* -2·-1: 검색·인스타 슬롯 동일 → 아이콘 한 벌만, 카피만 교차 페이드 */}
-      <BlurFade
-        show={step === -2 || step === -1}
-        className="left-step4-ui-blur-in pointer-events-none absolute inset-0 z-[5] overflow-hidden"
-      >
-        <PreStepAmbient>
-          <PreStepVoiceAndDots />
-          <Step0MatchIconBlob
-            centerX={PRE_STEP_2_SEARCH.centerX}
-            centerY={PRE_STEP_2_SEARCH.centerY}
-            iconSrc="/figma/ux2/step0/web-search-icon.svg"
-            iconSizePct={54}
-          />
-          <Step0MatchIconBlob
-            centerX={PRE_STEP_1_INSTAGRAM.centerX}
-            centerY={PRE_STEP_1_INSTAGRAM.centerY}
-            iconSrc="/figma/ux2/instagram-icon.svg"
-            iconSizePct={42}
-          />
-        </PreStepAmbient>
-      </BlurFade>
+      {/* -2·-1·0: 검색·인스타 슬롯 동일 → -1→0 아이콘 연속 유지 */}
+      <div className="pointer-events-none absolute inset-0 z-[5] overflow-hidden">
+        {showPreStep12BlobLayer ? (
+          <PreStepAmbient showGradient={!fadePreGradient && step !== 0}>
+            {step === -2 ? (
+              <div key={`pre-step-2-left-blobs-${preStep2EnterKey}`}>
+                <Step0MatchIconBlob
+                  blobId="leftSearch"
+                  enter
+                  enterDelayS={ux2PreStep2LeftSearchDelayS()}
+                  centerX={PRE_STEP_1_SEARCH.centerX}
+                  centerY={PRE_STEP_1_SEARCH.centerY}
+                  blobSize={PRE_STEP_1_SEARCH.size}
+                  iconSrc="/figma/ux2/step0/web-search-icon.svg"
+                  iconSizePct={54}
+                />
+              </div>
+            ) : null}
+            {step === -1 ? (
+              <div key={`pre-step-1-left-blobs-${preStep2EnterKey}`}>
+                <Step0MatchIconBlob
+                  key={`leftInstagram-s-1-k${preStep1InstaEnterKey}`}
+                  blobId="leftInstagram"
+                  enter
+                  enterDelayS={2}
+                  centerX={PRE_STEP_1_INSTAGRAM.centerX}
+                  centerY={PRE_STEP_1_INSTAGRAM.centerY}
+                  blobSize={PRE_STEP_1_INSTAGRAM.size}
+                  iconSrc="/figma/ux2/instagram-icon.svg"
+                  iconSizePct={42}
+                />
+                <Step0MatchIconBlob
+                  blobId="leftSearch"
+                  enter={false}
+                  centerX={PRE_STEP_1_SEARCH.centerX}
+                  centerY={PRE_STEP_1_SEARCH.centerY}
+                  blobSize={PRE_STEP_1_SEARCH.size}
+                  iconSrc="/figma/ux2/step0/web-search-icon.svg"
+                  iconSizePct={54}
+                />
+              </div>
+            ) : null}
+          </PreStepAmbient>
+        ) : null}
+      </div>
       <BlurFade
         show={step === -2}
         className="left-step4-ui-blur-in pointer-events-none absolute inset-0 z-[5] overflow-hidden"

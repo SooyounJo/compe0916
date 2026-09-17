@@ -11,7 +11,7 @@ import styles from "@/ux2/styles/ux2PreStepRightBackground.module.css";
 
 export const UX2_PRE_STEP_NIGHT_VIDEO = "/video/ux2-pre-step-night.mp4";
 
-/** -4~-2: night BlurFade in · -1: hold 후 BlurFade out → Weather BG */
+/** -4~-2: night BlurFade in · -1: hold 후 night out → 아래 0단계 step1-right-bg */
 export default function Ux2PreStepRightBackground({ step = 0 }) {
   const videoRef = useRef(null);
   const prevStepRef = useRef(step);
@@ -28,21 +28,6 @@ export default function Ux2PreStepRightBackground({ step = 0 }) {
 
     if (fadeTimerRef.current) clearTimeout(fadeTimerRef.current);
     if (unmountTimerRef.current) clearTimeout(unmountTimerRef.current);
-
-    if (step >= UX2_FIRST_STEP && step <= -2) {
-      setLayerMounted(true);
-      const enteringNight =
-        prev < UX2_FIRST_STEP || prev > -1 || prev === null;
-      if (enteringNight) {
-        setVideoVisible(false);
-        const enterId = requestAnimationFrame(() => {
-          requestAnimationFrame(() => setVideoVisible(true));
-        });
-        return () => cancelAnimationFrame(enterId);
-      }
-      setVideoVisible(true);
-      return undefined;
-    }
 
     if (step === -1) {
       setLayerMounted(true);

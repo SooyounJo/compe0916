@@ -1,0 +1,26 @@
+.reveal {
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transform: scale(0.8);
+  transform-origin: center center;
+  animation: ux2RightStep4CameraIn 1.45s cubic-bezier(0.33, 0, 0.15, 1) forwards;
+}
+
+@keyframes ux2RightStep4CameraIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.7);
+    filter: blur(10px);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.05);
+    filter: blur(2px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+}

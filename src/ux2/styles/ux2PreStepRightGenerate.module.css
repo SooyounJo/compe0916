@@ -1,0 +1,122 @@
+.root {
+  --ux2-pre4-halftone-in: 2.65s;
+  --ux2-pre4-glow-cycle: 4.2s;
+}
+
+.scene {
+  transition:
+    filter 1.1s cubic-bezier(0.33, 0, 0.15, 1),
+    transform 1.1s cubic-bezier(0.33, 0, 0.15, 1);
+}
+
+.sceneStep4 {
+  filter: blur(0);
+  transform: scale(1);
+}
+
+.sceneStep3 {
+  filter: blur(9px);
+  transform: scale(1.03);
+}
+
+.sceneStep2 {
+  filter: blur(15px);
+  transform: scale(1.055);
+}
+
+.halftoneClip {
+  clip-path: circle(6% at 50% 48%);
+  opacity: 0;
+  animation: ux2Pre4HalftoneIn var(--ux2-pre4-halftone-in)
+    cubic-bezier(0.33, 0, 0.15, 1) forwards;
+}
+
+.halftoneFull {
+  clip-path: circle(78% at 50% 46%);
+  opacity: 1;
+  filter: blur(0);
+}
+
+.halftonePhoto {
+  mix-blend-mode: soft-light;
+  opacity: 0.92;
+  animation: ux2Pre4HalftonePulse var(--ux2-pre4-glow-cycle) ease-in-out
+    var(--ux2-pre4-halftone-in) infinite;
+}
+
+.halftonePhotoFull {
+  mix-blend-mode: soft-light;
+  opacity: 0.78;
+  filter: blur(4px);
+}
+
+.glowWash {
+  mix-blend-mode: plus-lighter;
+  opacity: 0.45;
+  animation: ux2Pre4GlowDrift var(--ux2-pre4-glow-cycle) ease-in-out infinite;
+}
+
+.dotDissolve {
+  background-image: radial-gradient(
+    circle at center,
+    rgba(255, 255, 255, 0.16) 0.55px,
+    transparent 0.65px
+  );
+  background-size: 6px 6px;
+  mix-blend-mode: soft-light;
+  opacity: 0.52;
+  animation: ux2Pre4DotsShift 3.6s linear infinite;
+}
+
+.blurredPrompt {
+  opacity: 0.42;
+  filter: blur(3px);
+}
+
+@keyframes ux2Pre4HalftoneIn {
+  0% {
+    clip-path: circle(5% at 50% 52%);
+    opacity: 0;
+    filter: blur(10px);
+  }
+  55% {
+    opacity: 0.75;
+    filter: blur(2px);
+  }
+  100% {
+    clip-path: circle(78% at 50% 46%);
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+@keyframes ux2Pre4HalftonePulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.88;
+  }
+  50% {
+    transform: scale(1.025);
+    opacity: 1;
+  }
+}
+
+@keyframes ux2Pre4GlowDrift {
+  0%,
+  100% {
+    transform: rotate(0deg) scale(1.05);
+  }
+  50% {
+    transform: rotate(6deg) scale(1.12);
+  }
+}
+
+@keyframes ux2Pre4DotsShift {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 12px 9px;
+  }
+}

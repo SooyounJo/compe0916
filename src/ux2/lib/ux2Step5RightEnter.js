@@ -1,5 +1,5 @@
 /** 우측 5 rise handoff 길이 */
-export const UX2_STEP5_RIGHT_HANDOFF_S = 1.05;
+export const UX2_STEP5_RIGHT_HANDOFF_S = 0.82;
 
 import {
   ux2Step5CenterRingEnterDelayS,
@@ -19,7 +19,7 @@ export function ux2Step5RightEnterDelayS(id) {
 }
 
 /** 중앙 할ft톤 링 */
-export const UX2_STEP5_CENTER_RING_GROW_S = 1.15;
+export const UX2_STEP5_CENTER_RING_GROW_S = 0.95;
 
 export function ux2Step5CenterRingEnterDelayMs() {
   return ux2Step5RightEnterDelayS("ring") * 1000;

@@ -7,71 +7,49 @@ import {
   markLeftOrbitEnterPlayed,
   shouldPlayLeftOrbitEnter,
 } from "@/ux2/lib/leftOrbitEnterLatch";
-import { HANDOFF_ANIM_S } from "@/ux2/lib/dualOrbitHandoff";
-import { ux2Step5LeftExitCompleteS } from "@/ux2/lib/ux2Step4To5CrossHandoff";
-import { ux2HandoffDelayS } from "@/ux2/lib/ux2HandoffDelays";
-import { ux2LeftHandoffStyleVars } from "@/ux2/lib/ux2LeftOrbitStep45Handoff";
 import { UX2_LEFT_ORBIT_STEP4_ICONS } from "@/ux2/lib/ux2LeftOrbitStep4";
-import handoffStyles from "@/ux2/styles/left-orbit-step45-handoff.module.css";
 import {
-  UX2_STEP4_ENTRY_BASE_S,
-  UX2_STEP4_ENTER_DURATION_S,
-  ux2Step4EnterDelayS,
-} from "@/ux2/lib/ux2LeftOrbitStep4Enter";
+  UX2_PRE_STEP3_ICON_DURATION_S,
+  ux2PreStep3IconEnterDelayS,
+} from "@/ux2/lib/ux2PreStep3IconEnter";
+import {
+  UX2_UX1_STEP4_ENTER_ANIM_S,
+  UX2_UX1_STEP4_ENTRY_BASE_S,
+  UX2_UX1_STEP4_EXIT_ANIM_S,
+  ux2Ux1Step4StaggerDelayS,
+} from "@/ux2/lib/ux2Ux1Step45Timing";
+import preStep3Styles from "@/ux2/styles/ux2PreStep3IconArc.module.css";
 
-const ARC_ENTER_CLASS = "left-icon-orbit-enter-arc";
+const UX1_ENTER_CLASS = "ux1-left-icon-orbit-enter-arc";
+const UX1_EXIT_CLASS = "ux1-left-icon-orbit-exit-arc";
 
-function iconMotionClass(step, arcSettled, playEnter, handoffPlaying, icon) {
+function iconMotionClass(step, arcSettled, playEnter, playExit) {
   if (step === -3) {
+    return preStep3Styles.enter;
+  }
+  if (playExit) {
+    return UX1_EXIT_CLASS;
+  }
+  if (step === 5) {
     return "left-icon-orbit-settled";
   }
-  if (step === 5 && handoffPlaying) {
-    if (icon.handoff === "crossRight") {
-      return `${handoffStyles.exit} ${handoffStyles.crossExit}`;
-    }
-    if (icon.handoff === "exit") {
-      return handoffStyles.exit;
-    }
-    if (icon.handoff === "relocate") return handoffStyles.relocate;
+  if (step === 4 && arcSettled) {
     return "left-icon-orbit-settled";
   }
-  if (step === 4 && arcSettled) return "left-icon-orbit-settled";
-  if (step === 4 && playEnter) return ARC_ENTER_CLASS;
-  if (step === 4) return "left-icon-orbit-settled";
+  if (step === 4 && playEnter) {
+    return UX1_ENTER_CLASS;
+  }
+  if (step === 4) {
+    return "left-icon-orbit-settled";
+  }
   return "left-icon-orbit-settled";
 }
 
 function orbitStyleVars(icon) {
   return {
-    "--orbit-start-left": icon.entryStartLeft,
-    "--orbit-start-top": icon.entryStartTop,
-    "--orbit-entry-rim-a-left": icon.entryRimALeft,
-    "--orbit-entry-rim-a-top": icon.entryRimATop,
-    "--orbit-entry-rim-b-left": icon.entryRimBLeft,
-    "--orbit-entry-rim-b-top": icon.entryRimBTop,
-    "--orbit-entry-rim-c-left": icon.entryRimCLeft,
-    "--orbit-entry-rim-c-top": icon.entryRimCTop,
-    "--orbit-entry-rim-d-left": icon.entryRimDLeft,
-    "--orbit-entry-rim-d-top": icon.entryRimDTop,
     "--orbit-end-left": icon.left,
     "--orbit-end-top": icon.top,
     "--orbit-end-opacity": icon.opacity ?? 1,
-    "--orbit-rim-a-left": icon.rimALeft,
-    "--orbit-rim-a-top": icon.rimATop,
-    "--orbit-rim-b-left": icon.rimBLeft,
-    "--orbit-rim-b-top": icon.rimBTop,
-    "--orbit-dip-left": icon.dipLeft,
-    "--orbit-dip-top": icon.dipTop,
-    "--orbit-s-out-left": icon.sOutLeft,
-    "--orbit-s-out-top": icon.sOutTop,
-    "--orbit-s-mid-left": icon.sMidLeft,
-    "--orbit-s-mid-top": icon.sMidTop,
-    "--orbit-s-bridge-left": icon.sBridgeLeft,
-    "--orbit-s-bridge-top": icon.sBridgeTop,
-    "--orbit-relocate-left": icon.relocateLeft,
-    "--orbit-relocate-top": icon.relocateTop,
-    "--orbit-entry-from-dx": icon.entryFromDxCqw ?? "0cqw",
-    "--orbit-entry-from-dy": icon.entryFromDyCqw ?? "0cqw",
   };
 }
 
@@ -89,64 +67,64 @@ function Step4Glyph({ icon }) {
   );
 }
 
-/** 4 arc 진입 + [6:28](https://www.figma.com/design/KB7I2ICmW14rFdscAVfKWf/Untitled?node-id=6-28) 4→5 handoff */
-function initialStep4EnterState(step) {
-  if (step !== 4) {
-    return { entering: false, arcSettled: false };
-  }
-  bumpLeftOrbitEnterCycle();
-  const play = shouldPlayLeftOrbitEnter(4);
-  return { entering: play, arcSettled: !play };
-}
-
 export default function LeftCompanionIconArc({ step = 1 }) {
-  const [enterState, setEnterState] = useState(() => initialStep4EnterState(step));
-  const entering = enterState.entering;
-  const arcSettled = enterState.arcSettled;
-  const setArcSettled = (v) =>
-    setEnterState((s) => ({ ...s, arcSettled: v }));
-
-  const [handoffPlaying, setHandoffPlaying] = useState(false);
+  const [arcSettled, setArcSettled] = useState(false);
+  const [entering, setEntering] = useState(false);
+  const [enterGen, setEnterGen] = useState(0);
+  const [exitingTo5, setExitingTo5] = useState(false);
   const enterDoneCountRef = useRef(0);
+  const exitDoneCountRef = useRef(0);
   const prevStepRef = useRef(null);
 
   useLayoutEffect(() => {
     const prev = prevStepRef.current;
     prevStepRef.current = step;
 
-    enterDoneCountRef.current = 0;
-    if (step === 4 && prev !== null && prev !== 4) {
+    if (step === -3) {
+      return undefined;
+    }
+
+    if (step === 4 && prev !== 4) {
+      enterDoneCountRef.current = 0;
+      exitDoneCountRef.current = 0;
       bumpLeftOrbitEnterCycle();
       const play = shouldPlayLeftOrbitEnter(4);
-      setEnterState({ entering: play, arcSettled: !play });
+      setEnterGen((g) => g + 1);
+      setEntering(play);
+      setArcSettled(!play);
+      setExitingTo5(false);
+      return undefined;
     }
+
     if (step < 4) {
-      setEnterState({ entering: false, arcSettled: false });
-      setHandoffPlaying(false);
+      setEntering(false);
+      setArcSettled(false);
+      setExitingTo5(false);
+      return undefined;
     }
 
     if (step === 5 && prev === 4) {
-      setHandoffPlaying(true);
-      const timer = setTimeout(() => {
-        setHandoffPlaying(false);
-      }, ux2Step5LeftExitCompleteS() * 1000 + 80);
-      return () => clearTimeout(timer);
+      exitDoneCountRef.current = 0;
+      setEntering(false);
+      setExitingTo5(true);
+      return undefined;
     }
 
-    if (step === 5 && prev !== 4) {
-      setHandoffPlaying(false);
+    if (step === 5) {
+      setEntering(false);
+      setExitingTo5(false);
     }
 
     return undefined;
   }, [step]);
 
   const preStep3Arc = step === -3;
-
-  const playEnter = step === 4 && entering && !arcSettled && !preStep3Arc;
+  const playEnter = step === 4 && entering && !arcSettled && !exitingTo5;
+  const playExit = step === 5 && exitingTo5;
 
   const onEnterStart = useCallback(
     (e) => {
-      if (step !== 4 || e.animationName !== "left-icon-arc-enter") return;
+      if (step !== 4 || e.animationName !== "ux1-left-icon-arc-enter") return;
       markLeftOrbitEnterPlayed();
     },
     [step],
@@ -154,7 +132,7 @@ export default function LeftCompanionIconArc({ step = 1 }) {
 
   const onEnterEnd = useCallback(
     (e) => {
-      if (step !== 4 || e.animationName !== "left-icon-arc-enter") return;
+      if (step !== 4 || e.animationName !== "ux1-left-icon-arc-enter") return;
       enterDoneCountRef.current += 1;
       if (enterDoneCountRef.current >= UX2_LEFT_ORBIT_STEP4_ICONS.length) {
         setArcSettled(true);
@@ -163,57 +141,63 @@ export default function LeftCompanionIconArc({ step = 1 }) {
     [step],
   );
 
-  /** 5 정착: Figma 8:164는 우측 원 — 좌측은 카피만, arc 아이콘 없음 */
-  if (step === 5 && !handoffPlaying) {
+  const onExitEnd = useCallback(
+    (e) => {
+      if (!exitingTo5 || e.animationName !== "ux1-left-icon-arc-exit") return;
+      exitDoneCountRef.current += 1;
+      if (exitDoneCountRef.current >= UX2_LEFT_ORBIT_STEP4_ICONS.length) {
+        setExitingTo5(false);
+      }
+    },
+    [exitingTo5],
+  );
+
+  if (step !== 4 && step !== 5 && step !== -3) {
     return null;
   }
-  if (step !== 4 && step !== 5 && step !== -3) return null;
+  if (step === 5 && !playExit) {
+    return null;
+  }
 
   const iconsOnScreen =
-    step === 4 ||
-    preStep3Arc ||
-    (step === 5 && handoffPlaying)
+    preStep3Arc || step === 4 || playExit
       ? UX2_LEFT_ORBIT_STEP4_ICONS
       : [];
 
   return (
     <div className="pointer-events-none absolute inset-0 z-[6]" aria-hidden>
       {iconsOnScreen.map((icon) => {
-        const motion = iconMotionClass(
-          step,
-          arcSettled,
-          playEnter,
-          handoffPlaying,
-          icon,
-        );
-        const delayS = handoffPlaying
-          ? ux2HandoffDelayS(icon)
-          : playEnter
-            ? UX2_STEP4_ENTRY_BASE_S + ux2Step4EnterDelayS(icon.id)
-            : 0;
+        const motion = iconMotionClass(step, arcSettled, playEnter, playExit);
+        const delayS =
+          preStep3Arc
+            ? ux2PreStep3IconEnterDelayS(icon.id)
+            : playEnter || playExit
+              ? UX2_UX1_STEP4_ENTRY_BASE_S + ux2Ux1Step4StaggerDelayS(icon.id)
+              : 0;
 
-        const styleVars =
-          step === 5 && handoffPlaying
-            ? ux2LeftHandoffStyleVars(icon)
-            : orbitStyleVars(icon);
+        const styleVars = orbitStyleVars(icon);
 
         return (
           <div
-            key={icon.id}
+            key={playEnter ? `${icon.id}-${enterGen}` : icon.id}
             className={`absolute ${motion}`}
             style={{
               width: `${icon.sizeCqw}cqw`,
               height: `${icon.sizeCqw}cqw`,
               animationDelay: `${delayS}s`,
-              animationDuration: handoffPlaying
-                ? `${HANDOFF_ANIM_S}s`
+              animationDuration: preStep3Arc
+                ? `${UX2_PRE_STEP3_ICON_DURATION_S}s`
                 : playEnter
-                  ? `${UX2_STEP4_ENTER_DURATION_S}s`
-                  : undefined,
+                  ? `${UX2_UX1_STEP4_ENTER_ANIM_S}s`
+                  : playExit
+                    ? `${UX2_UX1_STEP4_EXIT_ANIM_S}s`
+                    : undefined,
               ...styleVars,
             }}
             onAnimationStart={playEnter ? onEnterStart : undefined}
-            onAnimationEnd={playEnter ? onEnterEnd : undefined}
+            onAnimationEnd={
+              playEnter ? onEnterEnd : playExit ? onExitEnd : undefined
+            }
           >
             <Step4Glyph icon={icon} />
           </div>

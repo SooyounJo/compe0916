@@ -1,0 +1,10 @@
+.frost {
+  background: radial-gradient(
+    ellipse 88% 78% at 50% 44%,
+    rgba(255, 255, 255, 0.1),
+    rgba(255, 200, 215, 0.06) 45%,
+    transparent 72%
+  );
+  opacity: 0.75;
+  pointer-events: none;
+}

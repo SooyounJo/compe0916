@@ -32,3 +32,29 @@
   filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.22));
   opacity: 1;
 }
+
+/* 2 / -2 좌 — 글래스에 살짝 푸른 캐스트 */
+.blobBlueTint {
+  position: relative;
+  isolation: isolate;
+}
+
+.blobBlueTint .blobGlass {
+  filter: drop-shadow(0 0 24px rgba(200, 220, 255, 0.32))
+    drop-shadow(0 0 12px rgba(120, 170, 255, 0.18));
+}
+
+.blobBlueTint::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 44% 40%,
+    rgba(150, 195, 255, 0.28) 0%,
+    rgba(110, 165, 245, 0.1) 52%,
+    transparent 74%
+  );
+  mix-blend-mode: soft-light;
+  pointer-events: none;
+}

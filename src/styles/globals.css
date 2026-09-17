@@ -455,6 +455,46 @@
   }
 }
 
+/* UX2 우측 4단계 — 좌 people과 동일 타이밍 음악 블롭 */
+.right-step4-music-icon {
+  position: absolute;
+  z-index: 26;
+  left: 10.8%;
+  top: 50%;
+  width: 20.8%;
+  height: 20.8%;
+  transform-origin: center center;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.8);
+  animation: right-step4-music-icon-in 1.45s cubic-bezier(0.33, 0, 0.15, 1) forwards;
+}
+
+@keyframes right-step4-music-icon-in {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -44%) scale(0.7);
+    filter: blur(10px);
+  }
+  60% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.05);
+    filter: blur(2px);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+    filter: blur(0);
+  }
+}
+
+.right-step4-music-icon--settled {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+  filter: blur(0);
+  animation: none;
+  will-change: auto;
+}
+
 /* UX1 좌측 5단계: 각자의 자리에서 좌측 끝에 있는 작은 아이콘부터 스르륵 순서대로 나타남 */
 .ux1-left-icon-orbit-step5-in {
   animation-name: ux1-left-icon-orbit-step5-in;

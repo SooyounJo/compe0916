@@ -1,0 +1,33 @@
+.enter,
+.settled {
+  position: absolute;
+}
+
+.enter {
+  opacity: 0;
+  filter: blur(14px);
+  transform: translate(-50%, -50%) scale(0.94);
+  animation-name: ux2PreStepBlobReveal;
+  animation-timing-function: cubic-bezier(0.33, 0, 0.15, 1);
+  animation-fill-mode: both;
+  backface-visibility: hidden;
+}
+
+.settled {
+  opacity: var(--blob-end-opacity, 1);
+  filter: blur(0);
+  transform: translate(-50%, -50%) scale(1);
+}
+
+@keyframes ux2PreStepBlobReveal {
+  0% {
+    opacity: 0;
+    filter: blur(14px);
+    transform: translate(-50%, -50%) scale(0.94);
+  }
+  100% {
+    opacity: var(--blob-end-opacity, 1);
+    filter: blur(0);
+    transform: translate(-50%, -50%) scale(1);
+  }
+}

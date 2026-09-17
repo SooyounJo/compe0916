@@ -42,6 +42,13 @@ export const STEP0_RIGHT_ROW = {
   textOffsetX: 392.75,
 };
 
+/** 0단계 우측 — CircleUI Ux2Step0IconMotion · Instagram persist 슬롯 */
+export const STEP0_RIGHT_ICON_BLOB = {
+  centerX: STEP0_RIGHT_ROW.left + STEP0_RIGHT_ROW.blobSize / 2,
+  centerY: STEP0_RIGHT_ROW.top + STEP0_RIGHT_ROW.height / 2,
+  size: STEP0_RIGHT_ROW.blobSize,
+};
+
 /** 0단계 우측 카피 — Figma 대비 좌측(인스타 슬롯 쪽)으로 당김 (px, F0_RIGHT) */
 export const STEP0_RIGHT_TEXT_NUDGE_LEFT_PX = 72;
 

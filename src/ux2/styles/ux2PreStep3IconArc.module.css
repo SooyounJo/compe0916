@@ -1,0 +1,24 @@
+.enter {
+  left: var(--orbit-end-left);
+  top: var(--orbit-end-top);
+  opacity: 0;
+  filter: blur(14px);
+  transform: translate(-50%, -50%) scale(0.94);
+  animation-name: ux2PreStep3IconReveal;
+  animation-timing-function: cubic-bezier(0.33, 0, 0.15, 1);
+  animation-fill-mode: both;
+  backface-visibility: hidden;
+}
+
+@keyframes ux2PreStep3IconReveal {
+  0% {
+    opacity: 0;
+    filter: blur(14px);
+    transform: translate(-50%, -50%) scale(0.94);
+  }
+  100% {
+    opacity: var(--orbit-end-opacity, 1);
+    filter: blur(0);
+    transform: translate(-50%, -50%) scale(1);
+  }
+}

@@ -1,0 +1,97 @@
+.root {
+  --ux2-pre4-halftone-in: 2.65s;
+  --ux2-pre4-glow-cycle: 4.2s;
+}
+
+.baseVideo {
+  object-fit: cover;
+  object-position: center;
+}
+
+.halftoneClip {
+  clip-path: circle(6% at 50% 48%);
+  opacity: 0;
+  animation: ux2Pre4HalftoneIn var(--ux2-pre4-halftone-in)
+    cubic-bezier(0.33, 0, 0.15, 1) forwards;
+}
+
+.halftonePhoto {
+  mix-blend-mode: soft-light;
+  opacity: 0.92;
+  animation: ux2Pre4HalftonePulse var(--ux2-pre4-glow-cycle) ease-in-out
+    var(--ux2-pre4-halftone-in) infinite;
+}
+
+.glowWash {
+  mix-blend-mode: plus-lighter;
+  opacity: 0.45;
+  animation: ux2Pre4GlowDrift var(--ux2-pre4-glow-cycle) ease-in-out infinite;
+}
+
+.dotDissolve {
+  background-image: radial-gradient(
+    circle at center,
+    rgba(255, 255, 255, 0.14) 0.55px,
+    transparent 0.65px
+  );
+  background-size: 5px 5px;
+  mix-blend-mode: soft-light;
+  opacity: 0;
+  animation:
+    ux2Pre4DotsIn 1.2s ease-out 0.35s forwards,
+    ux2Pre4DotsShift 3.6s linear 1.55s infinite;
+}
+
+@keyframes ux2Pre4HalftoneIn {
+  0% {
+    clip-path: circle(5% at 50% 52%);
+    opacity: 0;
+    filter: blur(10px);
+  }
+  55% {
+    opacity: 0.75;
+    filter: blur(2px);
+  }
+  100% {
+    clip-path: circle(78% at 50% 46%);
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+@keyframes ux2Pre4HalftonePulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.88;
+  }
+  50% {
+    transform: scale(1.025);
+    opacity: 1;
+  }
+}
+
+@keyframes ux2Pre4GlowDrift {
+  0%,
+  100% {
+    transform: rotate(0deg) scale(1.05);
+  }
+  50% {
+    transform: rotate(6deg) scale(1.12);
+  }
+}
+
+@keyframes ux2Pre4DotsIn {
+  to {
+    opacity: 0.55;
+  }
+}
+
+@keyframes ux2Pre4DotsShift {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 10px 8px;
+  }
+}

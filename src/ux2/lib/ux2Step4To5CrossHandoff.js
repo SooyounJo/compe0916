@@ -20,8 +20,16 @@ export function ux2Step5LeftExitCompleteS() {
 /** 좌 퇴장 끝난 뒤 우 진입까지 여유 */
 export const UX2_STEP5_GAP_AFTER_LEFT_S = 0.12;
 
+/** 우 people·video — 좌 cross 퇴장과 겹쳐 조기 등장 */
+export const UX2_STEP5_RIGHT_ENTER_LEAD_S = 0.55;
+
 export function ux2Step5RightEnterBaseS() {
-  return ux2Step5LeftExitCompleteS() + UX2_STEP5_GAP_AFTER_LEFT_S;
+  return Math.max(
+    0.28,
+    ux2Step5LeftExitCompleteS() +
+      UX2_STEP5_GAP_AFTER_LEFT_S -
+      UX2_STEP5_RIGHT_ENTER_LEAD_S,
+  );
 }
 
 /** 좌 cross — 살짝 우(duel gap) + 위로 사라짐 */
@@ -37,7 +45,7 @@ export function ux2Step4CrossExitStyleVars(iconId) {
 /** 우 rise — showRightIcons 시점 기준 stagger (people → video) */
 export function ux2Step5RightRiseStaggerDelayS(iconId) {
   if (iconId === "video") {
-    return 0.36;
+    return 0.2;
   }
   return 0;
 }
@@ -48,7 +56,7 @@ export function ux2Step5RightRiseEnterDelayS(iconId) {
 }
 
 export function ux2Step5CenterRingEnterDelayS() {
-  return ux2Step5RightRiseEnterDelayS("video") + 0.22;
+  return ux2Step5RightRiseEnterDelayS("video") + 0.1;
 }
 
 /** 우 rise 진입 — 정착점 기준 아래(+dy)에서 올라옴 */

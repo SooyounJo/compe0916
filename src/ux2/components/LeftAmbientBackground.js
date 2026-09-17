@@ -53,10 +53,14 @@ export default function LeftAmbientBackground({
 }) {
   const prevStepRef = useRef(step);
   const [holdAgentExit, setHoldAgentExit] = useState(false);
+  const [preStep3ArcKey, setPreStep3ArcKey] = useState(0);
 
   useEffect(() => {
     const prev = prevStepRef.current;
     prevStepRef.current = step;
+    if (step === -3 && prev !== -3) {
+      setPreStep3ArcKey((k) => k + 1);
+    }
     if (prev === 3 && step === 4) {
       setHoldAgentExit(true);
       const t = setTimeout(() => setHoldAgentExit(false), AGENT_EXIT_HOLD_MS);
@@ -159,9 +163,10 @@ export default function LeftAmbientBackground({
         toPct={pctCircle}
         iconFillColor="#9A93AA"
         emphasized
+        blueTint={step === 2}
       />
       <Ux2VoiceIconAtSlot
-        show={step === 3 || (step === 4 && dotsGathering)}
+        show={step === 3}
         slotCenterX={SEARCH_SLOT.x}
         slotCenterY={SEARCH_SLOT.y}
         iconSizeCqw={LEFT_BLOB_CQW * 0.58}
@@ -173,7 +178,12 @@ export default function LeftAmbientBackground({
         show={step === -3}
         className="left-step4-ui-blur-in pointer-events-none absolute inset-0 z-[6] overflow-hidden"
       >
-        <LeftCompanionIconArc step={-3} />
+        {step === -3 ? (
+          <LeftCompanionIconArc
+            key={`ux2-pre-step-3-arc-${preStep3ArcKey}`}
+            step={-3}
+          />
+        ) : null}
       </BlurFade>
       <LeftCompanionPreStep step={step} />
       <LeftCompanionStep0 show={step === 0} />

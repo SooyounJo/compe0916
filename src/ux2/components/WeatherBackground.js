@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useRef } from "react";
+import { useUx2PreStep1Handoff } from "@/ux2/lib/ux2PreStep1Handoff";
 import { ux2IsPreStep } from "@/ux2/lib/ux2FlowSteps";
 
 /** 배경 MP4 — 0~5.11초 구간 루프 */
@@ -15,8 +16,12 @@ export default function WeatherBackground({
   dualInnerGlow = false,
 }) {
   const step4Bg = step === 4;
-  /** -4~-1: night·Weather만 — step1-right-bg에 박힌 아이콘 노출 방지 */
-  const showStep1RightPhoto = step >= 0 && step <= 2 && !ux2IsPreStep(step);
+  const revealStep0Bg = useUx2PreStep1Handoff(step);
+  /** -4~-2: night만 · -1: night out과 동시에 0단계 BG · 0~2: step1-right-bg */
+  const showStep1RightPhoto =
+    (step >= 0 && step <= 2 && !ux2IsPreStep(step)) ||
+    (step === -1 && revealStep0Bg);
+  const hideAmbientMotion = dualInnerGlow && ux2IsPreStep(step);
   const showDualGlow =
     dualInnerGlow &&
     step >= 3 &&
@@ -72,7 +77,7 @@ export default function WeatherBackground({
       />
       <div
         className={`weather-bg-ambient__motion absolute inset-0 transition-opacity duration-[1200ms] ease-[cubic-bezier(0.33,0,0.15,1)] ${
-          showStep1RightPhoto ? "opacity-0" : "opacity-100"
+          showStep1RightPhoto || hideAmbientMotion ? "opacity-0" : "opacity-100"
         }`}
       >
         <video

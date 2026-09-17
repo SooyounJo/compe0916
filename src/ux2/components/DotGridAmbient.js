@@ -63,20 +63,34 @@ function drawPixel(ctx, cx, cy, size, alpha) {
   ctx.fillRect(cx - half, cy - half, size, size);
 }
 
-export default function DotGridAmbient({ step }) {
+function isDotGridStepActive(s, variant) {
+  if (variant === "preStep") {
+    return s >= -4 && s <= -2;
+  }
+  return s >= 5;
+}
+
+export default function DotGridAmbient({
+  step,
+  variant = "ambient",
+  className = "",
+}) {
   const wrapRef = useRef(null);
   const canvasRef = useRef(null);
   const phaseStartRef = useRef(0);
   const stepRef = useRef(step);
+  const variantRef = useRef(variant);
+  const isPreStep = variant === "preStep";
 
   stepRef.current = step;
+  variantRef.current = variant;
 
   useEffect(() => {
     phaseStartRef.current = performance.now() / 1000;
   }, [step]);
 
   useEffect(() => {
-    if (step < 5) return undefined;
+    if (!isDotGridStepActive(step, variant)) return undefined;
 
     const wrap = wrapRef.current;
     const canvas = canvasRef.current;
@@ -107,7 +121,11 @@ export default function DotGridAmbient({ step }) {
 
     const draw = (now) => {
       const s = stepRef.current;
-      if (s < 5) return;
+      const mode = variantRef.current;
+      if (!isDotGridStepActive(s, mode)) {
+        raf = requestAnimationFrame(draw);
+        return;
+      }
 
       const t = now / 1000;
       const phaseT = t - phaseStartRef.current;
@@ -116,9 +134,13 @@ export default function DotGridAmbient({ step }) {
       const cx = w * 0.5;
       const cy = h * 0.48;
       const maxR = Math.hypot(cx, cy);
+      const preGenerate = mode === "preStep";
+      const alphaBoost = preGenerate ? 1.35 : 1;
 
       let master = 1;
-      if (s === 5) {
+      if (preGenerate) {
+        master = 1;
+      } else if (s === 5) {
         master = Math.min(1, phaseT / SPAWN_S);
         master = master * master * (3 - 2 * master);
       } else if (s <= 7) {
@@ -131,7 +153,8 @@ export default function DotGridAmbient({ step }) {
         }
       }
 
-      const spawnP = s === 5 ? Math.min(1, phaseT / SPAWN_S) : 1;
+      const spawnP =
+        preGenerate || s !== 5 ? 1 : Math.min(1, phaseT / SPAWN_S);
 
       ctx.clearRect(0, 0, w, h);
 
@@ -165,7 +188,11 @@ export default function DotGridAmbient({ step }) {
 
           if (trailOn) {
             const a =
-              Math.min(0.5, (trail - 0.06) * 0.65) * spawn * master * pulse;
+              Math.min(0.5, (trail - 0.06) * 0.65) *
+              spawn *
+              master *
+              pulse *
+              alphaBoost;
             drawPixel(ctx, gx, gy, 2, a * 0.62);
             continue;
           }
@@ -178,7 +205,8 @@ export default function DotGridAmbient({ step }) {
             spawn *
             master *
             pulse *
-            (0.5 + h0 * 0.5);
+            (0.5 + h0 * 0.5) *
+            alphaBoost;
 
           drawPixel(ctx, gx, gy, size, alpha * (bright ? 0.88 : 0.62));
 
@@ -200,14 +228,20 @@ export default function DotGridAmbient({ step }) {
       cancelAnimationFrame(raf);
       ro.disconnect();
     };
-  }, [step]);
+  }, [step, variant]);
 
-  if (step < 5) return null;
+  if (!isDotGridStepActive(step, variant)) return null;
+
+  const wrapClass = isPreStep
+    ? "dot-grid-ambient dot-grid-ambient--pre-step mix-blend-soft-light"
+    : "dot-grid-ambient";
 
   return (
     <div
       ref={wrapRef}
-      className="dot-grid-ambient pointer-events-none absolute inset-0 z-[28] overflow-hidden rounded-full"
+      className={`${wrapClass} pointer-events-none absolute inset-0 overflow-hidden rounded-full ${
+        isPreStep ? "z-[4]" : "z-[28]"
+      } ${className}`}
       aria-hidden
     >
       <canvas

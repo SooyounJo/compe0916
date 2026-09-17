@@ -11,6 +11,7 @@ export default function Ux2InstagramIconPersist({
   instagramIconClassName = "",
   iconFillColor,
   emphasized = false,
+  blueTint = false,
 }) {
   if (!show) {
     return null;
@@ -32,6 +33,7 @@ export default function Ux2InstagramIconPersist({
         iconClassName={instagramIconClassName}
         iconFillColor={iconFillColor}
         emphasized={emphasized}
+        blueTint={blueTint}
         style={{ width: "100%", height: "100%" }}
       />
     </div>

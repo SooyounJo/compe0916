@@ -15,6 +15,7 @@ import {
 } from "@/ux2/lib/ux2Step9RightLayout";
 import { UX2_STEP10_MEMORY_CARD_PHOTO } from "@/ux2/lib/ux2Step10RightLayout";
 import crossfadeStyles from "@/ux2/styles/ux2Step910PhotoCrossfade.module.css";
+import { UX2_RIGHT_GLYPH_IMG_CLASS } from "@/ux2/lib/ux2RightIconFill";
 
 /** Figma [50:522](https://www.figma.com/design/BeRQvUjf5ci89pXVH3bry5/Untitled?node-id=50-522) */
 export default function RightCompanionStep9({
@@ -137,7 +138,7 @@ export default function RightCompanionStep9({
             src="/figma/ux2/step2/59df8.svg"
             alt=""
             fill
-            className="object-contain"
+            className={UX2_RIGHT_GLYPH_IMG_CLASS}
             sizes="8vw"
           />
         </div>
@@ -160,7 +161,7 @@ export default function RightCompanionStep9({
             src="/figma/ux2/step2/52235.svg"
             alt=""
             fill
-            className="object-contain"
+            className={UX2_RIGHT_GLYPH_IMG_CLASS}
             sizes="8vw"
           />
         </div>

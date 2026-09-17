@@ -1,4 +1,9 @@
-import { F0, STEP0_SEARCH_BLOB } from "@/ux2/lib/ux2Step0Layout";
+import {
+  centerOf,
+  F0,
+  STEP0_INSTAGRAM_BLOB,
+  STEP0_SEARCH_BLOB,
+} from "@/ux2/lib/ux2Step0Layout";
 import {
   STEP4_LEFT_DOTS,
   STEP4_LEFT_VOICE,
@@ -26,34 +31,27 @@ export const PRE_STEP_4_PROMPT = {
   top: 1407,
 };
 
-/** Figma 12:496 — -2 */
-export const PRE_STEP_2_SEARCH = {
-  centerX: CX + 699.13,
-  centerY: 809 + 275.75 / 2,
-  size: 275.75,
-};
-
 export const PRE_STEP_2_PROMPT = {
   top: 1404,
 };
 
-/** Figma 12:691 — -1 */
-export const PRE_STEP_1_SEARCH = PRE_STEP_2_SEARCH;
+const STEP0_SEARCH_CENTER = centerOf(STEP0_SEARCH_BLOB);
+const STEP0_IG_CENTER = centerOf(STEP0_INSTAGRAM_BLOB);
 
-/** 0단계와 동일 블롭 diameter (275.75) — -2·-1 공통 인스타 슬롯 */
-export const PRE_STEP_1_INSTAGRAM = {
-  centerX: CX + 535.75,
-  centerY: CYFromHalf(352.75),
+/** Figma 12:691 — -1 · 0 handoff 슬롯 (우측 검색·하단 인스타) */
+export const PRE_STEP_1_SEARCH = {
+  centerX: STEP0_SEARCH_CENTER.x,
+  centerY: STEP0_SEARCH_CENTER.y,
   size: STEP0_SEARCH_BLOB.size,
 };
 
-export const PRE_STEP_2_INSTAGRAM = PRE_STEP_1_INSTAGRAM;
+export const PRE_STEP_1_INSTAGRAM = {
+  centerX: STEP0_IG_CENTER.x,
+  centerY: STEP0_IG_CENTER.y,
+  size: STEP0_INSTAGRAM_BLOB.size,
+};
 
 export const PRE_STEP_0_MATCH_BLOB_SIZE = STEP0_SEARCH_BLOB.size;
-
-function CYFromHalf(offsetFromCenter) {
-  return CX + offsetFromCenter;
-}
 
 export const PRE_STEP_1_PROMPT = {
   left: CX - 685.75,
