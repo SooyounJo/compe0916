@@ -1,11 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import Image from "next/image";
-import {
-  markLeftOrbitEnterPlayed,
-  shouldPlayLeftOrbitEnter,
-} from "../lib/leftOrbitEnterLatch";
 import {
   LEFT_ORBIT_ARC_ENTRY,
   LEFT_ORBIT_STEP4_ENTRY_BASE_S,
@@ -109,34 +105,36 @@ function Step5Icon({ icon, noAnim }) {
 export default function LeftCompanionIconArc({ step = 1 }) {
   const [arcSettled, setArcSettled] = useState(false);
   const [entering, setEntering] = useState(false);
+  const [enterGen, setEnterGen] = useState(0);
   const [transitioningTo5, setTransitioningTo5] = useState(false);
   const [step5TransitionDone, setStep5TransitionDone] = useState(false);
   const [noAnimStep5, setNoAnimStep5] = useState(false);
   const enterDoneCountRef = useRef(0);
-  const prevStepRef = useRef(step);
+  /** null — 3→4 remount 시 step=4로 초기화되면 진입 모션이 스킵되는 것 방지 */
+  const prevStepRef = useRef(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const prevStep = prevStepRef.current;
     prevStepRef.current = step;
 
-    enterDoneCountRef.current = 0;
-    if (step === 4 && shouldPlayLeftOrbitEnter(4)) {
+    if (step === 4 && prevStep !== 4) {
+      enterDoneCountRef.current = 0;
+      setEnterGen((gen) => gen + 1);
       setEntering(true);
       setArcSettled(false);
       setTransitioningTo5(false);
       setStep5TransitionDone(false);
-    } else if (step === 4) {
-      setEntering(false);
-      setArcSettled(true);
-      setTransitioningTo5(false);
-      setStep5TransitionDone(false);
+      return undefined;
     }
+
     if (step < 4) {
       setEntering(false);
       setArcSettled(false);
       setTransitioningTo5(false);
       setStep5TransitionDone(false);
+      return undefined;
     }
+
     if (step === 5) {
       setEntering(false);
       if (prevStep === 4) {
@@ -149,23 +147,17 @@ export default function LeftCompanionIconArc({ step = 1 }) {
           setStep5TransitionDone(true);
         }, 2600);
         return () => clearTimeout(timer);
-      } else {
-        setTransitioningTo5(false);
-        setStep5TransitionDone(true);
-        setNoAnimStep5(false);
       }
+
+      setTransitioningTo5(false);
+      setStep5TransitionDone(true);
+      setNoAnimStep5(false);
     }
+
+    return undefined;
   }, [step]);
 
   const playEnter = step === 4 && entering && !arcSettled;
-
-  const onEnterStart = useCallback(
-    (e) => {
-      if (step !== 4 || e.animationName !== "ux1-left-icon-arc-enter") return;
-      markLeftOrbitEnterPlayed();
-    },
-    [step],
-  );
 
   const onEnterEnd = useCallback(
     (e) => {
@@ -216,7 +208,7 @@ export default function LeftCompanionIconArc({ step = 1 }) {
 
         return (
           <div
-            key={icon.id}
+            key={playEnter ? `${icon.id}-${enterGen}` : icon.id}
             /** 센터링은 모션 CSS의 transform: translate(-50%,-50%)가 담당 */
             className={`absolute will-change-[left,top,transform,opacity,filter] ${motion}`}
             style={{
@@ -253,7 +245,6 @@ export default function LeftCompanionIconArc({ step = 1 }) {
               "--orbit-relocate-left": icon.relocateLeft,
               "--orbit-relocate-top": icon.relocateTop,
             }}
-            onAnimationStart={playEnter ? onEnterStart : undefined}
             onAnimationEnd={playEnter ? onEnterEnd : undefined}
           >
             {icon.iconSrc ? (

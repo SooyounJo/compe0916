@@ -118,7 +118,7 @@ export const LEFT_ORBIT_STEP4_ENTRY_STAGGER_S =
   SLOT_SPACING_DEG / ENTRY_DEG_PER_S;
 export const LEFT_ORBIT_STEP4_ENTRY_BASE_S = 0.2;
 /** globals.css ux1-left-icon-arc-enter duration과 동일 */
-export const UX1_LEFT_ORBIT_STEP4_ENTER_ANIM_S = 0.9;
+export const UX1_LEFT_ORBIT_STEP4_ENTER_ANIM_S = 1.45;
 /** globals.css right-step4-music-icon-in duration과 동일 */
 export const UX1_STEP4_MUSIC_ENTER_ANIM_S = 1.45;
 /** 좌 arc 5개 진입 완료 후 우 음악·Let's Party 동시 등장 */

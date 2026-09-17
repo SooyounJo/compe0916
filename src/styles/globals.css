@@ -390,25 +390,30 @@
   }
 }
 
-/* UX1 좌측 4단계: 각자의 자리에서 좌측 끝에 있는 작은 아이콘부터 스르륵 순서대로 나타남 */
+/* UX1 좌측 4단계: 우측 음악 아이콘과 동일한 스르륵 등장 */
 .ux1-left-icon-orbit-enter-arc {
+  left: var(--orbit-end-left);
+  top: var(--orbit-end-top);
   animation-name: ux1-left-icon-arc-enter;
-  animation-duration: 0.9s;
-  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  animation-duration: 1.45s;
+  animation-timing-function: cubic-bezier(0.33, 0, 0.15, 1);
   animation-fill-mode: both;
+  backface-visibility: hidden;
+  will-change: transform, opacity, filter;
 }
 
 @keyframes ux1-left-icon-arc-enter {
   0% {
-    left: var(--orbit-end-left);
-    top: var(--orbit-end-top);
-    transform: translate(-50%, -50%) scale(0.6);
+    transform: translate(-50%, calc(-50% + 6%)) scale(0.7);
     opacity: 0;
-    filter: blur(6px);
+    filter: blur(10px);
+  }
+  60% {
+    transform: translate(-50%, -50%) scale(1.05);
+    opacity: 1;
+    filter: blur(2px);
   }
   100% {
-    left: var(--orbit-end-left);
-    top: var(--orbit-end-top);
     transform: translate(-50%, -50%) scale(1);
     opacity: var(--orbit-end-opacity, 1);
     filter: blur(0);
