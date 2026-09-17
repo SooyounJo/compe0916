@@ -4,12 +4,12 @@ const WAVE_DURATION_S = 3.4;
 const DOT_SIZE_CLASS = "h-[11px] w-[11px] sm:h-[12px] sm:w-[12px]";
 /** 1단계 — 좌측 Figma step1-dots(#A099B9)와 동일 톤·소형 */
 const STEP1_DOT_SIZE_CLASS = "h-[9px] w-[9px]";
+/** Figma step1-dots.svg — 좌·우 상단, 중앙 하단 아크 */
 const STEP1_ROW_BOX_W = "calc(9px * 3 + 0.65rem * 2)";
-const STEP1_ROW_BOX_H = "9px";
-const STEP1_DOT_OPACITY = [1, 0.8, 0.5];
+const STEP1_ROW_BOX_H = "18px";
 
 const CLUSTER_BOX_W = 34;
-const CLUSTER_BOX_H = 31;
+const CLUSTER_BOX_H = 34;
 const ROW_BOX_W = "calc(11px * 3 + 0.85rem * 2)";
 const ROW_BOX_H = "11px";
 
@@ -21,15 +21,16 @@ const ROW_OFFSETS = [
 ];
 
 const STEP1_ROW_OFFSETS = [
-  { x: "calc(-9px - 0.65rem)", y: "0px" },
-  { x: "0px", y: "0px" },
-  { x: "calc(9px + 0.65rem)", y: "0px" },
+  { x: "calc(-9px - 0.65rem)", y: "-3.2px" },
+  { x: "0px", y: "3.2px" },
+  { x: "calc(9px + 0.65rem)", y: "-3.2px" },
 ];
 
+/** 2~3 중앙 회전 닷 — 완전한 정삼각형으로 균일 회전 */
 const CLUSTER_OFFSETS = [
-  { x: "-10.5px", y: "-9px", opacity: 1 },
-  { x: "10.5px", y: "-4px", opacity: 0.8 },
-  { x: "-2px", y: "9px", opacity: 0.5 },
+  { x: "0px", y: "-10.5px", opacity: 1 },
+  { x: "9.1px", y: "5.25px", opacity: 0.8 },
+  { x: "-9.1px", y: "5.25px", opacity: 0.5 },
 ];
 
 const GATHER_CENTER = { x: "0px", y: "0px", opacity: 0 };
@@ -49,7 +50,7 @@ function DotShell({ index, step, gathering, step1White = false }) {
 
   let x = (step1Row ? STEP1_ROW_OFFSETS : ROW_OFFSETS)[index].x;
   let y = (step1Row ? STEP1_ROW_OFFSETS : ROW_OFFSETS)[index].y;
-  let dotOpacity = step1Row ? STEP1_DOT_OPACITY[index] : 1;
+  let dotOpacity = 1;
 
   if (gathering) {
     x = GATHER_CENTER.x;
@@ -70,7 +71,11 @@ function DotShell({ index, step, gathering, step1White = false }) {
   const trailC = orbitStyle
     ? "agent-dot-trail-orbit agent-dot-trail-orbit-c"
     : "agent-dot-trail-wave agent-dot-trail-wave-c";
-  const dotClass = orbitStyle ? "agent-dot-orbit" : "agent-dot-wave";
+  const dotClass = orbitStyle
+    ? "agent-dot-orbit"
+    : step1Row
+      ? "agent-dot-wave agent-dot-wave-step1"
+      : "agent-dot-wave";
 
   const sizeClass = step1Row ? STEP1_DOT_SIZE_CLASS : DOT_SIZE_CLASS;
   const step1Lavender = step1Row && !step1White;
@@ -94,11 +99,7 @@ function DotShell({ index, step, gathering, step1White = false }) {
       }`}
       style={{
         transform: dotTransform(x, y),
-        opacity: gathering
-          ? dotOpacity
-          : step1Row
-            ? STEP1_DOT_OPACITY[index]
-            : undefined,
+        opacity: gathering ? dotOpacity : undefined,
         transitionDelay:
           clustered && !gathering ? `${index * 70}ms` : "0ms",
       }}

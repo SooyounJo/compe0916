@@ -6,6 +6,7 @@ import LeftCompanionIconArc from "@/components/LeftCompanionIconArc";
 import LeftCompanionStep1 from "@/components/LeftCompanionStep1";
 import LeftCompanionStep6 from "@/components/LeftCompanionStep6";
 import LeftVoiceWineMorph from "@/components/LeftVoiceWineMorph";
+import BlurFade from "@/components/BlurFade";
 
 const LEFT_BLOB_BG_STEP1 = "/figma/left-blob/step1-bg.png";
 const LEFT_BLOB_BG_FROM_STEP2 = "/figma/left-blob/ambient-bg.png";
@@ -51,14 +52,17 @@ export default function LeftAmbientBackground({
         priority={step === 1}
       />
 
-      <LeftCompanionStep1 show={step === 1} />
+      <BlurFade show={step === 1}>
+        <LeftCompanionStep1 show />
+      </BlurFade>
 
       <div
         className={`pointer-events-none absolute left-1/2 z-[3] -translate-x-1/2 -translate-y-1/2 transition-[top,opacity] duration-[1200ms] ease-[cubic-bezier(0.25,0.1,0.2,1)] ${
           step <= 4 || dotsGathering ? "" : "pointer-events-none opacity-0"
         }`}
         style={{
-          top: step <= 1 ? "68%" : "50%",
+          /** 실기 레이아웃에 맞춰 약간 위로 */
+          top: step <= 1 ? "70%" : "50%",
         }}
       >
         <LeftCompanionAgentLayer

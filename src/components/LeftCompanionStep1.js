@@ -1,27 +1,37 @@
 const TEXT_SHADOW = "0 3.215px 7.394px rgba(40, 37, 57, 0.15)";
 
-/** Figma 50:148 — WeatherFace 대비 ~12% 축소 (듀얼 1단계 균형) */
+/** Figma 50:148 — 2줄 시계 + 하단 닷 여백 (WeatherFace 대비 ~12% 축소) */
+const F = 1872;
+/** 실기 렌더 기준으로 살짝 더 내려 앵커 조정 */
+const STEP1_TOP = (432 / F) * 100;
+
 export default function LeftCompanionStep1({ show = true }) {
   if (!show) return null;
 
   return (
-    <div className="pointer-events-none absolute inset-0 z-[2] flex items-center justify-center">
-      <div className="flex w-[22%] flex-col items-center gap-[9.1cqw] text-center">
+    <div className="pointer-events-none absolute inset-0 z-[2]">
+      <div
+        className="absolute left-1/2 flex w-[22%] -translate-x-1/2 flex-col items-center gap-[9.1cqw] text-center"
+        style={{ top: `${STEP1_TOP}%` }}
+      >
         <p
-          className="font-haas w-full text-[3.62cqw] font-light tracking-[-0.02em] text-[#575757]"
+          className="font-haas w-full shrink-0 text-[3.62cqw] font-light tracking-[-0.02em] text-[#575757]"
           style={{ textShadow: TEXT_SHADOW }}
         >
           WED 09/03
         </p>
         <div
-          className="relative w-[19.5cqw] shrink-0 font-haas font-thin leading-[0.85] tracking-[-0.04em] text-[#383645]"
+          className="shrink-0 font-haas font-thin leading-[0.85] tracking-[-0.04em] text-[#383645]"
           style={{ textShadow: TEXT_SHADOW }}
         >
-          <p className="text-[14.5cqw] leading-[0.85]">08</p>
-          <p className="text-[14.5cqw] leading-[0.85]">30</p>
+          <p className="text-[15.6cqw] leading-[0.85]">08</p>
+          <p className="text-[15.6cqw] leading-[0.85]">30</p>
         </div>
-        {/* 닷은 LeftCompanionAgentLayer — 1→2 우측과 동일 DOM 연속 */}
-        <div className="h-[9px] w-[calc(9px*3+0.65rem*2)] shrink-0" aria-hidden />
+        {/* 닷 레이어(70%)와 겹치지 않도록 하단 여백 확보 */}
+        <div
+          className="h-[9.5cqw] w-[calc(9px*3+0.65rem*2)] shrink-0"
+          aria-hidden
+        />
       </div>
     </div>
   );

@@ -36,6 +36,7 @@ export const LEFT_STEP5_ICONS = [
     variant: "music",
     ...music,
     sizeCqw: sizeCqw(275.75),
+    delayS: 0.5,
   },
   {
     id: "calendar",
@@ -44,6 +45,7 @@ export const LEFT_STEP5_ICONS = [
     ...calendar,
     sizeCqw: sizeCqw(258.482),
     opacity: 0.85,
+    delayS: 0.25,
   },
   {
     id: "moon",
@@ -51,5 +53,6 @@ export const LEFT_STEP5_ICONS = [
     iconSrc: "/figma/left-orbit/moon-icon.svg",
     ...moon,
     sizeCqw: sizeCqw(235.482),
+    delayS: 0,
   },
 ];

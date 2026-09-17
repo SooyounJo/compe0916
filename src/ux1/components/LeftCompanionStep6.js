@@ -1,6 +1,6 @@
 import Image from "next/image";
-import BlurFade from "@/components/BlurFade";
-import { AgentDotsContinuity } from "@/components/AgentDots";
+import BlurFade from "./BlurFade";
+import { AgentDotsContinuity } from "./AgentDots";
 
 const F = 1879;
 

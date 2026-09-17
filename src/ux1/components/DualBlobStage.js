@@ -1,5 +1,5 @@
-import CircleUI from "@/components/CircleUI";
-import CompanionLeftBlob from "@/components/CompanionLeftBlob";
+import CircleUI from "./CircleUI";
+import CompanionLeftBlob from "./CompanionLeftBlob";
 
 export default function DualBlobStage({ step = 1, dotsGathering = false }) {
   return (

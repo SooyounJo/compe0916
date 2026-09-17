@@ -1,7 +1,7 @@
 import {
   leftExitRimAlongArc,
   LEFT_SEAM,
-} from "@/lib/dualOrbitHandoffPath";
+} from "./dualOrbitHandoffPath";
 
 /** 원 하단 외곽 arc — 0°=12시, 시계방향 */
 const F = 1879.5;
@@ -62,12 +62,13 @@ function exitRimPath(fromDeg) {
 
 export const LEFT_HANDOFF_DIP = LEFT_SEAM;
 
-/** rim을 따라 entryDeg → slotDeg (하단 arc, 좌→우) */
+/** rim을 따라 entryDeg → slotDeg — 등간격 웨이포인트로 코드 보간 완화 */
 function entryRimPath(entryDeg, slotDeg) {
-  const a = arcPosition(lerpDeg(entryDeg, slotDeg, 0.2));
-  const b = arcPosition(lerpDeg(entryDeg, slotDeg, 0.44));
-  const c = arcPosition(lerpDeg(entryDeg, slotDeg, 0.68));
-  const d = arcPosition(lerpDeg(entryDeg, slotDeg, 0.88));
+  const a = arcPosition(lerpDeg(entryDeg, slotDeg, 1 / 6));
+  const b = arcPosition(lerpDeg(entryDeg, slotDeg, 2 / 6));
+  const c = arcPosition(lerpDeg(entryDeg, slotDeg, 3 / 6));
+  const d = arcPosition(lerpDeg(entryDeg, slotDeg, 4 / 6));
+  const e = arcPosition(lerpDeg(entryDeg, slotDeg, 5 / 6));
   return {
     entryRimALeft: a.left,
     entryRimATop: a.top,
@@ -77,6 +78,8 @@ function entryRimPath(entryDeg, slotDeg) {
     entryRimCTop: c.top,
     entryRimDLeft: d.left,
     entryRimDTop: d.top,
+    entryRimELeft: e.left,
+    entryRimETop: e.top,
   };
 }
 
@@ -99,13 +102,21 @@ const STEP5_RELOCATE_DEG = {
   moon: 128,
 };
 
-/** 하단 arc 좌측 rim — 우측 슬롯부터 순차 진입 */
+/** 하단 arc 좌측 rim — 좌→우로 행렬처럼 순차 진입 */
 const ENTRY_RIM_DEG = 252;
+/** 슬롯 간격(°). STEP4_SLOT_DEG 기준 */
+const SLOT_SPACING_DEG = 26;
+/** 공통 각속도 — 같은 속도로 아크를 따라가며 행렬이 이어짐 */
+const ENTRY_DEG_PER_S = 92;
 
 export const LEFT_ORBIT_ARC_ENTRY = arcPosition(ENTRY_RIM_DEG);
-/** 4 진입: 우→좌 등장 간격 */
-export const LEFT_ORBIT_STEP4_ENTRY_STAGGER_S = 0.17;
-export const LEFT_ORBIT_STEP4_ENTRY_BASE_S = 0.32;
+/** 4 진입: 앞 아이콘과 슬롯 간격만큼 떨어져 출발 */
+export const LEFT_ORBIT_STEP4_ENTRY_STAGGER_S =
+  SLOT_SPACING_DEG / ENTRY_DEG_PER_S;
+export const LEFT_ORBIT_STEP4_ENTRY_BASE_S = 0.2;
+
+/** 좌→우 (entry에 가까운 순) */
+const ENTRY_ORDER = ["moon", "calendar", "cocktail", "burger", "people"];
 
 const ICON_DEFS = [
   {
@@ -113,7 +124,6 @@ const ICON_DEFS = [
     deg: STEP4_SLOT_DEG.moon,
     src: "/figma/left-orbit/moon-blob.svg",
     sizeCqw: sizeCqw(183.482),
-    delayS: LEFT_ORBIT_STEP4_ENTRY_STAGGER_S * 4,
   },
   {
     id: "calendar",
@@ -122,40 +132,41 @@ const ICON_DEFS = [
     iconSrc: "/figma/left-orbit/calendar-icon.svg",
     sizeCqw: sizeCqw(183.482),
     opacity: 0.85,
-    delayS: LEFT_ORBIT_STEP4_ENTRY_STAGGER_S * 3,
   },
   {
     id: "cocktail",
     deg: STEP4_SLOT_DEG.cocktail,
     src: "/figma/left-orbit/cocktail-blob.svg",
     sizeCqw: sizeCqw(251.945),
-    delayS: LEFT_ORBIT_STEP4_ENTRY_STAGGER_S * 2,
   },
   {
     id: "burger",
     deg: STEP4_SLOT_DEG.burger,
     src: "/figma/left-orbit/burger-blob.svg",
     sizeCqw: sizeCqw(251.945),
-    delayS: LEFT_ORBIT_STEP4_ENTRY_STAGGER_S,
   },
   {
     id: "people",
     deg: STEP4_SLOT_DEG.people,
     src: "/figma/left-orbit/people-blob.svg",
     sizeCqw: sizeCqw(296.673),
-    delayS: 0,
   },
 ];
 
 function enrichIcon(def) {
   const end = arcPosition(def.deg);
   const entry = entryRimPath(ENTRY_RIM_DEG, def.deg);
+  const arcDeg = Math.abs(ENTRY_RIM_DEG - def.deg);
+  const orderIndex = ENTRY_ORDER.indexOf(def.id);
   const base = {
     ...def,
     left: end.left,
     top: end.top,
     entryStartLeft: LEFT_ORBIT_ARC_ENTRY.left,
     entryStartTop: LEFT_ORBIT_ARC_ENTRY.top,
+    delayS: Math.max(0, orderIndex) * LEFT_ORBIT_STEP4_ENTRY_STAGGER_S,
+    /** 거리 ∝ 시간 → 행렬이 같은 각속도로 이어짐 */
+    durationS: Math.max(0.45, arcDeg / ENTRY_DEG_PER_S),
     ...entry,
   };
 

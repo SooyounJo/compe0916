@@ -1,4 +1,4 @@
-import LeftAmbientBackground from "@/components/LeftAmbientBackground";
+import LeftAmbientBackground from "./LeftAmbientBackground";
 
 export default function CompanionLeftBlob({
   step = 1,

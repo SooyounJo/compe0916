@@ -1,4 +1,4 @@
-import BlurFade from "@/components/BlurFade";
+import BlurFade from "./BlurFade";
 
 export default function PartyFooter({ step }) {
   const showParty = step === 4;
