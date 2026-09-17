@@ -298,57 +298,40 @@
   }
 }
 
-/* 5번: gap S자 — 좌 bridge와 짝 */
+/* 5번: gap → 슬롯 (3키프레임 transform, 4 arc와 동일) */
 .icon-orbit-enter-handoff {
-  animation: icon-orbit-enter-handoff 2.1s cubic-bezier(0.22, 1, 0.36, 1) both;
+  left: var(--orbit-end-left);
+  top: var(--orbit-end-top);
+  animation: icon-orbit-enter-handoff 1.75s cubic-bezier(0.33, 0, 0.15, 1) both;
   z-index: 40;
+  backface-visibility: hidden;
+}
+
+.icon-orbit-handoff-pending {
+  opacity: 0;
+  pointer-events: none;
 }
 
 @keyframes icon-orbit-enter-handoff {
   0% {
-    left: var(--handoff-s-start-left);
-    top: var(--handoff-s-start-top);
-    transform: translate(-50%, -50%) scale(0.62);
+    transform: translate(
+        calc(-50% + var(--handoff-from-start-dx, 0cqw)),
+        calc(-50% + var(--handoff-from-start-dy, 0cqw))
+      )
+      scale(0.9);
     opacity: 0;
-    filter: blur(5px);
   }
-  8% {
-    opacity: 0.5;
-  }
-  22% {
-    left: var(--handoff-s-a-left);
-    top: var(--handoff-s-a-top);
-    transform: translate(-50%, -50%) scale(0.72);
-    opacity: 0.78;
-    filter: blur(3px);
-  }
-  44% {
-    left: var(--handoff-s-b-left);
-    top: var(--handoff-s-b-top);
-    transform: translate(-50%, -50%) scale(0.84);
-    opacity: 0.92;
-    filter: blur(1.5px);
-  }
-  68% {
-    left: var(--handoff-s-c-left);
-    top: var(--handoff-s-c-top);
-    transform: translate(-50%, -50%) scale(0.94);
-    opacity: 0.98;
-    filter: blur(0);
-  }
-  88% {
-    left: var(--handoff-s-d-left);
-    top: var(--handoff-s-d-top);
-    transform: translate(-50%, -50%) scale(0.99);
-    opacity: 1;
-    filter: blur(0);
+  54% {
+    transform: translate(
+        calc(-50% + var(--handoff-mid-dx, 0cqw)),
+        calc(-50% + var(--handoff-mid-dy, 0cqw))
+      )
+      scale(0.97);
+    opacity: 0.94;
   }
   100% {
-    left: var(--orbit-end-left);
-    top: var(--orbit-end-top);
     transform: translate(-50%, -50%) scale(1);
     opacity: 1;
-    filter: blur(0);
   }
 }
 
@@ -360,13 +343,11 @@
 @keyframes icon-orbit-wine-step5-in {
   from {
     opacity: 0;
-    transform: translate(-50%, -50%) scale(0.88);
-    filter: blur(6px);
+    transform: translate(-50%, -50%) scale(0.92);
   }
   to {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
-    filter: blur(0);
   }
 }
 
@@ -381,54 +362,31 @@
 
 /* 좌측 4단계: 좌 밖 하단 → 하단 arc 슬롯 (1구간, 1회) */
 .left-icon-orbit-enter-arc {
+  left: var(--orbit-end-left);
+  top: var(--orbit-end-top);
   animation-name: left-icon-arc-enter;
-  animation-duration: 1.85s;
-  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  animation-duration: 1.45s;
+  animation-timing-function: cubic-bezier(0.33, 0, 0.18, 1);
   animation-fill-mode: both;
+  backface-visibility: hidden;
+}
+
+.left-step4-ui-blur-in.ui-blur-fade {
+  transition-duration: 0.55s, 0.55s;
 }
 
 @keyframes left-icon-arc-enter {
   0% {
-    left: var(--orbit-start-left);
-    top: var(--orbit-start-top);
-    transform: translate(-50%, -50%) scale(0.5);
+    transform: translate(
+        calc(-50% + var(--orbit-entry-from-dx, 0cqw)),
+        calc(-50% + var(--orbit-entry-from-dy, 0cqw))
+      )
+      scale(0.86);
     opacity: 0;
-    filter: blur(8px);
-  }
-  16% {
-    left: var(--orbit-entry-rim-a-left);
-    top: var(--orbit-entry-rim-a-top);
-    transform: translate(-50%, -50%) scale(0.58);
-    opacity: 0.22;
-    filter: blur(6px);
-  }
-  36% {
-    left: var(--orbit-entry-rim-b-left);
-    top: var(--orbit-entry-rim-b-top);
-    transform: translate(-50%, -50%) scale(0.7);
-    opacity: 0.52;
-    filter: blur(3.5px);
-  }
-  58% {
-    left: var(--orbit-entry-rim-c-left);
-    top: var(--orbit-entry-rim-c-top);
-    transform: translate(-50%, -50%) scale(0.84);
-    opacity: 0.78;
-    filter: blur(1.5px);
-  }
-  80% {
-    left: var(--orbit-entry-rim-d-left);
-    top: var(--orbit-entry-rim-d-top);
-    transform: translate(-50%, -50%) scale(0.95);
-    opacity: 0.94;
-    filter: blur(0.35px);
   }
   100% {
-    left: var(--orbit-end-left);
-    top: var(--orbit-end-top);
     transform: translate(-50%, -50%) scale(1);
     opacity: var(--orbit-end-opacity, 1);
-    filter: blur(0);
   }
 }
 
@@ -689,6 +647,126 @@
   }
 }
 
+/* UX2 5→6: clip-path 원만 확대 (scale·DOM 스왑 없음 → 마스크 유지) */
+.ux2-halftone-expand__clip {
+  will-change: clip-path;
+}
+
+.ux2-halftone-expand__clip--step5-wait {
+  clip-path: circle(
+    0.001% at var(--ux2-ring-origin-x) var(--ux2-ring-origin-y)
+  );
+  opacity: 0;
+}
+
+.ux2-halftone-expand__clip--step5-in {
+  clip-path: circle(
+    0.001% at var(--ux2-ring-origin-x) var(--ux2-ring-origin-y)
+  );
+  animation: ux2-halftone-step5-ring-in var(--ux2-step5-ring-grow-s, 1.15s)
+    cubic-bezier(0.22, 0.85, 0.28, 1) forwards;
+}
+
+@keyframes ux2-halftone-step5-ring-in {
+  0% {
+    clip-path: circle(
+      2.5% at var(--ux2-ring-origin-x) var(--ux2-ring-origin-y)
+    );
+    opacity: 0.35;
+    filter: brightness(1.08);
+  }
+  100% {
+    clip-path: circle(
+      var(--ux2-ring-clip-r) at var(--ux2-ring-origin-x) var(--ux2-ring-origin-y)
+    );
+    opacity: 1;
+    filter: brightness(1);
+  }
+}
+
+.ux2-halftone-expand__ring-frame {
+  pointer-events: none;
+  position: absolute;
+  left: var(--ux2-ring-origin-x);
+  top: var(--ux2-ring-origin-y);
+  width: calc(var(--ux2-ring-clip-r) * 2);
+  height: calc(var(--ux2-ring-clip-r) * 2);
+  transform: translate(-50%, -50%) scale(0);
+  transform-origin: center center;
+  border-radius: 9999px;
+  border: 0.35cqw solid rgba(255, 255, 255, 0.58);
+  box-shadow:
+    inset 0 0 40px rgba(255, 255, 255, 0.14),
+    0 0 20px rgba(255, 255, 255, 0.08);
+  opacity: 0;
+}
+
+.ux2-halftone-expand__ring-frame--step5-in {
+  animation: ux2-halftone-step5-ring-frame-in var(--ux2-step5-ring-grow-s, 1.15s)
+    cubic-bezier(0.22, 0.85, 0.28, 1) forwards;
+}
+
+.ux2-halftone-expand__ring-frame--idle {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+}
+
+@keyframes ux2-halftone-step5-ring-frame-in {
+  0% {
+    transform: translate(-50%, -50%) scale(0.12);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
+
+.ux2-halftone-expand__photo-inner {
+  transform: scale(var(--ux2-halftone-photo-scale, 1));
+  transform-origin: var(--ux2-ring-origin-x) var(--ux2-ring-origin-y);
+  transition: transform 1.4s cubic-bezier(0.22, 0.08, 0.24, 1);
+}
+
+.ux2-halftone-expand__clip--burst {
+  clip-path: circle(
+    var(--ux2-ring-clip-r) at var(--ux2-ring-origin-x) var(--ux2-ring-origin-y)
+  );
+  animation: ux2-halftone-clip-expand 1.4s cubic-bezier(0.22, 0.08, 0.24, 1)
+    forwards;
+}
+
+@keyframes ux2-halftone-clip-expand {
+  0% {
+    clip-path: circle(
+      var(--ux2-ring-clip-r) at var(--ux2-ring-origin-x) var(--ux2-ring-origin-y)
+    );
+    filter: brightness(1.02);
+  }
+  55% {
+    filter: brightness(1.04);
+  }
+  100% {
+    clip-path: circle(50% at 50% 50%);
+    filter: brightness(1);
+  }
+}
+
+/* 5단계: Figma 중앙 원(선명) · 6+는 weather 위 블렌드 */
+.ux2-halftone-expand__photo--base {
+  mix-blend-mode: soft-light;
+  opacity: 0.94;
+}
+
+.ux2-halftone-expand__photo--step5 {
+  mix-blend-mode: normal;
+  opacity: 1;
+}
+
+.ux2-halftone-expand__step6-bg {
+  mix-blend-mode: normal;
+}
+
 .circle-step-6-out .ui-blur-fade {
   transition-duration: 1.75s, 1.75s;
 }
@@ -701,10 +779,38 @@
   transition-delay: 0.85s;
 }
 
+.party-night-foreground.ui-blur-fade--visible.right-step6-dual-in {
+  transition-delay: 1.05s, 1.05s;
+}
+
+/* UX2 5→6: 링·아이콘·카피 — halftone 확대와 함께 서서히 */
+.right-step5-to6-out.ui-blur-fade {
+  transition-duration: 1.65s, 1.65s;
+}
+
+.right-step5-to6-out.ui-blur-fade--hidden {
+  transition-delay: 0.08s, 0.08s;
+}
+
+.right-step5-foreground {
+  transition:
+    opacity 1.55s cubic-bezier(0.33, 0, 0.15, 1),
+    filter 1.55s cubic-bezier(0.33, 0, 0.15, 1),
+    transform 1.55s cubic-bezier(0.33, 0, 0.15, 1);
+}
+
+.right-step5-foreground--out {
+  opacity: 0;
+  filter: blur(10px);
+  transform: scale(0.97);
+  transition-delay: 0.12s, 0.12s, 0.12s;
+}
+
 .icon-orbit-settled {
+  left: var(--orbit-end-left);
+  top: var(--orbit-end-top);
   transform: translate(-50%, -50%) scale(1);
   opacity: 1;
-  filter: blur(0);
 }
 
 .icon-orbit-trail {

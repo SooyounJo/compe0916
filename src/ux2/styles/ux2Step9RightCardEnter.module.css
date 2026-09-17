@@ -1,0 +1,17 @@
+.cardGroup {
+  pointer-events: none;
+  transition:
+    transform 1.35s cubic-bezier(0.33, 0, 0.15, 1),
+    opacity 1.05s cubic-bezier(0.33, 0, 0.15, 1) 0.06s,
+    filter 1.1s cubic-bezier(0.33, 0, 0.15, 1) 0.04s;
+  transform: translateX(-46cqw);
+  opacity: 0;
+  filter: blur(16px);
+  will-change: transform, opacity, filter;
+}
+
+.cardGroupActive {
+  transform: translateX(0);
+  opacity: 1;
+  filter: blur(0);
+}

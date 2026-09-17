@@ -1,4 +1,3 @@
-import Image from "next/image";
 import BlurFade from "@/components/BlurFade";
 import {
   F,
@@ -68,24 +67,8 @@ export default function RightCompanionStep1({ show = true }) {
             width: `${ICON_BLOB_CQW}cqw`,
             height: `${ICON_BLOB_CQW}cqw`,
           }}
-        >
-          <div className="relative h-full w-full">
-            <Image
-              src="/figma/left-orbit/step6-music-blob.svg"
-              alt=""
-              fill
-              className="object-contain drop-shadow-[0_0_24px_rgba(255,255,255,0.28)]"
-              sizes="18vw"
-            />
-            <Image
-              src="/figma/ux2/instagram-icon.svg"
-              alt=""
-              width={118}
-              height={117}
-              className="absolute left-1/2 top-1/2 h-[42%] w-[42%] -translate-x-1/2 -translate-y-1/2 object-contain"
-            />
-          </div>
-        </div>
+          aria-hidden
+        />
       </div>
 
       <div

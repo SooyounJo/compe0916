@@ -1,8 +1,8 @@
 import BlurFade from "@/components/BlurFade";
 
-export default function PartyFooter({ step }) {
-  const showParty = step === 4;
-  const showWine = step === 5;
+export default function PartyFooter({ step, dualRight = false }) {
+  const showParty = step === 4 && !dualRight;
+  const showWine = step === 5 && !dualRight;
 
   const baseClass =
     "font-doto absolute bottom-[11%] left-1/2 z-30 w-full -translate-x-1/2 px-4 text-center text-[4.65cqw] font-black leading-none tracking-[-0.04em]";
@@ -26,7 +26,7 @@ export default function PartyFooter({ step }) {
         Let&apos;s Party!
       </BlurFade>
       <BlurFade show={showWine} className={baseClass} style={textStyle}>
-        wine, friends...
+        wine, friends
       </BlurFade>
     </>
   );

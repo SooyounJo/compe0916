@@ -1,0 +1,29 @@
+.handoff {
+  position: absolute;
+  left: var(--orbit-end-left);
+  top: var(--orbit-end-top);
+  z-index: 40;
+  animation: ux2RightHandoffRise 1.05s cubic-bezier(0.22, 0.85, 0.28, 1) both;
+  backface-visibility: hidden;
+}
+
+@keyframes ux2RightHandoffRise {
+  0% {
+    transform: translate(
+        calc(-50% + var(--handoff-rise-from-dx, 0cqw)),
+        calc(-50% + var(--handoff-rise-from-dy, 22cqw))
+      )
+      scale(0.78);
+    opacity: 0;
+    filter: blur(6px);
+  }
+  55% {
+    opacity: 0.92;
+    filter: blur(1px);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+    filter: blur(0);
+  }
+}

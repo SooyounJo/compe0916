@@ -163,9 +163,10 @@ export function AgentDotsContinuity({
   step,
   gathering = false,
   step1White = false,
+  enableSpin = true,
 }) {
   const clustered = step >= 2;
-  const spinCluster = step >= 2 && !gathering;
+  const spinCluster = enableSpin && step >= 2 && !gathering;
 
   return (
     <div

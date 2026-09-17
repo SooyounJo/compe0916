@@ -1,0 +1,45 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="309.57" height="309.57" viewBox="0 0 309.57 309.57" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Frame 2085670489">
+<foreignObject x="-6.07253" y="-8.65659" width="321.715" height="321.715"><div xmlns="http://www.w3.org/1999/xhtml" style="backdrop-filter:blur(17.44px);clip-path:url(#bgblur_0_0_14_clip_path);height:100%;width:100%"></div></foreignObject><g id="Ellipse 8190" filter="url(#filter0_diii_0_14)" data-figma-bg-blur-radius="34.8847">
+<circle cx="154.785" cy="152.201" r="125.973" fill="url(#paint0_linear_0_14)" fill-opacity="0.62" shape-rendering="crispEdges"/>
+<circle cx="154.785" cy="152.201" r="125.016" stroke="white" stroke-width="1.91402" shape-rendering="crispEdges"/>
+</g>
+<g id="alwaysask">
+<path id="Vector" fill-rule="evenodd" clip-rule="evenodd" d="M102.852 132.016C105.47 132.016 107.591 134.136 107.591 136.755V173.348C107.591 178.947 112.148 183.504 117.748 183.504H169.561C172.178 183.504 174.3 185.626 174.3 188.243C174.3 190.861 172.178 192.983 169.561 192.983H117.748C106.921 192.983 98.1122 184.174 98.1122 173.348V136.755C98.1122 134.136 100.236 132.016 102.852 132.016ZM174.499 111.474C181.947 111.474 188.041 117.568 188.041 125.016V130.182L206.59 119.407C207.217 119.033 207.859 118.844 208.498 118.844C209.996 118.844 211.514 119.999 211.514 122.206V165.156C211.514 167.327 210.045 168.463 208.592 168.463C207.915 168.463 207.236 168.242 206.578 167.804L188.041 157.091V162.292C188.041 169.74 181.947 175.834 174.499 175.834H127.339C121.381 175.834 116.506 170.959 116.506 165.001V123.828C116.506 117.035 122.066 111.474 128.86 111.474H174.499Z" fill="#9A93AA"/>
+</g>
+</g>
+<defs>
+<filter id="filter0_diii_0_14" x="-6.07253" y="-8.65659" width="321.715" height="321.715" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="2.58405"/>
+<feGaussianBlur stdDeviation="14.4061"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_0_14"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_0_14" result="shape"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="2.58405"/>
+<feGaussianBlur stdDeviation="22.8689"/>
+<feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0.894118 0 0 0 0 0.898039 0 0 0 0 1 0 0 0 1 0"/>
+<feBlend mode="normal" in2="shape" result="effect2_innerShadow_0_14"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dx="1.29203" dy="3.23007"/>
+<feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
+<feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0"/>
+<feBlend mode="normal" in2="effect2_innerShadow_0_14" result="effect3_innerShadow_0_14"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="2.58405"/>
+<feGaussianBlur stdDeviation="18.0238"/>
+<feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0.976471 0 0 0 0 1 0 0 0 0 0.788235 0 0 0 0.25 0"/>
+<feBlend mode="normal" in2="effect3_innerShadow_0_14" result="effect4_innerShadow_0_14"/>
+</filter>
+<clipPath id="bgblur_0_0_14_clip_path" transform="translate(6.07253 8.65659)"><circle cx="154.785" cy="152.201" r="125.973"/>
+</clipPath><linearGradient id="paint0_linear_0_14" x1="154.785" y1="26.2282" x2="154.785" y2="278.173" gradientUnits="userSpaceOnUse">
+<stop offset="0.259615" stop-color="white" stop-opacity="0.44"/>
+<stop offset="1" stop-color="#FBFCF0"/>
+</linearGradient>
+</defs>
+</svg>

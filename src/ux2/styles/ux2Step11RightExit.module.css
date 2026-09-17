@@ -1,0 +1,13 @@
+.photoSink {
+  transition:
+    transform 1.75s cubic-bezier(0.33, 0, 0.18, 1),
+    opacity 1.75s ease-out,
+    filter 1.75s ease-out;
+  will-change: transform, opacity, filter;
+}
+
+.photoSinkActive {
+  transform: translateY(58cqw);
+  opacity: 0;
+  filter: blur(26px);
+}

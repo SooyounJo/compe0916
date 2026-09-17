@@ -1,10 +1,12 @@
-/** 4단계 arc 진입 — 리마운트·Strict Mode에서도 1회만 재생 */
+/** UX2 — 4·5단계 arc 진입 1회 재생 래치 */
 let enterCycleId = 0;
-let enterPlayedForCycle = -1;
+let enter4PlayedForCycle = -1;
+let step5VisitId = 0;
+let step5EnterPlayedForVisit = -1;
 
 export function resetLeftOrbitEnterLatch() {
   enterCycleId += 1;
-  enterPlayedForCycle = -1;
+  enter4PlayedForCycle = -1;
 }
 
 export function shouldPlayLeftOrbitEnter(step) {
@@ -12,10 +14,32 @@ export function shouldPlayLeftOrbitEnter(step) {
     resetLeftOrbitEnterLatch();
     return false;
   }
-  if (step > 4) return false;
-  return enterPlayedForCycle !== enterCycleId;
+  if (step > 4) {
+    return false;
+  }
+  return enter4PlayedForCycle !== enterCycleId;
+}
+
+export function bumpLeftOrbitEnterCycle() {
+  enterCycleId += 1;
 }
 
 export function markLeftOrbitEnterPlayed() {
-  enterPlayedForCycle = enterCycleId;
+  enter4PlayedForCycle = enterCycleId;
+}
+
+export function shouldPlayLeftStep5Enter(step) {
+  if (step !== 5) {
+    return false;
+  }
+  return step5EnterPlayedForVisit !== step5VisitId;
+}
+
+export function markLeftStep5EnterPlayed() {
+  step5EnterPlayedForVisit = step5VisitId;
+}
+
+export function notifyLeftStep5Enter() {
+  step5VisitId += 1;
+  step5EnterPlayedForVisit = -1;
 }
