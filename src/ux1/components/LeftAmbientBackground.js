@@ -5,6 +5,7 @@ import LeftCompanionAgentLayer from "./LeftCompanionAgentLayer";
 import LeftCompanionIconArc from "./LeftCompanionIconArc";
 import LeftCompanionStep1 from "./LeftCompanionStep1";
 import LeftCompanionStep6 from "./LeftCompanionStep6";
+import LeftCompanionStep7 from "./LeftCompanionStep7";
 import LeftVoiceWineMorph from "./LeftVoiceWineMorph";
 import LeftStep5MusicIcon from "./LeftStep5MusicIcon";
 import BlurFade from "./BlurFade";
@@ -59,8 +60,8 @@ export default function LeftAmbientBackground({
         preload="auto"
         className="left-ambient__photo absolute inset-0 h-full w-full object-cover object-center"
         style={{
-          transform: step === 4 ? "scale(1.428)" : "scale(1.4)",
-          filter: step === 4 ? "blur(3px)" : "none",
+          transform: step === 4 || step >= 7 ? "scale(1.428)" : "scale(1.4)",
+          filter: step === 4 || step >= 7 ? "blur(3px)" : "none",
           transition: "transform 2.4s cubic-bezier(0.33, 0, 0.15, 1), filter 2.4s cubic-bezier(0.33, 0, 0.15, 1)",
         }}
         aria-hidden
@@ -89,7 +90,10 @@ export default function LeftAmbientBackground({
 
       <LeftCompanionIconArc step={step} />
 
-      <LeftCompanionStep6 show={step >= 6} step={step} />
+      <LeftCompanionStep6 step={step} />
+
+      {/* step 6부터 mount — 6→7 전환 시 prevStep=6 을 잡아 arc 진입 모션 유지 */}
+      <LeftCompanionStep7 step={step} />
 
       {showVoice ? (
         <LeftVoiceWineMorph step={step} voiceActive={voiceActive} />

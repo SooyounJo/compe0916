@@ -65,7 +65,7 @@ export default function IconOrbitCarousel({ step }) {
   }, [step]);
 
   if (step < 5) return null;
-  if (step === 6 && !exitingTo6) return null;
+  if (step >= 6 && !exitingTo6) return null;
 
   const playEnter = step === 5 && entering;
   const playExit = step === 6 && exitingTo6;

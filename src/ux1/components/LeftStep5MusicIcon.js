@@ -23,6 +23,7 @@ export default function LeftStep5MusicIcon({ step = 1 }) {
   }, [step]);
 
   if (step !== 5 && step !== 6) return null;
+  /** 7단계 handoff는 LeftCompanionStep7에서 처리 */
 
   const motion =
     step === 5 && entering

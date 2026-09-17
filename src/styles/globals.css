@@ -755,6 +755,15 @@
   }
 }
 
+.party-night-bg--active:not(.party-night-bg--step7-blur) .party-night-bg__img {
+  filter: blur(0) brightness(1);
+}
+
+.party-night-bg--step7-blur .party-night-bg__img {
+  filter: blur(11px) brightness(0.9) saturate(0.88);
+  transition: filter 2.1s cubic-bezier(0.33, 0, 0.15, 1);
+}
+
 /* UX2 5→6: clip-path 원만 확대 (scale·DOM 스왑 없음 → 마스크 유지) */
 .ux2-halftone-expand__clip {
   will-change: clip-path;
@@ -991,6 +1000,186 @@
   }
 }
 
+/* UX1 6→7: step6 텍스트 퇴장 */
+.ux1-left-step6-fade-out {
+  opacity: 1;
+  animation-name: ux1-left-step6-fade-out;
+  animation-duration: 0.95s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  animation-fill-mode: forwards;
+}
+
+@keyframes ux1-left-step6-fade-out {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* UX1 6→7: 우측 음악 블롭 퇴장 */
+.ux1-left-step7-music-out {
+  animation-name: ux1-left-step7-music-out;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  animation-fill-mode: forwards;
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+
+@keyframes ux1-left-step7-music-out {
+  0% {
+    opacity: 1;
+    transform: translate(50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(50%, calc(-50% + 5%)) scale(0.82);
+  }
+}
+
+/* UX1 6→7: 사운드 등장 */
+.ux1-left-step7-sound-in {
+  opacity: 0;
+  animation-name: ux1-left-step7-sound-in;
+  animation-duration: 1.05s;
+  animation-timing-function: cubic-bezier(0.33, 0, 0.15, 1);
+  animation-fill-mode: forwards;
+  backface-visibility: hidden;
+  will-change: transform, opacity, filter;
+}
+
+.left-ambient__voice--settled {
+  opacity: 0.92;
+  transform: translateY(-50%);
+}
+
+.left-step7-sound-slot.left-ambient__voice--settled,
+.left-step7-sound-slot.ux1-left-step7-sound-in {
+  transform: translate(50%, -50%);
+}
+
+@keyframes ux1-left-step7-sound-in {
+  0% {
+    opacity: 0;
+    transform: translate(50%, calc(-50% + 5%)) scale(0.82);
+    filter: blur(8px);
+  }
+  100% {
+    opacity: 0.92;
+    transform: translate(50%, -50%) scale(1);
+    filter: blur(0);
+  }
+}
+
+/* UX1 7단계: arc 아이콘 우→좌 스르륵 */
+.ux1-left-step7-icon-enter-rtl {
+  left: var(--orbit-end-left);
+  top: var(--orbit-end-top);
+  animation-name: ux1-left-step7-icon-enter-rtl;
+  animation-duration: 0.85s;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  animation-fill-mode: both;
+  backface-visibility: hidden;
+  will-change: transform, opacity, filter;
+}
+
+@keyframes ux1-left-step7-icon-enter-rtl {
+  0% {
+    transform: translate(calc(-50% + 14%), calc(-50% + 2%)) scale(0.9);
+    opacity: 0;
+    filter: blur(8px);
+  }
+  40% {
+    opacity: 0.78;
+    filter: blur(3px);
+  }
+  72% {
+    transform: translate(-50%, -50%) scale(1.025);
+    opacity: 1;
+    filter: blur(0);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: var(--orbit-end-opacity, 1);
+    filter: blur(0);
+  }
+}
+
+/* UX1 6→7: 우측 사운드 */
+.ux1-right-step7-sound-in {
+  opacity: 0;
+  animation-name: ux1-right-step7-sound-in;
+  animation-timing-function: cubic-bezier(0.33, 0, 0.15, 1);
+  animation-fill-mode: forwards;
+  backface-visibility: hidden;
+  will-change: transform, opacity, filter;
+}
+
+.ux1-right-step7-sound-in--settled {
+  opacity: 1;
+}
+
+@keyframes ux1-right-step7-sound-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.82);
+    filter: blur(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+}
+
+/* UX1 6→7: 우측 텍스트 */
+.ux1-right-step7-text-in {
+  opacity: 0;
+  animation-name: ux1-right-step7-text-in;
+  animation-timing-function: cubic-bezier(0.33, 0, 0.15, 1);
+  animation-fill-mode: forwards;
+  backface-visibility: hidden;
+  will-change: transform, opacity, filter;
+}
+
+.ux1-right-step7-text-in--settled {
+  opacity: 1;
+}
+
+@keyframes ux1-right-step7-text-in {
+  0% {
+    opacity: 0;
+    transform: translateX(-6%);
+    filter: blur(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+    filter: blur(0);
+  }
+}
+
+/* UX1 6→7: 우측 음악 아이콘 퇴장 */
+.ux1-right-step7-music-out {
+  animation-name: ux1-right-step7-music-out;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  animation-fill-mode: forwards;
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+
+@keyframes ux1-right-step7-music-out {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, calc(-50% + 5%)) scale(0.82);
+  }
+}
+
 .icon-orbit-trail {
   pointer-events: none;
 }
@@ -1214,6 +1403,18 @@ body {
   top: 50%;
   z-index: 8;
   transform: translateY(-50%);
+  opacity: 0.92;
+}
+
+/** UX1 7단계 — 3시 사운드 (VoiceMusicSlot 8.55% 대칭) */
+.left-step7-sound-slot {
+  position: absolute;
+  right: 8.55%;
+  top: 50%;
+  z-index: 8;
+  width: 7.37cqw;
+  height: 7.37cqw;
+  transform: translate(50%, -50%);
   opacity: 0.92;
 }
 

@@ -5,7 +5,7 @@ const FOOTER_TEXT_CLASS =
 
 /** 6번 Party Night — 5단계 footer와 동일 위치·크기 */
 export default function PartyNightScreen({ step }) {
-  const show = step >= 6;
+  const show = step === 6;
 
   const titleStyle = {
     backgroundImage: "linear-gradient(180deg, #4600b7 0%, #020004 100%)",
