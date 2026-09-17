@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import DualBlobStage from "@/ux1/components/DualBlobStage";
 import ScreenNav from "@/ux1/components/ScreenNav";
+import { UX1_STEP4_DWELL_MS } from "@/ux1/lib/leftOrbitStep4";
 
 const DEFAULT_STEP_MS = 3000;
 const GATHER_MS = 1000;
@@ -10,7 +11,7 @@ const STEP_DWELL_MS = {
   1: DEFAULT_STEP_MS,
   2: DEFAULT_STEP_MS,
   3: DEFAULT_STEP_MS,
-  4: 3200,
+  4: UX1_STEP4_DWELL_MS,
   5: 5800,
 };
 

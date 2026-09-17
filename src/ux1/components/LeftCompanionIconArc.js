@@ -217,7 +217,8 @@ export default function LeftCompanionIconArc({ step = 1 }) {
         return (
           <div
             key={icon.id}
-            className={`absolute -translate-x-1/2 -translate-y-1/2 will-change-[left,top,transform,opacity,filter] ${motion}`}
+            /** 센터링은 모션 CSS의 transform: translate(-50%,-50%)가 담당 */
+            className={`absolute will-change-[left,top,transform,opacity,filter] ${motion}`}
             style={{
               width: `${icon.sizeCqw}cqw`,
               height: `${icon.sizeCqw}cqw`,

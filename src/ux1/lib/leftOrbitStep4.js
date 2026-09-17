@@ -8,16 +8,18 @@ const F = 1879.5;
 
 const ARC_CX = 50;
 const ARC_CY = 50;
-const ARC_R = 44;
+const ARC_R = 45;
+/** 4단계 슬롯 — 실기 기준 원 안쪽 링 (rim 경로보다 안쪽) */
+const SLOT_R = 34;
 
 function sizeCqw(px) {
   return (px / F) * 100;
 }
 
-function arcPosition(degFromNorth) {
+function arcPosition(degFromNorth, radius = ARC_R) {
   const rad = (degFromNorth * Math.PI) / 180;
-  const left = ARC_CX + ARC_R * Math.sin(rad);
-  const top = ARC_CY - ARC_R * Math.cos(rad);
+  const left = ARC_CX + radius * Math.sin(rad);
+  const top = ARC_CY - radius * Math.cos(rad);
   return {
     left: `${left}%`,
     top: `${top}%`,
@@ -87,12 +89,13 @@ export const LEFT_ORBIT_STEP5_STAY_IDS = ["moon", "calendar", "cocktail"];
 /** 우측부터 빠져나감 (people → burger) */
 export const LEFT_ORBIT_STEP5_EXIT_IDS = ["people", "burger"];
 
+/** 실기 사진 기준 — 9시(달)에서 4시(사람)까지 균일한 링 정렬 */
 const STEP4_SLOT_DEG = {
-  moon: 218,
-  calendar: 192,
-  cocktail: 166,
-  burger: 140,
-  people: 114,
+  moon: 262,
+  calendar: 235,
+  cocktail: 202,
+  burger: 162,
+  people: 123,
 };
 
 /** 5단계: 우측 rim 세로 (위 cocktail → calendar → moon) — Figma ref, 와인(3시) 피함 */
@@ -103,7 +106,7 @@ const STEP5_RELOCATE_DEG = {
 };
 
 /** 하단 arc 좌측 rim — 좌→우로 행렬처럼 순차 진입 */
-const ENTRY_RIM_DEG = 252;
+const ENTRY_RIM_DEG = 290;
 /** 슬롯 간격(°). STEP4_SLOT_DEG 기준 */
 const SLOT_SPACING_DEG = 26;
 /** 공통 각속도 — 같은 속도로 아크를 따라가며 행렬이 이어짐 */
@@ -114,6 +117,21 @@ export const LEFT_ORBIT_ARC_ENTRY = arcPosition(ENTRY_RIM_DEG);
 export const LEFT_ORBIT_STEP4_ENTRY_STAGGER_S =
   SLOT_SPACING_DEG / ENTRY_DEG_PER_S;
 export const LEFT_ORBIT_STEP4_ENTRY_BASE_S = 0.2;
+/** globals.css ux1-left-icon-arc-enter duration과 동일 */
+export const UX1_LEFT_ORBIT_STEP4_ENTER_ANIM_S = 0.9;
+/** globals.css right-step4-music-icon-in duration과 동일 */
+export const UX1_STEP4_MUSIC_ENTER_ANIM_S = 1.45;
+/** 좌 arc 5개 진입 완료 후 우 음악·Let's Party 동시 등장 */
+export const UX1_STEP4_RIGHT_REVEAL_DELAY_S =
+  LEFT_ORBIT_STEP4_ENTRY_BASE_S +
+  4 * LEFT_ORBIT_STEP4_ENTRY_STAGGER_S +
+  UX1_LEFT_ORBIT_STEP4_ENTER_ANIM_S;
+/** 음악·텍스트 완전 등장 후 4→5 전환까지 추가 체류 */
+export const UX1_STEP4_POST_REVEAL_BUFFER_MS = 3200;
+export const UX1_STEP4_DWELL_MS = Math.round(
+  (UX1_STEP4_RIGHT_REVEAL_DELAY_S + UX1_STEP4_MUSIC_ENTER_ANIM_S) * 1000 +
+    UX1_STEP4_POST_REVEAL_BUFFER_MS,
+);
 
 /** 좌→우 (entry에 가까운 순) */
 const ENTRY_ORDER = ["moon", "calendar", "cocktail", "burger", "people"];
@@ -154,7 +172,7 @@ const ICON_DEFS = [
 ];
 
 function enrichIcon(def) {
-  const end = arcPosition(def.deg);
+  const end = arcPosition(def.deg, SLOT_R);
   const entry = entryRimPath(ENTRY_RIM_DEG, def.deg);
   const arcDeg = Math.abs(ENTRY_RIM_DEG - def.deg);
   const orderIndex = ENTRY_ORDER.indexOf(def.id);

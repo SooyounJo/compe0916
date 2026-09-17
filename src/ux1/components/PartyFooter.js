@@ -1,4 +1,5 @@
 import BlurFade from "./BlurFade";
+import { UX1_STEP4_RIGHT_REVEAL_DELAY_S } from "../lib/leftOrbitStep4";
 
 export default function PartyFooter({ step }) {
   const showParty = step === 4;
@@ -7,25 +8,23 @@ export default function PartyFooter({ step }) {
   const baseClass =
     "font-doto absolute bottom-[11%] left-1/2 z-30 w-full -translate-x-1/2 px-4 text-center text-[4.65cqw] font-black leading-none tracking-[-0.04em]";
 
-  const textStyle = {
-    backgroundImage:
-      "linear-gradient(90deg, #75002d 0%, #383645 55%, #22166d 100%)",
-    WebkitBackgroundClip: "text",
-    backgroundClip: "text",
-    color: "transparent",
-    textShadow: "0 4px 73px rgba(255,255,255,0.45)",
-  };
-
   return (
     <>
       <BlurFade
         show={showParty}
-        className={`${baseClass} party-footer-party-in`}
-        style={textStyle}
+        className={`${baseClass} party-footer-party-in party-footer-text party-footer-text-shimmer`}
+        style={{
+          transitionDelay: showParty
+            ? `${UX1_STEP4_RIGHT_REVEAL_DELAY_S}s, ${UX1_STEP4_RIGHT_REVEAL_DELAY_S}s`
+            : undefined,
+        }}
       >
         Let&apos;s Party!
       </BlurFade>
-      <BlurFade show={showWine} className={baseClass} style={textStyle}>
+      <BlurFade
+        show={showWine}
+        className={`${baseClass} party-footer-text`}
+      >
         wine, friends...
       </BlurFade>
     </>

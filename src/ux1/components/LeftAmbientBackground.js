@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { useEffect, useRef } from "react";
 import LeftCompanionAgentLayer from "./LeftCompanionAgentLayer";
 import LeftCompanionIconArc from "./LeftCompanionIconArc";
 import LeftCompanionStep1 from "./LeftCompanionStep1";
@@ -8,14 +8,10 @@ import LeftCompanionStep6 from "./LeftCompanionStep6";
 import LeftVoiceWineMorph from "./LeftVoiceWineMorph";
 import BlurFade from "./BlurFade";
 
-const LEFT_BLOB_BG_STEP1 = "/figma/left-blob/step1-bg.png";
-const LEFT_BLOB_BG_FROM_STEP2 = "/figma/left-blob/ambient-bg.png";
-
-const BG_CROSSFADE =
-  "transition-opacity duration-[1200ms] ease-[cubic-bezier(0.33,0,0.15,1)]";
+const LEFT_AMBIENT_BG_VIDEO = `/video/${encodeURIComponent("백그라운드 엠비언트 영상.mp4")}`;
 
 /**
- * 좌측 원 — 참조 이미지 배경 (+ 2단계~ 보이스)
+ * 좌측 원 — 비디오 배경 (+ 2단계~ 보이스)
  */
 export default function LeftAmbientBackground({
   step = 1,
@@ -26,31 +22,49 @@ export default function LeftAmbientBackground({
   const voiceActive =
     (step >= 2 && step <= 4) && !(dotsGathering && step === 3);
 
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return undefined;
+
+    const ensurePlay = () => {
+      video.playbackRate = 1;
+      void video.play().catch(() => {});
+    };
+
+    ensurePlay();
+    video.addEventListener("loadeddata", ensurePlay);
+    video.addEventListener("canplay", ensurePlay);
+
+    return () => {
+      video.removeEventListener("loadeddata", ensurePlay);
+      video.removeEventListener("canplay", ensurePlay);
+    };
+  }, []);
+
   return (
     <div
       className="left-ambient absolute inset-0 overflow-hidden rounded-full"
       data-step={step}
     >
-      <Image
-        src={LEFT_BLOB_BG_FROM_STEP2}
-        alt=""
-        fill
-        className={`left-ambient__photo object-cover object-center ${BG_CROSSFADE} ${
-          step >= 2 ? "opacity-100" : "opacity-0"
-        }`}
-        sizes="(max-width: 900px) 41vmin, 520px"
-        priority={step >= 2}
-      />
-      <Image
-        src={LEFT_BLOB_BG_STEP1}
-        alt=""
-        fill
-        className={`left-ambient__photo object-cover object-center ${BG_CROSSFADE} ${
-          step === 1 ? "opacity-100" : "opacity-0"
-        }`}
-        sizes="(max-width: 900px) 41vmin, 520px"
-        priority={step === 1}
-      />
+      <video
+        ref={videoRef}
+        muted
+        loop
+        playsInline
+        autoPlay
+        preload="auto"
+        className="left-ambient__photo absolute inset-0 h-full w-full object-cover object-center"
+        style={{
+          transform: step === 4 ? "scale(1.428)" : "scale(1.4)",
+          filter: step === 4 ? "blur(3px)" : "none",
+          transition: "transform 2.4s cubic-bezier(0.33, 0, 0.15, 1), filter 2.4s cubic-bezier(0.33, 0, 0.15, 1)",
+        }}
+        aria-hidden
+      >
+        <source src={LEFT_AMBIENT_BG_VIDEO} type="video/mp4" />
+      </video>
 
       <BlurFade show={step === 1}>
         <LeftCompanionStep1 show />

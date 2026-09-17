@@ -11,6 +11,8 @@ import PartyNightScreen from "./PartyNightScreen";
 import PartyNightBackground from "./PartyNightBackground";
 import DotGridAmbient from "./DotGridAmbient";
 import WeatherBackground from "./WeatherBackground";
+import RightStep4MusicIcon from "./RightStep4MusicIcon";
+import { UX1_STEP4_RIGHT_REVEAL_DELAY_S } from "../lib/leftOrbitStep4";
 
 const T = "duration-1000 ease-in-out transition-all";
 /** 3→4: gather(3末) → 4에서 블롭·닷 함께 축소 */
@@ -105,6 +107,16 @@ export default function CircleUI({
       <WeatherFace show={step <= 1} />
 
       <VoiceMusicSlot step={step} dotsGathering={dotsGathering} />
+
+      {dualRight && step === 4 ? (
+        <div
+          className="right-step4-music-icon"
+          style={{ animationDelay: `${UX1_STEP4_RIGHT_REVEAL_DELAY_S}s` }}
+          aria-hidden
+        >
+          <RightStep4MusicIcon />
+        </div>
+      ) : null}
 
       {/* 5~6 궤도·와인 — Figma cqw(원 전체), compact(0.46) 밖 */}
       <IconOrbitCarousel step={step} />
