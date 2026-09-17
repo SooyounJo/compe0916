@@ -6,18 +6,25 @@ import RightStep4MusicIcon from "./RightStep4MusicIcon";
 import { LEFT_ORBIT_STEP7_ARC_ICONS } from "../lib/leftOrbitStep7";
 import {
   LEFT_ORBIT_STEP4_ENTRY_BASE_S,
-  UX1_LEFT_ORBIT_STEP4_ENTER_ANIM_S,
+  LEFT_ORBIT_STEP4_ENTRY_STAGGER_S,
+  UX1_STEP4_EXIT_ANIM_S,
 } from "../lib/leftOrbitStep4";
+import {
+  LEFT_ORBIT_STEP7_EXIT_ORDER,
+  UX1_STEP7_TO8_LEFT_EXIT_BASE_S,
+} from "../lib/rightOrbitStep8";
 
-/** 7단계 좌 arc — 4단계와 동일 enter-arc 모션·stagger (우→좌 순) */
+/** 7단계 좌 arc — 4단계 enter / 7→8 LTR exit */
 export default function LeftCompanionIconArcStep7({
   step = 1,
   arcIconsVisible = false,
   entering = false,
 }) {
   const [arcSettled, setArcSettled] = useState(false);
+  const [exitingTo8, setExitingTo8] = useState(false);
   const [enterGen, setEnterGen] = useState(0);
   const enterDoneCountRef = useRef(0);
+  const exitDoneCountRef = useRef(0);
   const prevStepRef = useRef(null);
 
   useLayoutEffect(() => {
@@ -26,24 +33,51 @@ export default function LeftCompanionIconArcStep7({
 
     if (step === 7 && prevStep !== 7) {
       enterDoneCountRef.current = 0;
+      exitDoneCountRef.current = 0;
       setEnterGen((gen) => gen + 1);
       if (prevStep === 6) {
         setArcSettled(false);
       } else if (prevStep !== null) {
         setArcSettled(true);
       }
+      setExitingTo8(false);
       return undefined;
     }
 
-    if (step !== 7) {
+    if (step === 8 && prevStep === 7) {
+      exitDoneCountRef.current = 0;
+      setExitingTo8(true);
+      return undefined;
+    }
+
+    if (step === 8) {
+      setExitingTo8(false);
+    }
+
+    if (step !== 7 && step !== 8) {
       setArcSettled(false);
+      setExitingTo8(false);
     }
 
     return undefined;
   }, [step]);
 
+  useLayoutEffect(() => {
+    if (!exitingTo8) return undefined;
+    const timer = setTimeout(
+      () => setExitingTo8(false),
+      (UX1_STEP7_TO8_LEFT_EXIT_BASE_S +
+        5 * LEFT_ORBIT_STEP4_ENTRY_STAGGER_S +
+        UX1_STEP4_EXIT_ANIM_S) *
+        1000 +
+        100,
+    );
+    return () => clearTimeout(timer);
+  }, [exitingTo8]);
+
   const playEnter =
-    step === 7 && arcIconsVisible && entering && !arcSettled;
+    step === 7 && arcIconsVisible && entering && !arcSettled && !exitingTo8;
+  const playExit = step === 8 && exitingTo8;
 
   const onEnterEnd = useCallback(
     (e) => {
@@ -56,22 +90,38 @@ export default function LeftCompanionIconArcStep7({
     [step],
   );
 
-  if (step !== 7) return null;
-  if (!arcIconsVisible && entering) return null;
+  const onExitEnd = useCallback(
+    (e) => {
+      if (!exitingTo8 || e.animationName !== "ux1-left-icon-arc-exit") return;
+      exitDoneCountRef.current += 1;
+      if (exitDoneCountRef.current >= LEFT_ORBIT_STEP7_ARC_ICONS.length) {
+        setExitingTo8(false);
+      }
+    },
+    [exitingTo8],
+  );
+
+  if (step !== 7 && !exitingTo8) return null;
+  if (step === 7 && !arcIconsVisible && entering) return null;
 
   return (
     <div className="pointer-events-none absolute inset-0 z-[4]" aria-hidden>
       {LEFT_ORBIT_STEP7_ARC_ICONS.map((icon) => {
-        const motion =
-          arcSettled || !entering
+        const motion = playExit
+          ? "ux1-left-icon-orbit-exit-arc"
+          : arcSettled || !entering
             ? "left-icon-orbit-settled"
             : playEnter
               ? "ux1-left-icon-orbit-enter-arc"
               : "left-icon-orbit-settled";
 
-        const delayS = playEnter
-          ? LEFT_ORBIT_STEP4_ENTRY_BASE_S + icon.delayS
-          : 0;
+        const exitIndex = LEFT_ORBIT_STEP7_EXIT_ORDER.indexOf(icon.id);
+        const delayS = playExit
+          ? UX1_STEP7_TO8_LEFT_EXIT_BASE_S +
+            Math.max(0, exitIndex) * LEFT_ORBIT_STEP4_ENTRY_STAGGER_S
+          : playEnter
+            ? LEFT_ORBIT_STEP4_ENTRY_BASE_S + icon.delayS
+            : 0;
 
         const sizeStyle = icon.isMusic
           ? { width: `${icon.sizePct}%`, height: `${icon.sizePct}%` }
@@ -88,7 +138,9 @@ export default function LeftCompanionIconArcStep7({
               "--orbit-end-top": icon.top,
               "--orbit-end-opacity": icon.opacity ?? 1,
             }}
-            onAnimationEnd={playEnter ? onEnterEnd : undefined}
+            onAnimationEnd={
+              playEnter ? onEnterEnd : playExit ? onExitEnd : undefined
+            }
           >
             {icon.isMusic ? (
               <RightStep4MusicIcon />

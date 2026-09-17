@@ -1160,6 +1160,134 @@
   }
 }
 
+/* UX1 7: 우측 텍스트 퇴장 — 로딩 닷과 크로스페이드 */
+.ux1-right-step7-text-out {
+  opacity: 1;
+  animation-name: ux1-right-step7-text-out;
+  animation-timing-function: cubic-bezier(0.33, 0, 0.15, 1);
+  animation-fill-mode: forwards;
+  backface-visibility: hidden;
+  will-change: transform, opacity, filter;
+}
+
+@keyframes ux1-right-step7-text-out {
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(5%);
+    filter: blur(10px);
+  }
+}
+
+/* UX1 7: 우측 중앙 로딩 닷 */
+.ux1-right-step7-dots-in {
+  opacity: 0;
+  animation-name: ux1-right-step7-dots-in;
+  animation-timing-function: cubic-bezier(0.33, 0, 0.15, 1);
+  animation-fill-mode: forwards;
+  backface-visibility: hidden;
+  will-change: transform, opacity, filter;
+}
+
+.ux1-right-step7-dots-in--settled {
+  opacity: 1;
+}
+
+@keyframes ux1-right-step7-dots-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.86);
+    filter: blur(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+}
+
+.ux1-right-step7-dots-morph {
+  transition: opacity 0.4s ease;
+}
+
+/* UX1 7→8: 우측 사운드 퇴장 */
+.ux1-right-step7-sound-out {
+  animation-name: ux1-right-step7-sound-out;
+  animation-timing-function: cubic-bezier(0.33, 0, 0.15, 1);
+  animation-fill-mode: forwards;
+  backface-visibility: hidden;
+  will-change: transform, opacity, filter;
+}
+
+@keyframes ux1-right-step7-sound-out {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.82);
+    filter: blur(8px);
+  }
+}
+
+/* UX1 8: 우측 와인 — 스피커 슬롯 */
+.ux1-right-step8-wine-in {
+  opacity: 0;
+  animation-name: ux1-right-step8-wine-in;
+  animation-timing-function: cubic-bezier(0.33, 0, 0.15, 1);
+  animation-fill-mode: forwards;
+  backface-visibility: hidden;
+  will-change: transform, opacity, filter;
+}
+
+.ux1-right-step8-wine-in--settled {
+  opacity: 1;
+}
+
+@keyframes ux1-right-step8-wine-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.82);
+    filter: blur(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+}
+
+/* UX1 8: 좌측 텍스트 등장 */
+.ux1-left-step8-text-in {
+  opacity: 0;
+  animation-name: ux1-left-step8-text-in;
+  animation-timing-function: cubic-bezier(0.33, 0, 0.15, 1);
+  animation-fill-mode: forwards;
+  backface-visibility: hidden;
+  will-change: transform, opacity, filter;
+}
+
+.ux1-left-step8-text-in--settled {
+  opacity: 1;
+}
+
+@keyframes ux1-left-step8-text-in {
+  0% {
+    opacity: 0;
+    filter: blur(10px);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
 /* UX1 6→7: 우측 음악 아이콘 퇴장 */
 .ux1-right-step7-music-out {
   animation-name: ux1-right-step7-music-out;

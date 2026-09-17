@@ -161,7 +161,30 @@ export function step7LeftArcNearCompleteS() {
 export const UX1_STEP7_RIGHT_TEXT_IN_DELAY_S = step7LeftArcNearCompleteS();
 export const UX1_STEP7_RIGHT_TEXT_IN_ANIM_S = 1.15;
 
+/** 텍스트 등장 후 유지 시간 */
+export const UX1_STEP7_RIGHT_TEXT_HOLD_S = 2.6;
+
+export const UX1_STEP7_RIGHT_TEXT_OUT_DELAY_S =
+  UX1_STEP7_RIGHT_TEXT_IN_DELAY_S +
+  UX1_STEP7_RIGHT_TEXT_IN_ANIM_S +
+  UX1_STEP7_RIGHT_TEXT_HOLD_S;
+
+export const UX1_STEP7_RIGHT_TEXT_OUT_ANIM_S = 1.1;
+
+/** 텍스트 퇴장과 동시에 중앙 로딩 닷 등장 */
+export const UX1_STEP7_RIGHT_DOTS_IN_DELAY_S = UX1_STEP7_RIGHT_TEXT_OUT_DELAY_S;
+export const UX1_STEP7_RIGHT_DOTS_IN_ANIM_S = 1.2;
+
+export function step7RightSequenceTotalS() {
+  return UX1_STEP7_RIGHT_DOTS_IN_DELAY_S + UX1_STEP7_RIGHT_DOTS_IN_ANIM_S + 0.3;
+}
+
 export const UX1_STEP6_DWELL_MS = 7200;
+
+/** 7단계 전체 시퀀스(로딩 닷까지) 후 8로 넘어가기 전 체류 */
+export const UX1_STEP7_DWELL_MS = Math.round(
+  (step7RightSequenceTotalS() + 4.5) * 1000,
+);
 
 export const UX1_STEP7_SONG_LINES = [
   "A song for today's",

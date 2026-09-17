@@ -1,9 +1,8 @@
 const TEXT_SHADOW = "0 3.215px 7.394px rgba(40, 37, 57, 0.15)";
 
-/** Figma 50:148 — 2줄 시계 + 하단 닷 여백 (WeatherFace 대비 ~12% 축소) */
+/** Figma 50:148 — WeatherFace(20:3022) 상단 앵커와 동일 */
 const F = 1872;
-/** 실기 렌더 기준으로 살짝 더 내려 앵커 조정 */
-const STEP1_TOP = (432 / F) * 100;
+const STEP1_TOP = (481 / F) * 100;
 
 export default function LeftCompanionStep1({ show = true }) {
   if (!show) return null;
