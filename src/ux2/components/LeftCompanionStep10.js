@@ -1,7 +1,7 @@
 "use client";
 
-import Image from "next/image";
 import BlurFade from "@/ux2/components/BlurFade";
+import Ux2LeftCenterLoadingDots from "@/ux2/components/Ux2LeftCenterLoadingDots";
 import {
   pctLeft10,
   sizeCqwLeft10,
@@ -26,7 +26,7 @@ export default function LeftCompanionStep10({ show = false }) {
       className="pointer-events-none absolute inset-0 z-[6] overflow-hidden"
     >
       <div
-        className="absolute -translate-x-1/2 -translate-y-1/2"
+        className="absolute flex -translate-x-1/2 -translate-y-1/2 items-center justify-center"
         style={{
           left: `${pctLeft10(STEP10_LEFT_DOTS.centerX)}%`,
           top: `${pctLeft10(STEP10_LEFT_DOTS.centerY)}%`,
@@ -34,13 +34,7 @@ export default function LeftCompanionStep10({ show = false }) {
           height: `${sizeCqwLeft10(STEP10_LEFT_DOTS.height)}%`,
         }}
       >
-        <Image
-          src="/figma/left-orbit/step6-dots.svg"
-          alt=""
-          fill
-          className="object-contain"
-          sizes="20vw"
-        />
+        <Ux2LeftCenterLoadingDots />
       </div>
 
       <div

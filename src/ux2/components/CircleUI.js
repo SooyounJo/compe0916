@@ -59,17 +59,17 @@ export default function CircleUI({
 
   /** 1→2→3 같은 닷 DOM — BlurFade 제외 */
   const dotsPhase = step <= 1 ? 1 : step <= 3 ? step : 3;
-  const centerClusterGather = dotsGathering && step === 3;
-  const centerClusterExit = step >= 4;
-  /** 듀얼 우측: 2·3은 피드/UI만 — 중앙 닷은 3→4 gather 때만 */
+  const centerClusterGather = dotsGathering;
+  const centerClusterExit = step >= 4 && !dotsGathering;
+  /** 듀얼 우측: 3→4 gather·축소 동안만 중앙 닷/쉘 */
   const showCenterDots = dualRight
-    ? dotsGathering && step === 3
+    ? dotsGathering && step <= 4
     : step <= 4 || dotsGathering;
   const showCenterBlobShell = dualRight
-    ? dotsGathering && step === 3
+    ? dotsGathering && step <= 4
     : (step >= 2 && step <= 4) || dotsGathering;
   const shellLit = dualRight
-    ? dotsGathering && step === 3
+    ? dotsGathering && step <= 4
     : (step >= 3 && step <= 4) || dotsGathering;
   const centerDotsSpin = !dualRight;
   const dotsLayerVisible = step <= 4 || dotsGathering;
@@ -181,7 +181,7 @@ export default function CircleUI({
             className={step === 1 ? cardStyles.instagramCard1Glow : ""}
           />
           <Ux2VoiceIconAtSlot
-            show={step === 3}
+            show={step === 3 || (step === 4 && dotsGathering)}
             slotCenterX={RIGHT_SLOT_X}
             slotCenterY={RIGHT_SLOT_Y}
             iconSizeCqw={RIGHT_BLOB_CQW * 0.58}
@@ -194,11 +194,11 @@ export default function CircleUI({
       {dualRight ? <RightCompanionStep1To2 step={step} /> : null}
       {dualRight ? <RightCompanionStep4 show={step === 4} /> : null}
       {dualRight && step >= 4 && step <= 6 ? (
-        <RightCompanionStep5 show={step === 5} step={step} />
+        <RightCompanionStep5 show={step === 5 || step === 6} step={step} />
       ) : null}
       {dualRight ? (
         <RightCompanionStep6
-          show={step === 6 || step === 7 || step === 8}
+          show={step >= 6 && step <= 11}
           step={step}
         />
       ) : null}

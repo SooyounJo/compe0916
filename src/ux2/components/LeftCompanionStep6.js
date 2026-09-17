@@ -1,25 +1,24 @@
 "use client";
 
+import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import BlurFade from "@/ux2/components/BlurFade";
+import continuityStyles from "@/ux2/styles/ux2Step67Continuity.module.css";
+import Ux2LeftCenterLoadingDots from "@/ux2/components/Ux2LeftCenterLoadingDots";
 import {
   pctLeft6,
   sizeCqwLeft6,
   STEP6_LEFT_DOTS,
   STEP6_LEFT_MUSIC,
   STEP6_LEFT_ORBIT_A,
-  STEP6_LEFT_ORBIT_B,
   STEP6_LEFT_ORBIT_C,
 } from "@/ux2/lib/ux2Step6LeftLayout";
 import {
   pctLeft7,
   sizeCqwLeft7,
   STEP7_LEFT_MUSIC_BLOB,
+  UX2_STEP7_QR_BLOB_SRC,
 } from "@/ux2/lib/ux2Step7LeftLayout";
-import {
-  UX2_STEP8_COMPOSE_IN_BLOB_SCALE,
-  UX2_STEP8_COMPOSE_PURPLE,
-} from "@/ux2/lib/ux2Step8Icons";
 import Ux2Step7LeftBlobHandoff from "@/ux2/components/Ux2Step7LeftBlobHandoff";
 
 function OrbitIcon({
@@ -42,7 +41,13 @@ function OrbitIcon({
       }}
     >
       <div className="relative h-full w-full">
-        <Image src={blobSrc} alt="" fill className="object-contain" sizes="16vw" />
+        <Image
+          src={blobSrc}
+          alt=""
+          fill
+          className="object-contain drop-shadow-[0_0_20px_rgba(255,255,255,0.22)]"
+          sizes="16vw"
+        />
         {iconSrc ? (
           <Image
             src={iconSrc}
@@ -61,53 +66,85 @@ function OrbitIcon({
 /** Figma [8:142](https://www.figma.com/design/cXldlocGQQFUzuQBy7DTEn/-3-AI-Companion_2?node-id=8-142) */
 export default function LeftCompanionStep6({ show = false, step = 6 }) {
   const step7Plus = step >= 7;
-  const step8 = step === 8;
   const showCenterDots = step >= 6 && step <= 7;
-  const musicLayout = step7Plus ? STEP7_LEFT_MUSIC_BLOB : STEP6_LEFT_MUSIC;
-  const musicPct = step7Plus ? pctLeft7 : pctLeft6;
-  const musicSizeCqw = step7Plus ? sizeCqwLeft7 : sizeCqwLeft6;
+  const [persistVideo, setPersistVideo] = useState(step <= 7);
+
+  useEffect(() => {
+    if (step === 6) {
+      setPersistVideo(true);
+    }
+    if (step >= 8) {
+      setPersistVideo(false);
+    }
+  }, [step]);
+
+  const onStep7HandoffSettled = useCallback(() => {
+    setPersistVideo(false);
+  }, []);
+
+  const showSharedVideo =
+    persistVideo && (step === 6 || step === 7);
+  const videoLayout =
+    step >= 7 ? STEP7_LEFT_MUSIC_BLOB : STEP6_LEFT_MUSIC;
+  const videoPct = step >= 7 ? pctLeft7 : pctLeft6;
+  const videoSizeCqw = step >= 7 ? sizeCqwLeft7 : sizeCqwLeft6;
 
   return (
     <BlurFade
       show={show}
-      className="party-night-foreground pointer-events-none absolute inset-0 z-[6] overflow-hidden"
+      className={`party-night-foreground pointer-events-none absolute inset-0 z-[6] overflow-hidden ${
+        step >= 7 ? continuityStyles.rightContinuity : ""
+      }`}
     >
       {showCenterDots ? (
         <div
-          className="absolute left-1/2 -translate-x-1/2"
+          className="absolute left-1/2 flex -translate-x-1/2 items-center justify-center"
           style={{
             top: `${pctLeft6(STEP6_LEFT_DOTS.top)}%`,
             width: `${pctLeft6(STEP6_LEFT_DOTS.width)}%`,
             height: `${pctLeft6(STEP6_LEFT_DOTS.height)}%`,
           }}
         >
-          <Image
-            src="/figma/left-orbit/step6-dots.svg"
-            alt=""
-            fill
-            className="object-contain"
-            sizes="20vw"
-          />
+          <Ux2LeftCenterLoadingDots />
         </div>
       ) : null}
 
-      {step === 7 ? (
-        <Ux2Step7LeftBlobHandoff show={show} />
-      ) : (
+      {showSharedVideo ? (
         <OrbitIcon
-          layout={musicLayout}
+          layout={videoLayout}
           blobSrc="/figma/ux2/step4/video-blob.svg"
-          iconSrc={step8 ? UX2_STEP8_COMPOSE_PURPLE : null}
-          iconScale={UX2_STEP8_COMPOSE_IN_BLOB_SCALE}
-          pct={musicPct}
-          sizeCqw={musicSizeCqw}
+          iconSrc={null}
+          pct={videoPct}
+          sizeCqw={videoSizeCqw}
         />
-      )}
-      {!step7Plus ? (
-        <>
+      ) : null}
+
+      {step === 7 ? (
+        <Ux2Step7LeftBlobHandoff
+          show={show}
+          onSettled={onStep7HandoffSettled}
+        />
+      ) : null}
+
+      {step >= 8 && step <= 11 ? (
+        <OrbitIcon
+          layout={STEP7_LEFT_MUSIC_BLOB}
+          blobSrc={UX2_STEP7_QR_BLOB_SRC}
+          iconSrc={null}
+          pct={pctLeft7}
+          sizeCqw={sizeCqwLeft7}
+        />
+      ) : null}
+
+      {step === 6 || step === 7 ? (
+        <div
+          className={
+            step === 7 ? continuityStyles.orbit6FadeOut : undefined
+          }
+        >
           <OrbitIcon
             layout={STEP6_LEFT_ORBIT_A}
-            blobSrc="/figma/ux2/step4/gallery-blob.svg"
+            blobSrc={UX2_STEP7_QR_BLOB_SRC}
             iconSrc={null}
           />
           <OrbitIcon
@@ -115,12 +152,7 @@ export default function LeftCompanionStep6({ show = false, step = 6 }) {
             blobSrc="/figma/ux2/step4/edit-blob.svg"
             iconSrc={null}
           />
-          <OrbitIcon
-            layout={STEP6_LEFT_ORBIT_B}
-            blobSrc="/figma/ux2/step4/bookmark-blob.svg"
-            iconSrc={null}
-          />
-        </>
+        </div>
       ) : null}
     </BlurFade>
   );

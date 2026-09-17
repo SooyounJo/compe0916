@@ -8,6 +8,7 @@ import {
   shouldPlayLeftOrbitEnter,
 } from "@/ux2/lib/leftOrbitEnterLatch";
 import { HANDOFF_ANIM_S } from "@/ux2/lib/dualOrbitHandoff";
+import { ux2Step5LeftExitCompleteS } from "@/ux2/lib/ux2Step4To5CrossHandoff";
 import { ux2HandoffDelayS } from "@/ux2/lib/ux2HandoffDelays";
 import { ux2LeftHandoffStyleVars } from "@/ux2/lib/ux2LeftOrbitStep45Handoff";
 import { UX2_LEFT_ORBIT_STEP4_ICONS } from "@/ux2/lib/ux2LeftOrbitStep4";
@@ -22,7 +23,12 @@ const ARC_ENTER_CLASS = "left-icon-orbit-enter-arc";
 
 function iconMotionClass(step, arcSettled, playEnter, handoffPlaying, icon) {
   if (step === 5 && handoffPlaying) {
-    if (icon.handoff === "exit") return handoffStyles.exit;
+    if (icon.handoff === "crossRight") {
+      return `${handoffStyles.exit} ${handoffStyles.crossExit}`;
+    }
+    if (icon.handoff === "exit") {
+      return handoffStyles.exit;
+    }
     if (icon.handoff === "relocate") return handoffStyles.relocate;
     return "left-icon-orbit-settled";
   }
@@ -80,16 +86,6 @@ function Step4Glyph({ icon }) {
   );
 }
 
-function step5SettledIconsFromStep4() {
-  return UX2_LEFT_ORBIT_STEP4_ICONS.filter((icon) => icon.handoff === "relocate").map(
-    (icon) => ({
-      ...icon,
-      left: icon.handoffEndLeft,
-      top: icon.handoffEndTop,
-    }),
-  );
-}
-
 /** 4 arc 진입 + [6:28](https://www.figma.com/design/KB7I2ICmW14rFdscAVfKWf/Untitled?node-id=6-28) 4→5 handoff */
 function initialStep4EnterState(step) {
   if (step !== 4) {
@@ -108,7 +104,6 @@ export default function LeftCompanionIconArc({ step = 1 }) {
     setEnterState((s) => ({ ...s, arcSettled: v }));
 
   const [handoffPlaying, setHandoffPlaying] = useState(false);
-  const [handoffDone, setHandoffDone] = useState(false);
   const enterDoneCountRef = useRef(0);
   const prevStepRef = useRef(null);
 
@@ -125,22 +120,18 @@ export default function LeftCompanionIconArc({ step = 1 }) {
     if (step < 4) {
       setEnterState({ entering: false, arcSettled: false });
       setHandoffPlaying(false);
-      setHandoffDone(false);
     }
 
     if (step === 5 && prev === 4) {
       setHandoffPlaying(true);
-      setHandoffDone(false);
       const timer = setTimeout(() => {
         setHandoffPlaying(false);
-        setHandoffDone(true);
-      }, HANDOFF_ANIM_S * 1000 + 80);
+      }, ux2Step5LeftExitCompleteS() * 1000 + 80);
       return () => clearTimeout(timer);
     }
 
     if (step === 5 && prev !== 4) {
       setHandoffPlaying(false);
-      setHandoffDone(true);
     }
 
     return undefined;
@@ -167,30 +158,27 @@ export default function LeftCompanionIconArc({ step = 1 }) {
     [step],
   );
 
+  /** 5 정착: Figma 8:164는 우측 원 — 좌측은 카피만, arc 아이콘 없음 */
+  if (step === 5 && !handoffPlaying) {
+    return null;
+  }
   if (step !== 4 && step !== 5) return null;
 
   const iconsOnScreen =
-    step === 4
+    step === 4 || (step === 5 && handoffPlaying)
       ? UX2_LEFT_ORBIT_STEP4_ICONS
-      : step === 5 && handoffPlaying
-        ? UX2_LEFT_ORBIT_STEP4_ICONS
-        : step === 5 && handoffDone
-          ? step5SettledIconsFromStep4()
-          : [];
+      : [];
 
   return (
     <div className="pointer-events-none absolute inset-0 z-[6]" aria-hidden>
       {iconsOnScreen.map((icon) => {
-        const motion =
-          step === 5 && handoffDone
-            ? "left-icon-orbit-settled"
-            : iconMotionClass(
-                step,
-                arcSettled,
-                playEnter,
-                handoffPlaying,
-                icon,
-              );
+        const motion = iconMotionClass(
+          step,
+          arcSettled,
+          playEnter,
+          handoffPlaying,
+          icon,
+        );
         const delayS = handoffPlaying
           ? ux2HandoffDelayS(icon)
           : playEnter
@@ -198,15 +186,9 @@ export default function LeftCompanionIconArc({ step = 1 }) {
             : 0;
 
         const styleVars =
-          step === 5 && handoffDone
-            ? {
-                "--orbit-end-left": icon.left,
-                "--orbit-end-top": icon.top,
-                "--orbit-end-opacity": icon.opacity ?? 1,
-              }
-            : step === 5 && handoffPlaying
-              ? ux2LeftHandoffStyleVars(icon)
-              : orbitStyleVars(icon);
+          step === 5 && handoffPlaying
+            ? ux2LeftHandoffStyleVars(icon)
+            : orbitStyleVars(icon);
 
         return (
           <div

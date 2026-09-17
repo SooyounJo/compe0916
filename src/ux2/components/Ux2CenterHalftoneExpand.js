@@ -80,6 +80,7 @@ export default function Ux2CenterHalftoneExpand({ step = 0 }) {
       clearRingTimers();
       setRingPhase("idle");
       setBurst(false);
+      setStep6BgVisible(false);
     }
 
     if (step < 5) {
@@ -141,7 +142,7 @@ export default function Ux2CenterHalftoneExpand({ step = 0 }) {
 
   const basePhotoClass =
     step === 5 && !burst
-      ? "object-cover object-center ux2-halftone-expand__photo--base ux2-halftone-expand__photo--step5"
+      ? "object-cover object-[50%_42%] ux2-halftone-expand__photo--base ux2-halftone-expand__photo--step5"
       : "object-cover object-center ux2-halftone-expand__photo--base";
 
   return (

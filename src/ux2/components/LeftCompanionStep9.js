@@ -1,7 +1,7 @@
 "use client";
 
-import Image from "next/image";
 import BlurFade from "@/ux2/components/BlurFade";
+import Ux2LeftCenterLoadingDots from "@/ux2/components/Ux2LeftCenterLoadingDots";
 import {
   pctLeft9,
   sizeCqwLeft9,
@@ -18,7 +18,7 @@ const PROMPT_STYLE = {
   textShadow: "0 4px 73px rgba(255,255,255,0.8)",
 };
 
-/** Figma [50:506](https://www.figma.com/design/BeRQvUjf5ci89pXVH3bry5/Untitled?node-id=50-506) */
+/** Figma [50:506] — 9~11 좌 카피·닷 동일 유지 (한 BlurFade, 9 진입 시만 등장) */
 export default function LeftCompanionStep9({ show = false }) {
   return (
     <BlurFade
@@ -26,7 +26,7 @@ export default function LeftCompanionStep9({ show = false }) {
       className="pointer-events-none absolute inset-0 z-[6] overflow-hidden"
     >
       <div
-        className="absolute -translate-x-1/2 -translate-y-1/2"
+        className="absolute flex -translate-x-1/2 -translate-y-1/2 items-center justify-center"
         style={{
           left: `${pctLeft9(STEP9_LEFT_DOTS.centerX)}%`,
           top: `${pctLeft9(STEP9_LEFT_DOTS.centerY)}%`,
@@ -34,13 +34,7 @@ export default function LeftCompanionStep9({ show = false }) {
           height: `${sizeCqwLeft9(STEP9_LEFT_DOTS.height)}%`,
         }}
       >
-        <Image
-          src="/figma/left-orbit/step6-dots.svg"
-          alt=""
-          fill
-          className="object-contain"
-          sizes="20vw"
-        />
+        <Ux2LeftCenterLoadingDots />
       </div>
 
       <div

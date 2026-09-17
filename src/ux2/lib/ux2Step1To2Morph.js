@@ -43,10 +43,16 @@ export const BLOB_ORIGIN_PCT = {
   y: pct(STEP0_RIGHT_ROW.top + STEP0_RIGHT_ROW.height / 2),
 };
 
-/** 1단계 — 좌→우 순차 등장 (작은 상태에서 슬롯으로) */
-export const STEP1_CARD_INTRO_STAGGER_MS = 200;
-export const STEP1_CARD_INTRO_SHIFT_CQW = 28;
+/** 1단계 — 좌·중·우 글래스, 왼쪽(작음) → 슬롯 순차 등장 */
+export const STEP1_CARD_INTRO_STAGGER_MS = 260;
 export const STEP1_CARD_INTRO_SCALE = 0.34;
+
+/** 카드별 시작 오프셋(cqw) — 우측일수록 더 왼쪽 밖에서 진입 */
+export const STEP1_CARD_INTRO_SHIFT_CQW = {
+  left: 38,
+  center: 58,
+  right: 76,
+};
 
 export const STEP1_CARD_INTRO_RANK = {
   left: 0,

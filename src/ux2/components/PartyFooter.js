@@ -26,7 +26,7 @@ export default function PartyFooter({ step, dualRight = false }) {
         Let&apos;s Party!
       </BlurFade>
       <BlurFade show={showWine} className={baseClass} style={textStyle}>
-        wine, friends...
+        wine, friends
       </BlurFade>
     </>
   );

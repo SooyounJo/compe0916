@@ -1,11 +1,16 @@
-/** 우측 5 handoff — globals icon-orbit-enter-handoff 1.75s */
-export const UX2_STEP5_RIGHT_HANDOFF_S = 1.75;
+/** 우측 5 rise handoff 길이 */
+export const UX2_STEP5_RIGHT_HANDOFF_S = 1.05;
 
-/** UX2: 긴 대기(1s+) 제거 — 좌 이탈과 겹치되 바로 곡선 진입 */
+import {
+  ux2Step5CenterRingEnterDelayS,
+  ux2Step5RightRiseEnterDelayS,
+} from "@/ux2/lib/ux2Step4To5CrossHandoff";
+
+/** 우 — 좌 퇴장 완료 후 people → video */
 export const UX2_STEP5_RIGHT_ENTER = [
-  { id: "people", delayS: 0.1 },
-  { id: "video", delayS: 0.22 },
-  { id: "ring", delayS: 0.38 },
+  { id: "people", delayS: ux2Step5RightRiseEnterDelayS("people") },
+  { id: "video", delayS: ux2Step5RightRiseEnterDelayS("video") },
+  { id: "ring", delayS: ux2Step5CenterRingEnterDelayS() },
 ];
 
 export function ux2Step5RightEnterDelayS(id) {
@@ -13,13 +18,9 @@ export function ux2Step5RightEnterDelayS(id) {
   return row?.delayS ?? 0.6;
 }
 
-/** 중앙 할ft톤 링 — people·video handoff 끝난 뒤 확대 */
+/** 중앙 할ft톤 링 */
 export const UX2_STEP5_CENTER_RING_GROW_S = 1.15;
 
 export function ux2Step5CenterRingEnterDelayMs() {
-  const lastIconDelayS = Math.max(
-    ux2Step5RightEnterDelayS("people"),
-    ux2Step5RightEnterDelayS("video"),
-  );
-  return (lastIconDelayS + UX2_STEP5_RIGHT_HANDOFF_S) * 1000;
+  return ux2Step5RightEnterDelayS("ring") * 1000;
 }

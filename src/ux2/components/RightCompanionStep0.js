@@ -42,7 +42,7 @@ export default function RightCompanionStep0({ show = true }) {
           style={{ textShadow: TEXT_SHADOW }}
         >
           <p className="mb-0">{`I'd love to look at`}</p>
-          <p>more of our old photos.</p>
+          <p>more of our old photos</p>
         </div>
       </div>
     </BlurFade>

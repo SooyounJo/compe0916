@@ -32,7 +32,7 @@ export const STEP6_LEFT_MUSIC = {
   size: 275.75,
 };
 
-/** 8:150 */
+/** 8:393 / 7단계 QR — 8:150 슬롯 */
 export const STEP6_LEFT_ORBIT_A = {
   centerX: CX + 601.49,
   centerY: 1155 + 258.482 / 2,

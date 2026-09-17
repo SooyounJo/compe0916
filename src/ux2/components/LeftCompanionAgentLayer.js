@@ -1,4 +1,4 @@
-import { AgentDotsContinuity } from "@/components/AgentDots";
+import { AgentDotsContinuity } from "@/ux2/components/AgentDots";
 import { AgentBlobShell } from "@/components/AgentBlobCluster";
 
 const CENTER_CLUSTER_EASE =
@@ -13,8 +13,9 @@ export default function LeftCompanionAgentLayer({
   dotsGathering = false,
 }) {
   const dotsPhase = step <= 1 ? 1 : step <= 3 ? step : 3;
-  const centerClusterGather = dotsGathering && step === 3;
-  const centerClusterExit = step >= 4;
+  /** 3末 gather → 4初에도 유지, dotsGathering 해제 후 퇴장 */
+  const centerClusterGather = dotsGathering;
+  const centerClusterExit = step >= 4 && !dotsGathering;
   const showCenterBlobShell =
     (step >= 2 && step <= 4) || dotsGathering;
   const shellLit = (step >= 3 && step <= 4) || dotsGathering;

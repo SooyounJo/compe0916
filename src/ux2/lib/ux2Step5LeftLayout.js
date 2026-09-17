@@ -45,6 +45,17 @@ export const STEP5_LEFT_PROMPT = {
   top: STEP0_TEXT.top,
 };
 
+/** Figma 8:190 — 8:205 alwaysask (5단계 좌측 유일 촬영 블롭) */
+export const STEP5_LEFT_CAMERA = {
+  centerX: 1501 + 275.75 / 2,
+  centerY: 809 + 275.75 / 2,
+  size: 275.75,
+};
+
+export function sizeCqwLeft5(px) {
+  return (px / F_LEFT5) * 100;
+}
+
 export const STEP5_LEFT_ICONS = LEFT_STEP5_ICONS.map((icon) => {
   const withPath = withUx2IconEntryPath(icon);
   const inset = insetStep5IconTowardCenter(withPath.left, withPath.top);

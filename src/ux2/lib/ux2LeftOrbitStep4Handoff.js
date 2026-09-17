@@ -1,6 +1,7 @@
 import { leftExitRimAlongArc } from "@/ux2/lib/dualOrbitHandoffPath";
 import { F0 } from "@/ux2/lib/ux2Step0Layout";
 import { STEP5_LEFT_ICONS } from "@/ux2/lib/ux2Step5LeftLayout";
+import { UX2_CROSS_HANDOFF_IDS } from "@/ux2/lib/ux2Step4To5CrossHandoff";
 
 const F = F0;
 const CX = F / 2;
@@ -10,13 +11,12 @@ const STEP5_BY_ID = Object.fromEntries(
   STEP5_LEFT_ICONS.map((icon) => [icon.id, icon]),
 );
 
-/** Figma 4→5 — 우측으로 빠짐 */
-export const UX2_HANDOFF_EXIT_IDS = ["people", "gallery"];
+/** Figma 4→5 — gallery·edit만 소멸 (people·video → 우 8:164) */
+export const UX2_HANDOFF_EXIT_IDS = ["gallery", "edit"];
 
 /** 4 아이콘 id → 5단계 정착 id */
 export const UX2_HANDOFF_RELOCATE = {
   video: "music",
-  bookmark: "moon",
 };
 
 function parsePct(value) {
@@ -74,6 +74,14 @@ function relocateVars(fromLeft, fromTop, toLeft, toTop) {
 }
 
 export function enrichUx2Step4Handoff(icon) {
+  if (UX2_CROSS_HANDOFF_IDS.includes(icon.id)) {
+    return {
+      ...icon,
+      handoff: "crossRight",
+      ...exitVars(icon.left, icon.top),
+    };
+  }
+
   if (UX2_HANDOFF_EXIT_IDS.includes(icon.id)) {
     return {
       ...icon,

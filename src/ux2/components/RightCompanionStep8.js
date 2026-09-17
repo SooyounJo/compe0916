@@ -1,15 +1,15 @@
 "use client";
 
+import BlurFade from "@/ux2/components/BlurFade";
 import { pctRight8, STEP8_RIGHT_PROMPT } from "@/ux2/lib/ux2Step8RightLayout";
 
-/** 7→8: 우측 video 블롭은 RightCompanionStep6 유지, 8에서 카피만 */
+/** 7→8: 우측 QR 블롭은 RightCompanionStep6(7~11), 8에서 카피만 BlurFade 등장 */
 export default function RightCompanionStep8({ show = false }) {
-  if (!show) {
-    return null;
-  }
-
   return (
-    <div className="pointer-events-none absolute inset-0 z-[15] overflow-hidden">
+    <BlurFade
+      show={show}
+      className="pointer-events-none absolute inset-0 z-[15] overflow-hidden"
+    >
       <p
         className="font-doto absolute whitespace-nowrap text-[4.79cqw] font-black leading-none tracking-[-0.04em] text-white"
         style={{
@@ -20,6 +20,6 @@ export default function RightCompanionStep8({ show = false }) {
       >
         Easier saving
       </p>
-    </div>
+    </BlurFade>
   );
 }

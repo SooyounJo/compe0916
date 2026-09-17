@@ -5,6 +5,8 @@ import { UX2_LAST_STEP } from "@/ux2/lib/ux2FlowSteps";
 
 const DEFAULT_STEP_MS = 3000;
 const GATHER_MS = 1000;
+/** step 4 진입 후 cluster GONE(1.2s)과 맞춤 */
+const GATHER_RELEASE_MS = 1280;
 const LAST_STEP = UX2_LAST_STEP;
 
 const STEP_DWELL_MS = {
@@ -28,7 +30,7 @@ export default function DualBlobExperience() {
 
   const advanceFromStep3 = useCallback(() => {
     setActiveStep(4);
-    setTimeout(() => setDotsGathering(false), 700);
+    setTimeout(() => setDotsGathering(false), GATHER_RELEASE_MS);
   }, []);
 
   const handleSelectStep = useCallback(

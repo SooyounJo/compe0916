@@ -14,9 +14,26 @@
   will-change: left, top, width, height, filter, opacity, transform;
 }
 
-/* 1단계 — 좌→우 등장 (delay는 인라인) */
-.cardStep1Enter {
-  transition-duration: 1.05s, 1.05s, 1.05s, 1.05s, 0.95s, 0.95s, 0.95s, 1.08s;
+/* 1단계 — 왼쪽(작은 scale)에서 슬롯으로 튀어나옴 (--intro-shift, delay 인라인) */
+.cardStep1PopIn {
+  animation: ux2-step1-card-pop-in 1.12s cubic-bezier(0.22, 0.85, 0.28, 1) both;
+  transition: none;
+}
+
+@keyframes ux2-step1-card-pop-in {
+  0% {
+    transform: translateX(var(--intro-shift, -42cqw)) scale(0.34);
+    opacity: calc(var(--intro-opacity, 1) * 0.25);
+    filter: blur(8px);
+  }
+  55% {
+    filter: blur(2px);
+  }
+  100% {
+    transform: translateX(0) scale(1);
+    opacity: var(--intro-opacity, 1);
+    filter: blur(0);
+  }
 }
 
 /* 2단계 피드 — 캐러셀 슬롯 교체·1→2 펼침 */

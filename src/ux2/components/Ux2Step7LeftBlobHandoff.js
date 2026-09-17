@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import BlurFade from "@/ux2/components/BlurFade";
 import {
   pctLeft7,
   sizeCqwLeft7,
@@ -36,7 +35,10 @@ function BlobImage({ src }) {
 /**
  * 7단계 좌 — 상단 video · 하단 QR 유지 후 QR이 상단 슬롯으로 rise (0단계 handoff)
  */
-export default function Ux2Step7LeftBlobHandoff({ show = false }) {
+export default function Ux2Step7LeftBlobHandoff({
+  show = false,
+  onSettled,
+}) {
   const [phase, setPhase] = useState("idle");
   const [travelToSlot, setTravelToSlot] = useState(false);
 
@@ -51,16 +53,16 @@ export default function Ux2Step7LeftBlobHandoff({ show = false }) {
     setTravelToSlot(false);
 
     const handoffTimer = setTimeout(() => setPhase("handoff"), STEP7_LEFT_ICON_HOLD_MS);
-    const settledTimer = setTimeout(
-      () => setPhase("settled"),
-      STEP7_LEFT_ICON_HOLD_MS + STEP7_LEFT_ICON_HANDOFF_MS,
-    );
+    const settledTimer = setTimeout(() => {
+      setPhase("settled");
+      onSettled?.();
+    }, STEP7_LEFT_ICON_HOLD_MS + STEP7_LEFT_ICON_HANDOFF_MS);
 
     return () => {
       clearTimeout(handoffTimer);
       clearTimeout(settledTimer);
     };
-  }, [show]);
+  }, [show, onSettled]);
 
   useEffect(() => {
     if (phase !== "handoff") {
@@ -84,23 +86,12 @@ export default function Ux2Step7LeftBlobHandoff({ show = false }) {
     height: `${sizeCqwLeft7(STEP7_LEFT_MUSIC_BLOB.size)}%`,
   };
 
-  const showVideoAtSlot = phase === "hold" || phase === "handoff";
   const showQrAtOrigin = phase === "hold";
   const handoff = phase === "handoff";
   const showQrAtSlot = phase === "settled";
 
   return (
     <>
-      {showVideoAtSlot ? (
-        <BlurFade
-          show={phase === "hold"}
-          className="absolute z-[2] -translate-x-1/2 -translate-y-1/2"
-          style={slotStyle}
-        >
-          <BlobImage src="/figma/ux2/step4/video-blob.svg" />
-        </BlurFade>
-      ) : null}
-
       {showQrAtOrigin ? (
         <div
           className="absolute z-[3] -translate-x-1/2 -translate-y-1/2"

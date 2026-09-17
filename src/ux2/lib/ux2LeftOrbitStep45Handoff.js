@@ -1,3 +1,5 @@
+import { ux2Step4CrossExitStyleVars } from "@/ux2/lib/ux2Step4To5CrossHandoff";
+
 function parsePct(value) {
   return parseFloat(value);
 }
@@ -27,9 +29,18 @@ export function ux2LeftHandoffStyleVars(icon) {
     };
   }
 
+  if (icon.handoff === "crossRight") {
+    return {
+      "--orbit-end-left": icon.left,
+      "--orbit-end-top": icon.top,
+      "--orbit-end-opacity": icon.opacity ?? 1,
+      ...ux2Step4CrossExitStyleVars(icon.id),
+    };
+  }
+
   if (icon.handoff === "exit") {
-    const exitDx = icon.id === "people" ? "28cqw" : "24cqw";
-    const exitDy = icon.id === "people" ? "-26cqw" : "-22cqw";
+    const exitDx = "6cqw";
+    const exitDy = "-28cqw";
     return {
       "--orbit-end-left": icon.left,
       "--orbit-end-top": icon.top,

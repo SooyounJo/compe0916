@@ -1,5 +1,6 @@
 "use client";
 
+import BlurFade from "@/ux2/components/BlurFade";
 import { pctLeft8, STEP8_LEFT_PROMPT } from "@/ux2/lib/ux2Step8LeftLayout";
 
 const PROMPT_STYLE = {
@@ -11,14 +12,13 @@ const PROMPT_STYLE = {
   textShadow: "0 4px 73px rgba(255,255,255,0.8)",
 };
 
-/** 7→8: 아이콘은 LeftCompanionStep6 유지, 8에서 카피만 추가 (BlurFade 없음) */
+/** 7→8: 아이콘은 LeftCompanionStep6 유지, 8에서 카피만 BlurFade 등장 */
 export default function LeftCompanionStep8({ show = false }) {
-  if (!show) {
-    return null;
-  }
-
   return (
-    <div className="pointer-events-none absolute inset-0 z-[8] overflow-hidden">
+    <BlurFade
+      show={show}
+      className="pointer-events-none absolute inset-0 z-[8] overflow-hidden"
+    >
       <div
         className="font-doto absolute max-w-[56%] text-left text-[4.79cqw] font-black leading-[1.08] tracking-[-0.04em]"
         style={{
@@ -30,6 +30,6 @@ export default function LeftCompanionStep8({ show = false }) {
         <p className="mb-0">We need to change it</p>
         <p className="mb-0">easier to save</p>
       </div>
-    </div>
+    </BlurFade>
   );
 }

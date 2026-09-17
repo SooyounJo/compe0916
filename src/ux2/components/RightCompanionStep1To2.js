@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import BlurFade from "@/ux2/components/BlurFade";
 import { GLASS_CARD_GRADIENT, RIGHT_TEXT_GRADIENT, STEP2_TITLE_GRADIENT } from "@/ux2/lib/ux2Step1Layout";
 import {
@@ -11,7 +11,6 @@ import {
   STEP2_TITLE_BAND,
   feedSlotForContent,
   STEP1_CARD_INTRO_RANK,
-  STEP1_CARD_INTRO_SCALE,
   STEP1_CARD_INTRO_SHIFT_CQW,
   STEP1_CARD_INTRO_STAGGER_MS,
   step2SlotRect,
@@ -197,7 +196,7 @@ function MorphCard({
   step,
   morphToFeed,
   emergeFromBlob,
-  step1Intro,
+  step1PopDelayMs,
   heroVideoActive,
   carouselRotation,
   feedExitStage = -1,
@@ -215,36 +214,31 @@ function MorphCard({
   const exitLeft =
     feedExitStage >= 0 && feedExitStage >= slotRank && atFeed;
   const step1Layout = step === 1 && !morphToFeed && !emergeFromBlob;
-  const introRank = STEP1_CARD_INTRO_RANK[card.key] ?? 0;
-  const introActive = step1Layout && step1Intro;
-  const introSettle = step1Layout && !step1Intro;
+  const introShiftCqw = STEP1_CARD_INTRO_SHIFT_CQW[card.key] ?? 48;
+  const playStep1Pop = step1Layout;
 
   return (
     <div
       className={`${cardStyles.card} ${atFeed ? cardStyles.cardAtFeed : ""} ${
         emergeFromBlob ? cardStyles.cardBlurPeak : ""
       } ${exitLeft ? cardStyles.cardExitLeft : ""} ${
-        introSettle ? cardStyles.cardStep1Enter : ""
+        playStep1Pop ? cardStyles.cardStep1PopIn : ""
       }`}
       style={{
         left: `${emergeFromBlob ? BLOB_ORIGIN_PCT.x : rect.left}%`,
         top: `${emergeFromBlob ? BLOB_ORIGIN_PCT.y : rect.top}%`,
         width: emergeFromBlob ? "14.2cqw" : `${rect.width}%`,
         height: emergeFromBlob ? "14.2cqw" : `${rect.height}%`,
-        opacity: emergeFromBlob
-          ? 0.55
-          : introActive
-            ? rect.opacity * 0.45
-            : rect.opacity,
+        opacity: emergeFromBlob ? 0.55 : rect.opacity,
         borderRadius: `${rect.radiusCqw}cqw`,
         transform: emergeFromBlob
           ? "translate(-50%, -50%) scale(0.72)"
-          : introActive
-            ? `translateX(-${STEP1_CARD_INTRO_SHIFT_CQW}cqw) scale(${STEP1_CARD_INTRO_SCALE})`
+          : playStep1Pop
+            ? undefined
             : "translateX(0) scale(1)",
-        transitionDelay: introSettle
-          ? `${introRank * STEP1_CARD_INTRO_STAGGER_MS}ms`
-          : "0ms",
+        "--intro-shift": `-${introShiftCqw}cqw`,
+        "--intro-opacity": rect.opacity,
+        animationDelay: playStep1Pop ? `${step1PopDelayMs}ms` : undefined,
         zIndex: isHero ? 4 : 2,
       }}
     >
@@ -285,31 +279,30 @@ function MorphCard({
 
 /** Figma 18:427 → 1:897 — 글래스 3장이 블롭에서 펼쳐지며 피드 카드로 모프; 3에서 피드 좌측 퇴장 */
 export default function RightCompanionStep1To2({ step = 1 }) {
-  const visible = step === 1 || step === 2 || step === 3;
-  const uiStep = step === 3 ? 2 : step;
+  const [holdStep3Feed, setHoldStep3Feed] = useState(false);
+  const visible =
+    step === 1 || step === 2 || step === 3 || holdStep3Feed;
+  const uiStep =
+    step === 3 || (step === 4 && holdStep3Feed) ? 2 : step;
+  const uiFeedStep =
+    step === 3 || (step === 4 && holdStep3Feed) ? 3 : step;
   const [morphToFeed, setMorphToFeed] = useState(step === 2 || step === 3);
   const [emergeFromBlob, setEmergeFromBlob] = useState(false);
   const [heroVideoActive, setHeroVideoActive] = useState(false);
   const [carouselRotation, setCarouselRotation] = useState(step === 3 ? 2 : 0);
   const [feedExitStage, setFeedExitStage] = useState(-1);
   const [showStep3Overlay, setShowStep3Overlay] = useState(false);
-  const [step1Intro, setStep1Intro] = useState(true);
+  const [step1PopCycle, setStep1PopCycle] = useState(0);
 
-  useEffect(() => {
-    if (step !== 1) {
-      setStep1Intro(true);
-      return undefined;
+  useLayoutEffect(() => {
+    if (step === 1) {
+      setStep1PopCycle((c) => c + 1);
     }
-
-    setStep1Intro(true);
-    const introId = requestAnimationFrame(() => {
-      requestAnimationFrame(() => setStep1Intro(false));
-    });
-    return () => cancelAnimationFrame(introId);
   }, [step]);
 
   useEffect(() => {
     if (step === 3) {
+      setHoldStep3Feed(false);
       setMorphToFeed(true);
       setEmergeFromBlob(false);
       setHeroVideoActive(false);
@@ -332,6 +325,15 @@ export default function RightCompanionStep1To2({ step = 1 }) {
       };
     }
 
+    if (step === 4) {
+      setShowStep3Overlay(false);
+      setHoldStep3Feed(false);
+      setFeedExitStage(-1);
+      setMorphToFeed(false);
+      return undefined;
+    }
+
+    setHoldStep3Feed(false);
     setFeedExitStage(-1);
     setShowStep3Overlay(false);
 
@@ -399,19 +401,22 @@ export default function RightCompanionStep1To2({ step = 1 }) {
       <div className="absolute inset-0">
         {MORPH_CARDS.map((card) => (
           <MorphCard
-            key={card.key}
+            key={`${card.key}-${step1PopCycle}`}
             card={card}
             step={uiStep}
             morphToFeed={morphToFeed}
             emergeFromBlob={emergeFromBlob}
-            step1Intro={step1Intro}
+            step1PopDelayMs={
+              (STEP1_CARD_INTRO_RANK[card.key] ?? 0) *
+              STEP1_CARD_INTRO_STAGGER_MS
+            }
             heroVideoActive={
               card.key === "center" &&
               heroVideoActive &&
               carouselRotation === 0
             }
             carouselRotation={carouselRotation}
-            feedExitStage={step === 3 ? feedExitStage : -1}
+            feedExitStage={uiFeedStep === 3 ? feedExitStage : -1}
           />
         ))}
 
@@ -439,7 +444,7 @@ export default function RightCompanionStep1To2({ step = 1 }) {
         </BlurFade>
 
         <BlurFade
-          show={uiStep === 2 && morphToFeed}
+          show={uiStep === 2 && morphToFeed && step !== 4}
           className="pointer-events-none absolute inset-0"
         >
           <div
@@ -463,7 +468,9 @@ export default function RightCompanionStep1To2({ step = 1 }) {
         </BlurFade>
       </div>
 
-      <RightCompanionStep3Overlay show={step === 3 && showStep3Overlay} />
+      <RightCompanionStep3Overlay
+        show={step === 3 && showStep3Overlay}
+      />
     </BlurFade>
   );
 }

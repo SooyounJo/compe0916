@@ -1,0 +1,50 @@
+.root {
+  border-radius: inherit;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.wrap {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    ellipse 68% 112% at 88% 50%,
+    rgba(var(--ux2-edge-r), var(--ux2-edge-g), var(--ux2-edge-b), 0.78) 0%,
+    rgba(var(--ux2-edge-r), var(--ux2-edge-g), var(--ux2-edge-b), 0.42) 28%,
+    rgba(var(--ux2-edge-r), var(--ux2-edge-g), var(--ux2-edge-b), 0.2) 48%,
+    rgba(var(--ux2-edge-r), var(--ux2-edge-g), var(--ux2-edge-b), 0.08) 64%,
+    transparent 86%
+  );
+  box-shadow:
+    inset -32px 0 80px rgba(var(--ux2-edge-r), var(--ux2-edge-g), var(--ux2-edge-b), 0.52),
+    inset -14px 0 44px rgba(var(--ux2-edge-r), var(--ux2-edge-g), var(--ux2-edge-b), 0.38),
+    inset 0 0 72px rgba(var(--ux2-edge-r), var(--ux2-edge-g), var(--ux2-edge-b), 0.1);
+}
+
+.bloom {
+  position: absolute;
+  inset: -8% -28% -8% 42%;
+  border-radius: inherit;
+  background: radial-gradient(
+    ellipse 58% 98% at 92% 50%,
+    rgba(var(--ux2-edge-r), var(--ux2-edge-g), var(--ux2-edge-b), 0.65) 0%,
+    rgba(var(--ux2-edge-r), var(--ux2-edge-g), var(--ux2-edge-b), 0.22) 42%,
+    transparent 78%
+  );
+  filter: blur(14px);
+  opacity: 0.92;
+}
+
+.toneCbc495 {
+  --ux2-edge-r: 203;
+  --ux2-edge-g: 196;
+  --ux2-edge-b: 149;
+}
+
+.toneCaaedf {
+  --ux2-edge-r: 202;
+  --ux2-edge-g: 174;
+  --ux2-edge-b: 223;
+}

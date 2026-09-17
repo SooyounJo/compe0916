@@ -14,14 +14,13 @@ import LeftCompanionStep6 from "@/ux2/components/LeftCompanionStep6";
 import LeftCompanionStep7 from "@/ux2/components/LeftCompanionStep7";
 import LeftCompanionStep8 from "@/ux2/components/LeftCompanionStep8";
 import LeftCompanionStep9 from "@/ux2/components/LeftCompanionStep9";
-import LeftCompanionStep10 from "@/ux2/components/LeftCompanionStep10";
-import Ux2Step911LeftQrIcon from "@/ux2/components/Ux2Step911LeftQrIcon";
 import Ux2InstagramIconPersist from "@/ux2/components/Ux2InstagramIconPersist";
 import Ux2VoiceIconAtSlot from "@/ux2/components/Ux2VoiceIconAtSlot";
 import Ux2Step0IconMotion from "@/ux2/components/Ux2Step0IconMotion";
 import Ux2LeftAmbientVideo from "@/ux2/components/Ux2LeftAmbientVideo";
 import Ux2Step4IconPrefetch from "@/ux2/components/Ux2Step4IconPrefetch";
 import step0EdgeGlow from "@/ux2/styles/ux2LeftStep0EdgeGlow.module.css";
+import step7RightEdgeGlow from "@/ux2/styles/ux2LeftStep7RightEdgeGlow.module.css";
 import { UX2_LAST_STEP } from "@/ux2/lib/ux2FlowSteps";
 import {
   centerOf,
@@ -66,12 +65,12 @@ export default function LeftAmbientBackground({
   }, [step]);
 
   const showAgentLayer =
-    step === 3 ||
-    (dotsGathering && step === 3) ||
-    holdAgentExit;
+    step === 3 || (dotsGathering && step <= 4) || holdAgentExit;
   const leftVideoBg = step >= 1 && step <= UX2_LAST_STEP;
   /** 1~2 좌측 원 연보라 rim · 3+ off (0→1은 crossfade로 서서히) */
   const showLavenderEdge = step === 1 || step === 2;
+  const showStep7RightEdgeGold = step >= 7 && step <= 8;
+  const showStep9RightEdgeLilac = step >= 9 && step <= UX2_LAST_STEP;
 
   return (
     <div
@@ -107,6 +106,32 @@ export default function LeftAmbientBackground({
         aria-hidden
       />
 
+      <BlurFade
+        show={showStep7RightEdgeGold}
+        className={`${step7RightEdgeGlow.root} pointer-events-none absolute inset-0 z-[2]`}
+        aria-hidden={!showStep7RightEdgeGold}
+      >
+        <div
+          className={`${step7RightEdgeGlow.wrap} ${step7RightEdgeGlow.toneCbc495}`}
+          aria-hidden
+        >
+          <div className={step7RightEdgeGlow.bloom} aria-hidden />
+        </div>
+      </BlurFade>
+
+      <BlurFade
+        show={showStep9RightEdgeLilac}
+        className={`${step7RightEdgeGlow.root} pointer-events-none absolute inset-0 z-[2]`}
+        aria-hidden={!showStep9RightEdgeLilac}
+      >
+        <div
+          className={`${step7RightEdgeGlow.wrap} ${step7RightEdgeGlow.toneCaaedf}`}
+          aria-hidden
+        >
+          <div className={step7RightEdgeGlow.bloom} aria-hidden />
+        </div>
+      </BlurFade>
+
       <Ux2Step0IconMotion
         show={step === 0}
         slotCenterX={SEARCH_SLOT.x}
@@ -130,7 +155,7 @@ export default function LeftAmbientBackground({
         emphasized
       />
       <Ux2VoiceIconAtSlot
-        show={step === 3}
+        show={step === 3 || (step === 4 && dotsGathering)}
         slotCenterX={SEARCH_SLOT.x}
         slotCenterY={SEARCH_SLOT.y}
         iconSizeCqw={LEFT_BLOB_CQW * 0.58}
@@ -152,8 +177,8 @@ export default function LeftAmbientBackground({
       >
         {showAgentLayer ? (
           <LeftCompanionAgentLayer
-            step={holdAgentExit ? 4 : step}
-            dotsGathering={holdAgentExit ? false : dotsGathering}
+            step={step}
+            dotsGathering={dotsGathering}
           />
         ) : null}
       </BlurFade>
@@ -163,14 +188,12 @@ export default function LeftAmbientBackground({
       ) : null}
 
       <LeftCompanionStep6
-        show={step === 6 || step === 7 || step === 8}
+        show={step >= 6 && step <= 11}
         step={step}
       />
       <LeftCompanionStep7 show={step === 7} />
       <LeftCompanionStep8 show={step === 8} />
-      <Ux2Step911LeftQrIcon show={step >= 9 && step <= 11} />
-      <LeftCompanionStep9 show={step === 9} />
-      <LeftCompanionStep10 show={step === 10 || step === 11} />
+      <LeftCompanionStep9 show={step >= 9 && step <= 11} />
     </div>
   );
 }

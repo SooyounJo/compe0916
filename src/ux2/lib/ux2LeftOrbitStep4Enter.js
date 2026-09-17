@@ -1,9 +1,9 @@
 /** Figma 78:190 / 8:252 — rim arc 진입, 우→좌 순차 */
 export const UX2_STEP4_FOLLOW_ORDER = [
   "people",
-  "gallery",
-  "bookmark",
   "video",
+  "gallery",
+  "edit",
 ];
 
 /** globals left-icon-arc-enter 와 동일 */

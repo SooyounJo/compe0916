@@ -1,14 +1,17 @@
-/** UX2 4→5 — 짧은 스태거 (좌→우 흐름) */
-const UX2_HANDOFF_DELAY_S = {
+/** UX2 4→5 — 좌: 위쪽(people)부터 순차 상승 퇴장 */
+export const UX2_HANDOFF_DELAY_S = {
   people: 0,
-  gallery: 0.05,
-  edit: 0.04,
-  bookmark: 0.09,
-  video: 0.13,
+  edit: 0.08,
+  video: 0.16,
+  gallery: 0.22,
 };
 
 export function ux2HandoffDelayS(icon) {
-  if (icon.handoff === "exit" || icon.handoff === "relocate") {
+  if (
+    icon.handoff === "exit" ||
+    icon.handoff === "relocate" ||
+    icon.handoff === "crossRight"
+  ) {
     return UX2_HANDOFF_DELAY_S[icon.id] ?? 0;
   }
   return 0;

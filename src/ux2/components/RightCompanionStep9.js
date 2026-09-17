@@ -11,13 +11,8 @@ import {
   STEP9_RIGHT_CARD_TITLE,
   STEP9_RIGHT_HEART,
   STEP9_RIGHT_MEMORY_CARD,
-  STEP9_RIGHT_QR_BLOB,
   UX2_STEP9_MEMORY_CARD_PHOTO,
 } from "@/ux2/lib/ux2Step9RightLayout";
-import {
-  UX2_STEP9_QR_SCANNER_ICON_WHITE,
-  UX2_STEP9_QR_SCANNER_IN_BLOB_SCALE,
-} from "@/ux2/lib/ux2Step9Icons";
 import { UX2_STEP10_MEMORY_CARD_PHOTO } from "@/ux2/lib/ux2Step10RightLayout";
 import crossfadeStyles from "@/ux2/styles/ux2Step910PhotoCrossfade.module.css";
 
@@ -30,7 +25,6 @@ export default function RightCompanionStep9({
 }) {
   const atTenPlus = flowStep >= 10;
   const card = STEP9_RIGHT_MEMORY_CARD;
-  const qrSize = sizeCqwRight9(STEP9_RIGHT_QR_BLOB.size);
   const [sinkActive, setSinkActive] = useState(false);
   const [slideActive, setSlideActive] = useState(false);
 
@@ -69,39 +63,6 @@ export default function RightCompanionStep9({
   if (!show) {
     return null;
   }
-
-  const qrBlob = (
-    <div
-      className="absolute -translate-x-1/2 -translate-y-1/2"
-      style={{
-        left: `${pctRight9(STEP9_RIGHT_QR_BLOB.centerX)}%`,
-        top: `${pctRight9(STEP9_RIGHT_QR_BLOB.centerY)}%`,
-        width: `${qrSize}%`,
-        height: `${qrSize}%`,
-      }}
-    >
-      <div className="relative h-full w-full">
-        <Image
-          src="/figma/left-orbit/step6-music-blob.svg"
-          alt=""
-          fill
-          className="object-contain drop-shadow-[0_0_28px_rgba(255,255,255,0.35)]"
-          sizes="18vw"
-        />
-        <Image
-          src={UX2_STEP9_QR_SCANNER_ICON_WHITE}
-          alt=""
-          width={96}
-          height={96}
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 object-contain"
-          style={{
-            width: `${UX2_STEP9_QR_SCANNER_IN_BLOB_SCALE * 100}%`,
-            height: `${UX2_STEP9_QR_SCANNER_IN_BLOB_SCALE * 100}%`,
-          }}
-        />
-      </div>
-    </div>
-  );
 
   const cardCluster = (
     <>
@@ -209,7 +170,6 @@ export default function RightCompanionStep9({
 
   return (
     <div className="pointer-events-none absolute inset-0 z-[14] overflow-hidden">
-      {qrBlob}
       {cardSlideFromLeft ? (
         <div
           className={`absolute inset-0 ${enterStyles.cardGroup} ${
