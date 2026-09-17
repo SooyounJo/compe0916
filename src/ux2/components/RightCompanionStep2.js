@@ -10,7 +10,6 @@ import {
   SIDE,
 } from "@/ux2/lib/ux2Step2RightFeed";
 import { STEP2_TITLE_GRADIENT } from "@/ux2/lib/ux2Step1Layout";
-import { UX2_RIGHT_GLYPH_IMG_CLASS } from "@/ux2/lib/ux2RightIconFill";
 
 const TITLE_STYLE = {
   backgroundImage: STEP2_TITLE_GRADIENT,
@@ -44,7 +43,7 @@ function SideFeedCard({ imageSrc, style }) {
             alt=""
             width={31}
             height={8}
-            className={`ml-auto h-[0.41cqw] w-[1.65cqw] ${UX2_RIGHT_GLYPH_IMG_CLASS}`}
+            className="ml-auto h-[0.41cqw] w-[1.65cqw]"
           />
         </div>
         <div className="absolute bottom-[3.5%] right-[3.5%] flex items-center gap-[1.2cqw]">
@@ -53,14 +52,14 @@ function SideFeedCard({ imageSrc, style }) {
             alt=""
             width={64}
             height={64}
-            className={`h-[3.4cqw] w-[3.4cqw] ${UX2_RIGHT_GLYPH_IMG_CLASS}`}
+            className="h-[3.4cqw] w-[3.4cqw]"
           />
           <Image
             src="/figma/ux2/step2/52235.svg"
             alt=""
             width={49}
             height={49}
-            className={`h-[2.62cqw] w-[2.62cqw] ${UX2_RIGHT_GLYPH_IMG_CLASS}`}
+            className="h-[2.62cqw] w-[2.62cqw]"
           />
         </div>
       </div>
@@ -94,7 +93,7 @@ function HeroFeedCard() {
           alt=""
           width={38}
           height={10}
-          className={`ml-auto h-[0.5cqw] w-[2.02cqw] opacity-90 ${UX2_RIGHT_GLYPH_IMG_CLASS}`}
+          className="ml-auto h-[0.5cqw] w-[2.02cqw] opacity-90"
         />
       </div>
       <div className="absolute bottom-[2.4cqw] right-[2.4cqw] flex items-center gap-[1.6cqw]">
@@ -103,14 +102,14 @@ function HeroFeedCard() {
           alt=""
           width={78}
           height={78}
-          className={`h-[4.15cqw] w-[4.15cqw] ${UX2_RIGHT_GLYPH_IMG_CLASS}`}
+          className="h-[4.15cqw] w-[4.15cqw]"
         />
         <Image
           src="/figma/ux2/step2/eab56.svg"
           alt=""
           width={61}
           height={61}
-          className={`h-[3.24cqw] w-[3.24cqw] ${UX2_RIGHT_GLYPH_IMG_CLASS}`}
+          className="h-[3.24cqw] w-[3.24cqw]"
         />
       </div>
     </div>

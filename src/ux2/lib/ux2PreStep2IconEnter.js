@@ -1,10 +1,9 @@
-/** -2 — 좌 검색·인스타 → 우 검색·캘린더·갤러리 순차 opacity·blur */
+/** -2 — -3 검색 유지 → arc → 좌 검색 */
 export const UX2_PRE_STEP2_ICON_ORDER = [
-  "left-search",
-  "left-instagram",
   "right-search",
-  "right-calendar",
   "right-gallery",
+  "right-calendar",
+  "left-search",
 ];
 
 export const UX2_PRE_STEP2_ICON_BASE_S = 0.1;

@@ -28,6 +28,7 @@ const STEP6_BG_FADE_MS = 1800;
 export default function Ux2CenterHalftoneExpand({ step = 0 }) {
   const prevStepRef = useRef(step);
   const ringTimersRef = useRef([]);
+  const ringIntroKeyRef = useRef(null);
   const [burst, setBurst] = useState(false);
   const [step6BgVisible, setStep6BgVisible] = useState(false);
   const [ringPhase, setRingPhase] = useState("idle");
@@ -42,7 +43,11 @@ export default function Ux2CenterHalftoneExpand({ step = 0 }) {
     ringTimersRef.current = [];
   };
 
-  const scheduleRingIntro = () => {
+  const scheduleRingIntro = (introKey) => {
+    if (ringIntroKeyRef.current === introKey) {
+      return;
+    }
+    ringIntroKeyRef.current = introKey;
     clearRingTimers();
     setRingPhase("wait");
     const delayMs = ux2Step5CenterRingEnterDelayMs();
@@ -72,7 +77,7 @@ export default function Ux2CenterHalftoneExpand({ step = 0 }) {
     if (from4) {
       setBurst(false);
       setStep6BgVisible(false);
-      scheduleRingIntro();
+      scheduleRingIntro("4-5");
       return () => clearRingTimers();
     }
 
@@ -85,6 +90,7 @@ export default function Ux2CenterHalftoneExpand({ step = 0 }) {
 
     if (step < 5) {
       clearRingTimers();
+      ringIntroKeyRef.current = null;
       setRingPhase("idle");
       setBurst(false);
       setStep6BgVisible(false);
@@ -132,12 +138,8 @@ export default function Ux2CenterHalftoneExpand({ step = 0 }) {
 
   const showStep5Frame = step === 5 && !burst;
   let frameClass = "ux2-halftone-expand__ring-frame";
-  if (showStep5Frame) {
-    if (ringPhase === "grow") {
-      frameClass += " ux2-halftone-expand__ring-frame--step5-in";
-    } else if (ringPhase === "idle") {
-      frameClass += " ux2-halftone-expand__ring-frame--idle";
-    }
+  if (showStep5Frame && ringPhase === "idle") {
+    frameClass += " ux2-halftone-expand__ring-frame--idle";
   }
 
   const basePhotoClass =

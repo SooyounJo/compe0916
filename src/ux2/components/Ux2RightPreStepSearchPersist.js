@@ -6,14 +6,14 @@ import { ux2PreStep3SearchAtVoiceDelayS } from "@/ux2/lib/ux2PreStep3IconEnter";
 import { UX2_PRE_STEP3_RIGHT_SEARCH } from "@/ux2/lib/ux2PreStep3SearchBlobLayout";
 import { UX2_RIGHT_ICON_FILL } from "@/ux2/lib/ux2RightIconFill";
 
-/** -3 → -2 — 검색 블롭 연속 유지 (-3 등장 후 -2에서 settled) */
+/** -3 검색 등장 → -2에서 동일 DOM 유지(settled) → arc 블롭은 그 위 레이어 */
 export default function Ux2RightPreStepSearchPersist({ step = 0 }) {
   const [searchEnterKey, setSearchEnterKey] = useState(0);
   const [searchVisible, setSearchVisible] = useState(false);
   const prevStepRef = useRef(null);
 
-  const showLayer = step === -3 || step === -2;
-  const settled = step === -2;
+  const showLayer = step === -3 || step === -2 || step === -1;
+  const settled = step === -2 || step === -1;
 
   useEffect(() => {
     const prev = prevStepRef.current;
@@ -29,17 +29,28 @@ export default function Ux2RightPreStepSearchPersist({ step = 0 }) {
       return () => clearTimeout(timer);
     }
 
-    if (step === -2) {
-      if (prev === -3) {
-        setSearchVisible(true);
-      } else if (prev !== -2) {
-        setSearchEnterKey((k) => k + 1);
-        setSearchVisible(true);
-      }
+    if (step === -2 && (prev === -3 || prev === -2)) {
+      setSearchVisible(true);
       return undefined;
     }
 
-    if (step !== -3) {
+    if (step === -2 && prev !== -2) {
+      setSearchEnterKey((k) => k + 1);
+      setSearchVisible(true);
+      return undefined;
+    }
+
+    if (step === -1 && (prev === -2 || prev === -1)) {
+      setSearchVisible(true);
+      return undefined;
+    }
+
+    if (step === -1 && prev !== -1) {
+      setSearchVisible(true);
+      return undefined;
+    }
+
+    if (step >= 0 || step < -3) {
       setSearchVisible(false);
     }
 
@@ -51,7 +62,11 @@ export default function Ux2RightPreStepSearchPersist({ step = 0 }) {
   }
 
   return (
-    <div className="pointer-events-none absolute inset-0 z-[15] overflow-hidden">
+    <div
+      className={`pointer-events-none absolute inset-0 overflow-hidden ${
+        settled ? "z-[13]" : "z-[15]"
+      }`}
+    >
       <Ux2PreStep3SearchBlob
         show
         enterKey={searchEnterKey}
@@ -60,7 +75,7 @@ export default function Ux2RightPreStepSearchPersist({ step = 0 }) {
         centerY={UX2_PRE_STEP3_RIGHT_SEARCH.centerY}
         blobSizeCqw={UX2_PRE_STEP3_RIGHT_SEARCH.blobSizeCqw}
         toPct={UX2_PRE_STEP3_RIGHT_SEARCH.toPct}
-        immediateEnter={step === -3}
+        immediateEnter={step === -3 && !settled}
         iconFillColor={UX2_RIGHT_ICON_FILL}
       />
     </div>

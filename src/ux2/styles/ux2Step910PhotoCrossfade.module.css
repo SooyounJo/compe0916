@@ -20,16 +20,21 @@
 }
 
 .cardPhoto {
-  transition: opacity 1.35s cubic-bezier(0.33, 0, 0.15, 1);
-  will-change: opacity;
+  transition:
+    opacity 1.4s cubic-bezier(0.33, 0, 0.15, 1),
+    filter 1.4s cubic-bezier(0.33, 0, 0.15, 1);
+  will-change: opacity, filter;
 }
 
 .cardPhotoHidden {
   opacity: 0;
+  filter: blur(14px);
+  pointer-events: none;
 }
 
 .cardPhotoVisible {
   opacity: 1;
+  filter: blur(0);
 }
 
 .cardChrome {

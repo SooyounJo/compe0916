@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import Image from "next/image";
 import BlurFade from "@/ux2/components/BlurFade";
 import {
@@ -9,6 +9,8 @@ import {
   STEP4_RIGHT_VOICE,
 } from "@/ux2/lib/ux2Step4Layout";
 import { ux2Step4RightVoiceHideDelayS } from "@/ux2/lib/ux2Step45DualTiming";
+import { UX2_UX1_STEP4_RIGHT_REVEAL_DELAY_S } from "@/ux2/lib/ux2Ux1Step45Timing";
+import promptStyles from "@/ux2/styles/ux2Step4RightPrompt.module.css";
 
 const PROMPT_STYLE = {
   color: "#fff",
@@ -19,6 +21,20 @@ const PROMPT_STYLE = {
 export default function RightCompanionStep4({ show = false }) {
   const voiceSizePct = pctRight(STEP4_RIGHT_VOICE.size);
   const [showVoice, setShowVoice] = useState(true);
+  const [showPrompt, setShowPrompt] = useState(false);
+
+  useLayoutEffect(() => {
+    if (!show) {
+      setShowPrompt(false);
+      return undefined;
+    }
+    setShowPrompt(false);
+    const t = setTimeout(
+      () => setShowPrompt(true),
+      UX2_UX1_STEP4_RIGHT_REVEAL_DELAY_S * 1000,
+    );
+    return () => clearTimeout(t);
+  }, [show]);
 
   useEffect(() => {
     if (!show) {
@@ -58,17 +74,19 @@ export default function RightCompanionStep4({ show = false }) {
         </div>
       </BlurFade>
 
-      <div
-        className="absolute font-doto text-[4.8cqw] font-black leading-none tracking-[-0.02em]"
-        style={{
-          left: `${pctRight(STEP4_RIGHT_PROMPT.left)}%`,
-          top: `${pctRight(STEP4_RIGHT_PROMPT.top)}%`,
-          ...PROMPT_STYLE,
-        }}
-      >
-        <p className="mb-0 whitespace-nowrap">Save new memories</p>
-        <p className="whitespace-nowrap">with Friends</p>
-      </div>
+      {showPrompt ? (
+        <div
+          className={`${promptStyles.textReveal} pointer-events-none absolute font-doto text-[4.8cqw] font-black leading-none tracking-[-0.02em]`}
+          style={{
+            left: `${pctRight(STEP4_RIGHT_PROMPT.left)}%`,
+            top: `${pctRight(STEP4_RIGHT_PROMPT.top)}%`,
+            ...PROMPT_STYLE,
+          }}
+        >
+          <p className="mb-0 whitespace-nowrap">Save new memories</p>
+          <p className="whitespace-nowrap">with Friends</p>
+        </div>
+      ) : null}
     </BlurFade>
   );
 }

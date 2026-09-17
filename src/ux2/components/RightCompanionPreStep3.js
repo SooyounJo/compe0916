@@ -1,10 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import Image from "next/image";
 import BlurFade from "@/ux2/components/BlurFade";
 import { pctCircleRight } from "@/ux2/lib/ux2Step0Layout";
-import { ux2PreStep3SearchAtVoiceDelayS } from "@/ux2/lib/ux2PreStep3IconEnter";
+import {
+  ux2PreStep3RightTextEnterDelayS,
+  ux2PreStep3SearchAtVoiceDelayS,
+} from "@/ux2/lib/ux2PreStep3IconEnter";
 import {
   PRE_STEP_RIGHT_3_TEXT,
   PRE_STEP_RIGHT_3_VOICE,
@@ -16,6 +19,19 @@ const TEXT_SHADOW = "0 4px 73px rgba(255,255,255,0.8)";
 /** Figma [12:202](https://www.figma.com/design/cXldlocGQQFUzuQBy7DTEn/-3-AI-Companion_2?node-id=12-202) — 전경 */
 export default function RightCompanionPreStep3({ step = 0 }) {
   const [searchBlobVisible, setSearchBlobVisible] = useState(false);
+  const [showText, setShowText] = useState(false);
+
+  useLayoutEffect(() => {
+    if (step !== -3) {
+      setShowText(false);
+      return undefined;
+    }
+
+    setShowText(false);
+    const delayMs = ux2PreStep3RightTextEnterDelayS() * 1000;
+    const timer = setTimeout(() => setShowText(true), delayMs);
+    return () => clearTimeout(timer);
+  }, [step]);
 
   useEffect(() => {
     if (step !== -3) {
@@ -60,17 +76,19 @@ export default function RightCompanionPreStep3({ step = 0 }) {
         </div>
       ) : null}
 
-      <div
-        className="font-doto absolute max-w-[72%] text-left text-[4.79cqw] font-black leading-[1.08] tracking-[-0.02em] text-white"
-        style={{
-          left: `${pctCircleRight(PRE_STEP_RIGHT_3_TEXT.left)}%`,
-          top: `${pctCircleRight(PRE_STEP_RIGHT_3_TEXT.top)}%`,
-          textShadow: TEXT_SHADOW,
-        }}
-      >
-        <p className="mb-0 whitespace-pre">{`2022, Memories `}</p>
-        <p className="whitespace-pre">of the Seven Sisters</p>
-      </div>
+      {showText ? (
+        <div
+          className={`${styles.textReveal} font-doto absolute max-w-[72%] text-left text-[4.79cqw] font-black leading-[1.08] tracking-[-0.02em] text-white`}
+          style={{
+            left: `${pctCircleRight(PRE_STEP_RIGHT_3_TEXT.left)}%`,
+            top: `${pctCircleRight(PRE_STEP_RIGHT_3_TEXT.top)}%`,
+            textShadow: TEXT_SHADOW,
+          }}
+        >
+          <p className="mb-0 whitespace-pre">{`2022, Memories `}</p>
+          <p className="whitespace-pre">of the Seven Sisters</p>
+        </div>
+      ) : null}
     </BlurFade>
   );
 }

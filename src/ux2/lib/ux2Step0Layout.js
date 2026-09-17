@@ -5,6 +5,10 @@ export const F0 = 1879.5;
 export const STEP0_TEXT_HANDOFF_MS = 2000;
 export const STEP0_ICON_HANDOFF_MS = 1000;
 
+/** 듀얼 우측 — Ux2Step0IconMotion(opacity) settled 후 카피 */
+export const STEP0_RIGHT_TEXT_AFTER_ICON_MS =
+  STEP0_TEXT_HANDOFF_MS + STEP0_ICON_HANDOFF_MS;
+
 export const STEP0_TEXT = {
   left: 254,
   top: 832,

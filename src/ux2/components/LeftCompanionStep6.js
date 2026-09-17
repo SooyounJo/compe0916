@@ -11,14 +11,17 @@ import {
   STEP6_LEFT_DOTS,
   STEP6_LEFT_MUSIC,
   STEP6_LEFT_ORBIT_A,
-  STEP6_LEFT_ORBIT_C,
   STEP6_LEFT_VOICE,
 } from "@/ux2/lib/ux2Step6LeftLayout";
 import {
   UX2_UX1_STEP4_ENTER_ANIM_S,
   UX2_UX1_STEP4_ENTRY_BASE_S,
 } from "@/ux2/lib/ux2Ux1Step45Timing";
-import { ux2Step6LeftEnterDelayS } from "@/ux2/lib/ux2Step6LeftEnter";
+import {
+  ux2Step6LeftEnterDelayS,
+  ux2Step6LeftQrBlurEnterDelayS,
+} from "@/ux2/lib/ux2Step6LeftEnter";
+import qrBlurStyles from "@/ux2/styles/ux2Step6QrBlurIn.module.css";
 import {
   pctLeft7,
   sizeCqwLeft7,
@@ -119,6 +122,54 @@ function SettledOrbitSlot({ layout, pct = pctLeft6, sizeCqw = sizeCqwLeft6, chil
   );
 }
 
+/** 6단계 QR — 전경 페이드·video와 분리, 지연 후 blur·opacity */
+function Step6QrBlurSlot({ step, enterGen, layout, children }) {
+  const [showQr, setShowQr] = useState(false);
+  const [playReveal, setPlayReveal] = useState(false);
+  const size = sizeCqwLeft6(layout.size);
+
+  useLayoutEffect(() => {
+    if (step < 6) {
+      setShowQr(false);
+      setPlayReveal(false);
+      return undefined;
+    }
+    if (step > 6) {
+      setShowQr(true);
+      setPlayReveal(false);
+      return undefined;
+    }
+    setShowQr(false);
+    setPlayReveal(false);
+    const delayMs = ux2Step6LeftQrBlurEnterDelayS() * 1000;
+    const t = setTimeout(() => {
+      setShowQr(true);
+      setPlayReveal(true);
+    }, delayMs);
+    return () => clearTimeout(t);
+  }, [step, enterGen]);
+
+  if (!showQr) {
+    return null;
+  }
+
+  return (
+    <div
+      className={`absolute ${UX1_STEP6_SETTLED} ${
+        playReveal ? qrBlurStyles.reveal : ""
+      }`}
+      style={{
+        width: `${size}%`,
+        height: `${size}%`,
+        "--orbit-end-left": `${pctLeft6(layout.centerX)}%`,
+        "--orbit-end-top": `${pctLeft6(layout.centerY)}%`,
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
 export default function LeftCompanionStep6({ show = false, step = 6 }) {
   const showCenterDots = step >= 6 && step <= 7;
   const [persistVideo, setPersistVideo] = useState(step <= 7);
@@ -128,7 +179,7 @@ export default function LeftCompanionStep6({ show = false, step = 6 }) {
   const enterDoneRef = useRef(0);
   const prevStepRef = useRef(null);
 
-  const playStep6Enter = step === 6 && entering && !enterSettled;
+  const playStep6Enter = step === 6 && !enterSettled;
 
   useLayoutEffect(() => {
     const prev = prevStepRef.current;
@@ -159,7 +210,7 @@ export default function LeftCompanionStep6({ show = false, step = 6 }) {
       return;
     }
     enterDoneRef.current += 1;
-    if (enterDoneRef.current >= 4) {
+    if (enterDoneRef.current >= 2) {
       setEnterSettled(true);
       setEntering(false);
     }
@@ -186,6 +237,7 @@ export default function LeftCompanionStep6({ show = false, step = 6 }) {
   const videoSizeCqw = step >= 7 ? sizeCqwLeft7 : sizeCqwLeft6;
 
   return (
+    <>
     <BlurFade
       show={show}
       className={`party-night-foreground pointer-events-none absolute inset-0 z-[6] overflow-hidden ${
@@ -249,44 +301,27 @@ export default function LeftCompanionStep6({ show = false, step = 6 }) {
         </SettledOrbitSlot>
       ) : null}
 
-      {step === 6 || step === 7 ? (
-        <div
-          className={
-            step === 7 ? continuityStyles.orbit6FadeOut : undefined
-          }
-        >
-          <Step6EnterSlot
-            enterId="orbit_c"
-            playEnter={playStep6Enter}
-            enterGen={enterGen}
-            centerX={STEP6_LEFT_ORBIT_C.centerX}
-            centerY={STEP6_LEFT_ORBIT_C.centerY}
-            sizeCqw={STEP6_LEFT_ORBIT_C.size}
-            onAnimationEnd={playStep6Enter ? onStep6EnterEnd : undefined}
-          >
-            <OrbitIcon
-              layout={STEP6_LEFT_ORBIT_C}
-              blobSrc="/figma/ux2/step4/edit-blob.svg"
-              iconSrc={null}
-            />
-          </Step6EnterSlot>
-          <Step6EnterSlot
-            enterId="orbit_a"
-            playEnter={playStep6Enter}
-            enterGen={enterGen}
-            centerX={STEP6_LEFT_ORBIT_A.centerX}
-            centerY={STEP6_LEFT_ORBIT_A.centerY}
-            sizeCqw={STEP6_LEFT_ORBIT_A.size}
-            onAnimationEnd={playStep6Enter ? onStep6EnterEnd : undefined}
-          >
-            <OrbitIcon
-              layout={STEP6_LEFT_ORBIT_A}
-              blobSrc={UX2_STEP7_QR_BLOB_SRC}
-              iconSrc={null}
-            />
-          </Step6EnterSlot>
-        </div>
-      ) : null}
     </BlurFade>
+
+    {show && (step === 6 || step === 7) ? (
+      <div
+        className={`pointer-events-none absolute inset-0 z-[8] overflow-hidden ${
+          step === 7 ? continuityStyles.orbit6FadeOut : ""
+        }`}
+      >
+        <Step6QrBlurSlot
+          step={step}
+          enterGen={enterGen}
+          layout={STEP6_LEFT_ORBIT_A}
+        >
+          <OrbitIcon
+            layout={STEP6_LEFT_ORBIT_A}
+            blobSrc={UX2_STEP7_QR_BLOB_SRC}
+            iconSrc={null}
+          />
+        </Step6QrBlurSlot>
+      </div>
+    ) : null}
+    </>
   );
 }

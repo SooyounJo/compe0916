@@ -25,9 +25,9 @@ export const STEP6_LEFT_VOICE = {
   size: 211.482,
 };
 
-/** 8:153 — always ask / 뮤직 블롭 */
+/** 8:153 — video 블롭 (7·8 `STEP7_LEFT_MUSIC_BLOB`과 동일 — 6→7 점프 방지) */
 export const STEP6_LEFT_MUSIC = {
-  centerX: CX + 699.13,
+  centerX: F - (84 + 275.75 / 2),
   centerY: 809 + 275.75 / 2,
   size: 275.75,
 };

@@ -1,0 +1,15 @@
+.inPlaceReveal {
+  animation: ux2Step1LeftTextIn 0.88s cubic-bezier(0.33, 0, 0.15, 1) both;
+  will-change: opacity, filter;
+}
+
+@keyframes ux2Step1LeftTextIn {
+  0% {
+    opacity: 0;
+    filter: blur(12px);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0);
+  }
+}

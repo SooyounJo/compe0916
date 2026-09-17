@@ -11,6 +11,11 @@ import { LEFT_TEXT_GRADIENT } from "@/ux2/lib/ux2Step1Layout";
 import { UX2_PRE_STEP_PROMPTS } from "@/ux2/lib/ux2PreStepCopy";
 import { useUx2PreStep1Handoff } from "@/ux2/lib/ux2PreStep1Handoff";
 import {
+  UX2_PRE_STEP2_BLOB_ENTER_DURATION_S,
+  ux2PreStep2AllBlobsEnterEndS,
+  ux2PreStep2BlobEnterDelayS,
+} from "@/ux2/lib/ux2PreStep2BlobEnter";
+import {
   pctPre,
   PRE_STEP_1_INSTAGRAM,
   PRE_STEP_1_PROMPT,
@@ -23,7 +28,6 @@ import {
   PRE_STEP_VOICE,
   sizeCqwPre,
 } from "@/ux2/lib/ux2PreStepLayout";
-import { ux2PreStep2LeftSearchDelayS } from "@/ux2/lib/ux2PreStep2BlobEnter";
 
 const GRADIENT_TEXT = {
   backgroundImage: LEFT_TEXT_GRADIENT,
@@ -140,7 +144,7 @@ function Step0MatchIconBlob({
 }
 
 function IconBlob({ centerX, centerY, size, blobSrc, iconSrc, iconInsetPct = 25 }) {
-  const blobSize = sizeCqwPre(size);
+  const blobCqw = pctCircle(size);
   const iconInset = `${iconInsetPct}%`;
   return (
     <div
@@ -148,8 +152,8 @@ function IconBlob({ centerX, centerY, size, blobSrc, iconSrc, iconInsetPct = 25 
       style={{
         left: `${pctPre(centerX)}%`,
         top: `${pctPre(centerY)}%`,
-        width: `${blobSize}%`,
-        height: `${blobSize}%`,
+        width: `${blobCqw}cqw`,
+        height: `${blobCqw}cqw`,
       }}
     >
       <Image
@@ -273,19 +277,46 @@ export default function LeftCompanionPreStep({ step = 0 }) {
   const prevStepRef = useRef(step);
   const [preStep2EnterKey, setPreStep2EnterKey] = useState(0);
   const [preStep1InstaEnterKey, setPreStep1InstaEnterKey] = useState(0);
+  const [leftSearchEnter, setLeftSearchEnter] = useState(false);
+  const [showPreStep2Prompt, setShowPreStep2Prompt] = useState(false);
   /** -1까지 정적 블롭 · 0은 Ux2Step0IconMotion handoff */
-  /** -2·-1 좌: 0 handoff 슬롯(검색·인스타) 동일 · -2는 정착만 */
-  const showPreStep12BlobLayer = step === -2 || step === -1;
+  /** -2 좌: 검색 블롭만(LeftAmbientBackground) · -1: 인스타+검색 handoff */
+  const showPreStep2Layer = step === -2 || step === -1;
 
   useEffect(() => {
     const prev = prevStepRef.current;
     prevStepRef.current = step;
     if (step === -2 && prev !== -2) {
       setPreStep2EnterKey((k) => k + 1);
+      setLeftSearchEnter(true);
+      setShowPreStep2Prompt(false);
+      const searchEndS =
+        ux2PreStep2BlobEnterDelayS("leftSearch") +
+        UX2_PRE_STEP2_BLOB_ENTER_DURATION_S;
+      const promptMs = ux2PreStep2AllBlobsEnterEndS() * 1000;
+      const tSearch = setTimeout(
+        () => setLeftSearchEnter(false),
+        searchEndS * 1000 + 80,
+      );
+      const tPrompt = setTimeout(() => setShowPreStep2Prompt(true), promptMs);
+      return () => {
+        clearTimeout(tSearch);
+        clearTimeout(tPrompt);
+      };
     }
     if (step === -1 && prev === -2) {
       setPreStep1InstaEnterKey((k) => k + 1);
+      setLeftSearchEnter(false);
+      setShowPreStep2Prompt(false);
     }
+    if (step < -2) {
+      setLeftSearchEnter(false);
+      setShowPreStep2Prompt(false);
+    }
+    if (step === -2 && prev === -2) {
+      setShowPreStep2Prompt(true);
+    }
+    return undefined;
   }, [step]);
 
   return (
@@ -301,14 +332,14 @@ export default function LeftCompanionPreStep({ step = 0 }) {
 
       {/* -2·-1·0: 검색·인스타 슬롯 동일 → -1→0 아이콘 연속 유지 */}
       <div className="pointer-events-none absolute inset-0 z-[5] overflow-hidden">
-        {showPreStep12BlobLayer ? (
+        {showPreStep2Layer ? (
           <PreStepAmbient showGradient={!fadePreGradient && step !== 0}>
-            {step === -2 ? (
-              <div key={`pre-step-2-left-blobs-${preStep2EnterKey}`}>
+            {step === -2 || step === -1 ? (
+              <div key={`pre-step-left-search-${preStep2EnterKey}`}>
                 <Step0MatchIconBlob
                   blobId="leftSearch"
-                  enter
-                  enterDelayS={ux2PreStep2LeftSearchDelayS()}
+                  enter={leftSearchEnter}
+                  enterDelayS={ux2PreStep2BlobEnterDelayS("leftSearch")}
                   centerX={PRE_STEP_1_SEARCH.centerX}
                   centerY={PRE_STEP_1_SEARCH.centerY}
                   blobSize={PRE_STEP_1_SEARCH.size}
@@ -318,7 +349,7 @@ export default function LeftCompanionPreStep({ step = 0 }) {
               </div>
             ) : null}
             {step === -1 ? (
-              <div key={`pre-step-1-left-blobs-${preStep2EnterKey}`}>
+              <div key={`pre-step-1-left-insta-${preStep1InstaEnterKey}`}>
                 <Step0MatchIconBlob
                   key={`leftInstagram-s-1-k${preStep1InstaEnterKey}`}
                   blobId="leftInstagram"
@@ -330,22 +361,13 @@ export default function LeftCompanionPreStep({ step = 0 }) {
                   iconSrc="/figma/ux2/instagram-icon.svg"
                   iconSizePct={42}
                 />
-                <Step0MatchIconBlob
-                  blobId="leftSearch"
-                  enter={false}
-                  centerX={PRE_STEP_1_SEARCH.centerX}
-                  centerY={PRE_STEP_1_SEARCH.centerY}
-                  blobSize={PRE_STEP_1_SEARCH.size}
-                  iconSrc="/figma/ux2/step0/web-search-icon.svg"
-                  iconSizePct={54}
-                />
               </div>
             ) : null}
           </PreStepAmbient>
         ) : null}
       </div>
       <BlurFade
-        show={step === -2}
+        show={step === -2 && showPreStep2Prompt}
         className="left-step4-ui-blur-in pointer-events-none absolute inset-0 z-[5] overflow-hidden"
       >
         <PreStepPrompt stepKey={-2} />

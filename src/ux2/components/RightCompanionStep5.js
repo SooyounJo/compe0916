@@ -13,17 +13,16 @@ import {
   STEP5_RIGHT_VIDEO,
   ux2RightVideoBlobCenterPx,
 } from "@/ux2/lib/ux2Step5RightLayout";
-import { UX2_STEP5_RIGHT_HANDOFF_S } from "@/ux2/lib/ux2Step5RightEnter";
+import {
+  UX2_STEP5_RIGHT_HANDOFF_S,
+  ux2Step5RightPromptDelayMs,
+} from "@/ux2/lib/ux2Step5RightEnter";
 import { ux2Step5RightRiseStaggerDelayS } from "@/ux2/lib/ux2Step4To5CrossHandoff";
 import {
-  UX2_STEP5_DUAL_PEOPLE_DELAY_S,
+  ux2Step5DualPeopleDelayS,
   ux2Step5DualRightVideoHandoffDelayS,
 } from "@/ux2/lib/ux2Step45DualTiming";
-import {
-  UX2_RIGHT_TINTED_BLOB_IMG_CLASS,
-  UX2_RIGHT_VIDEO_BLOB_SRC,
-  UX2_RIGHT_WHITE_BLOB_IMG_CLASS,
-} from "@/ux2/lib/ux2RightIconFill";
+import textStyles from "@/ux2/styles/ux2Step1LeftTextIn.module.css";
 
 const PROMPT_STYLE = {
   backgroundImage: "linear-gradient(90deg, #4600b7 0%, #020004 100%)",
@@ -42,6 +41,7 @@ export default function RightCompanionStep5({ show = false, step = 5 }) {
   const [showPeople, setShowPeople] = useState(false);
   const [showVideo, setShowVideo] = useState(false);
   const [leavingTo6, setLeavingTo6] = useState(false);
+  const [showPrompt, setShowPrompt] = useState(false);
   const prevStepRef = useRef(null);
 
   const peopleSize = sizeCqwRight5(STEP5_RIGHT_PEOPLE.size);
@@ -56,6 +56,7 @@ export default function RightCompanionStep5({ show = false, step = 5 }) {
 
     if (to6) {
       setLeavingTo6(true);
+      setShowVideo(true);
       setPlayPeopleEnter(false);
       setPlayVideoEnter(false);
       const t = setTimeout(() => setLeavingTo6(false), STEP5_TO6_EXIT_MS);
@@ -68,10 +69,12 @@ export default function RightCompanionStep5({ show = false, step = 5 }) {
       setShowVideo(false);
       setPlayPeopleEnter(false);
       setPlayVideoEnter(false);
+      setShowPrompt(false);
 
-      const peopleMs = UX2_STEP5_DUAL_PEOPLE_DELAY_S * 1000;
+      const peopleMs = ux2Step5DualPeopleDelayS() * 1000;
       const videoMs = ux2Step5DualRightVideoHandoffDelayS() * 1000;
       const handoffMs = UX2_STEP5_RIGHT_HANDOFF_S * 1000 + 120;
+      const promptMs = ux2Step5RightPromptDelayMs();
 
       const peopleStart = setTimeout(() => {
         setShowPeople(true);
@@ -81,7 +84,6 @@ export default function RightCompanionStep5({ show = false, step = 5 }) {
         () => setPlayPeopleEnter(false),
         peopleMs + handoffMs,
       );
-
       const videoStart = setTimeout(() => {
         setShowVideo(true);
         setPlayVideoEnter(true);
@@ -90,12 +92,14 @@ export default function RightCompanionStep5({ show = false, step = 5 }) {
         () => setPlayVideoEnter(false),
         videoMs + handoffMs,
       );
+      const promptStart = setTimeout(() => setShowPrompt(true), promptMs);
 
       return () => {
         clearTimeout(peopleStart);
         clearTimeout(peopleEnd);
         clearTimeout(videoStart);
         clearTimeout(videoEnd);
+        clearTimeout(promptStart);
       };
     }
 
@@ -104,6 +108,12 @@ export default function RightCompanionStep5({ show = false, step = 5 }) {
       setShowVideo(true);
       setPlayPeopleEnter(false);
       setPlayVideoEnter(false);
+      setShowPrompt(false);
+      const promptStart = setTimeout(
+        () => setShowPrompt(true),
+        ux2Step5RightPromptDelayMs(),
+      );
+      return () => clearTimeout(promptStart);
     }
 
     if (step < 5) {
@@ -112,6 +122,7 @@ export default function RightCompanionStep5({ show = false, step = 5 }) {
       setShowPeople(false);
       setShowVideo(false);
       setLeavingTo6(false);
+      setShowPrompt(false);
     }
 
     return undefined;
@@ -186,7 +197,7 @@ export default function RightCompanionStep5({ show = false, step = 5 }) {
               src="/figma/ux2/step4/people-blob.svg"
               alt=""
               fill
-              className={UX2_RIGHT_TINTED_BLOB_IMG_CLASS}
+              className="object-contain drop-shadow-[0_0_20px_rgba(255,255,255,0.22)]"
               sizes="22vw"
             />
           </div>
@@ -215,26 +226,28 @@ export default function RightCompanionStep5({ show = false, step = 5 }) {
         >
           <div className="relative h-full w-full">
             <Image
-              src={UX2_RIGHT_VIDEO_BLOB_SRC}
+              src="/figma/ux2/step4/video-blob.svg"
               alt=""
               fill
-              className={UX2_RIGHT_WHITE_BLOB_IMG_CLASS}
+              className="object-contain drop-shadow-[0_0_20px_rgba(255,255,255,0.22)]"
               sizes="18vw"
             />
           </div>
         </div>
         )}
 
-        <div
-          className="absolute left-1/2 -translate-x-1/2 text-center font-doto text-[4.8cqw] font-extrabold leading-none tracking-[-0.02em]"
-          style={{
-            top: `${pctRight5(STEP5_RIGHT_PROMPT.top)}%`,
-            ...PROMPT_STYLE,
-          }}
-        >
-          <p className="mb-0 whitespace-nowrap">{`Keep Today's`}</p>
-          <p className="whitespace-nowrap">Memories</p>
-        </div>
+        {showPrompt || leavingTo6 ? (
+          <div
+            className={`${textStyles.inPlaceReveal} absolute left-1/2 -translate-x-1/2 text-center font-doto text-[4.8cqw] font-extrabold leading-none tracking-[-0.02em]`}
+            style={{
+              top: `${pctRight5(STEP5_RIGHT_PROMPT.top)}%`,
+              ...PROMPT_STYLE,
+            }}
+          >
+            <p className="mb-0 whitespace-nowrap">{`Keep Today's`}</p>
+            <p className="whitespace-nowrap">Memories</p>
+          </div>
+        ) : null}
       </div>
     </BlurFade>
   );

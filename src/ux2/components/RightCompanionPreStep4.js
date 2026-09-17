@@ -7,7 +7,6 @@ import {
   PRE_STEP_RIGHT_4_COCKTAIL,
   PRE_STEP_RIGHT_4_PROMPT,
 } from "@/ux2/lib/ux2PreStepRightLayout";
-import { UX2_RIGHT_TINTED_BLOB_IMG_CLASS } from "@/ux2/lib/ux2RightIconFill";
 
 const PROMPT_STYLE = {
   backgroundImage: "linear-gradient(90deg, #efe5a9 0%, #ffffff 100%)",
@@ -39,7 +38,7 @@ export default function RightCompanionPreStep4({ step = 0 }) {
           src="/figma/left-orbit/cocktail-blob.svg"
           alt=""
           fill
-          className={UX2_RIGHT_TINTED_BLOB_IMG_CLASS}
+          className="object-contain drop-shadow-[0_0_24px_rgba(255,255,255,0.28)]"
           sizes="22vw"
         />
       </div>

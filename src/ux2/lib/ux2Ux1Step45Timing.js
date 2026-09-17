@@ -42,11 +42,20 @@ export function ux2Ux1Step5WineFooterDelayS() {
   );
 }
 
-/** 4 arc 5개 퇴장 완료 (UX2는 4개 아이콘) */
-export function ux2Ux1Step4To5ExitTotalS() {
+/** 4→5 — iconId별 arc 퇴장 애니 종료 시각(step 5 t=0) */
+export function ux2Ux1Step4IconExitEndS(iconId) {
+  const index = UX2_UX1_STEP4_ENTRY_ORDER.indexOf(iconId);
+  if (index < 0) {
+    return 0;
+  }
   return (
     UX2_UX1_STEP4_ENTRY_BASE_S +
-    3 * UX2_UX1_STEP4_ENTRY_STAGGER_S +
+    index * UX2_UX1_STEP4_ENTRY_STAGGER_S +
     UX2_UX1_STEP4_EXIT_ANIM_S
   );
+}
+
+/** 4 arc 전원 퇴장 완료 (UX2는 4개 아이콘) */
+export function ux2Ux1Step4To5ExitTotalS() {
+  return ux2Ux1Step4IconExitEndS("people");
 }

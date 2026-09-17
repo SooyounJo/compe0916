@@ -3,21 +3,24 @@ import DualBlobStage from "@/ux2/components/DualBlobStage";
 import ScreenNav from "@/ux2/components/ScreenNav";
 import { UX2_FIRST_STEP, UX2_LAST_STEP } from "@/ux2/lib/ux2FlowSteps";
 
-const DEFAULT_STEP_MS = 3000;
-const GATHER_MS = 1000;
+/** 시작(자동 재생) — 단계당 체류 (수동 단계 버튼과 무관) */
+const AUTO_PLAY_PACE = 1.4;
+const DEFAULT_STEP_MS = Math.round(3000 * AUTO_PLAY_PACE);
+const GATHER_MS = Math.round(1000 * AUTO_PLAY_PACE);
 /** step 4 진입 후 cluster GONE(1.2s)과 맞춤 */
 const GATHER_RELEASE_MS = 1280;
 const FIRST_STEP = UX2_FIRST_STEP;
 const LAST_STEP = UX2_LAST_STEP;
 
 const STEP_DWELL_MS = {
-  [-1]: 3600,
+  [-1]: Math.round(3600 * AUTO_PLAY_PACE),
   0: DEFAULT_STEP_MS,
   1: DEFAULT_STEP_MS,
-  2: DEFAULT_STEP_MS,
+  /** 2 — 피드·캐러셀·중앙 영상 재생 여유 */
+  2: Math.round(4400 * AUTO_PLAY_PACE),
   3: DEFAULT_STEP_MS,
-  4: 3200,
-  5: 5800,
+  4: Math.round(3200 * AUTO_PLAY_PACE),
+  5: Math.round(5800 * AUTO_PLAY_PACE),
 };
 
 function dwellMsForStep(step) {

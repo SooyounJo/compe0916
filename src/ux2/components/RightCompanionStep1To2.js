@@ -4,7 +4,6 @@ import Image from "next/image";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import BlurFade from "@/ux2/components/BlurFade";
 import { GLASS_CARD_GRADIENT, RIGHT_TEXT_GRADIENT, STEP2_TITLE_GRADIENT } from "@/ux2/lib/ux2Step1Layout";
-import { UX2_RIGHT_GLYPH_IMG_CLASS } from "@/ux2/lib/ux2RightIconFill";
 import {
   BLOB_ORIGIN_PCT,
   MORPH_CARDS,
@@ -15,6 +14,7 @@ import {
   STEP1_CARD_INTRO_SHIFT_CQW,
   STEP1_CARD_INTRO_STAGGER_MS,
   step2SlotRect,
+  ux2Step2RightMorphDelayMs,
 } from "@/ux2/lib/ux2Step1To2Morph";
 import { pctInCircle } from "@/ux2/lib/ux2Step2RightFeed";
 import RightCompanionStep3Overlay from "@/ux2/components/RightCompanionStep3Overlay";
@@ -127,7 +127,7 @@ function SideFeedChrome() {
           alt=""
           width={31}
           height={8}
-          className={`ml-auto h-[0.41cqw] w-[1.65cqw] ${UX2_RIGHT_GLYPH_IMG_CLASS}`}
+          className="ml-auto h-[0.41cqw] w-[1.65cqw]"
         />
       </div>
       <div className="absolute bottom-[3.5%] right-[3.5%] flex items-center gap-[1.2cqw]">
@@ -136,14 +136,14 @@ function SideFeedChrome() {
           alt=""
           width={64}
           height={64}
-          className={`h-[3.4cqw] w-[3.4cqw] ${UX2_RIGHT_GLYPH_IMG_CLASS}`}
+          className="h-[3.4cqw] w-[3.4cqw]"
         />
         <Image
           src="/figma/ux2/step2/52235.svg"
           alt=""
           width={49}
           height={49}
-          className={`h-[2.62cqw] w-[2.62cqw] ${UX2_RIGHT_GLYPH_IMG_CLASS}`}
+          className="h-[2.62cqw] w-[2.62cqw]"
         />
       </div>
     </>
@@ -169,7 +169,7 @@ function HeroFeedChrome() {
           alt=""
           width={38}
           height={10}
-          className={`ml-auto h-[0.5cqw] w-[2.02cqw] opacity-90 ${UX2_RIGHT_GLYPH_IMG_CLASS}`}
+          className="ml-auto h-[0.5cqw] w-[2.02cqw] opacity-90"
         />
       </div>
       <div className="absolute bottom-[2.4cqw] right-[2.4cqw] flex items-center gap-[1.6cqw]">
@@ -178,14 +178,14 @@ function HeroFeedChrome() {
           alt=""
           width={78}
           height={78}
-          className={`h-[4.15cqw] w-[4.15cqw] ${UX2_RIGHT_GLYPH_IMG_CLASS}`}
+          className="h-[4.15cqw] w-[4.15cqw]"
         />
         <Image
           src="/figma/ux2/step2/eab56.svg"
           alt=""
           width={61}
           height={61}
-          className={`h-[3.24cqw] w-[3.24cqw] ${UX2_RIGHT_GLYPH_IMG_CLASS}`}
+          className="h-[3.24cqw] w-[3.24cqw]"
         />
       </div>
     </>
@@ -301,6 +301,12 @@ export default function RightCompanionStep1To2({ step = 1 }) {
     }
   }, [step]);
 
+  useLayoutEffect(() => {
+    if (step !== 3) {
+      setShowStep3Overlay(false);
+    }
+  }, [step]);
+
   useEffect(() => {
     if (step === 3) {
       setHoldStep3Feed(false);
@@ -340,14 +346,18 @@ export default function RightCompanionStep1To2({ step = 1 }) {
 
     if (step === 2) {
       setMorphToFeed(false);
-      setEmergeFromBlob(true);
-      const emergeId = requestAnimationFrame(() => {
+      setEmergeFromBlob(false);
+      const delayMs = ux2Step2RightMorphDelayMs();
+      const startTimer = setTimeout(() => {
+        setEmergeFromBlob(true);
         requestAnimationFrame(() => {
-          setEmergeFromBlob(false);
-          setMorphToFeed(true);
+          requestAnimationFrame(() => {
+            setEmergeFromBlob(false);
+            setMorphToFeed(true);
+          });
         });
-      });
-      return () => cancelAnimationFrame(emergeId);
+      }, delayMs);
+      return () => clearTimeout(startTimer);
     }
     setMorphToFeed(false);
     setEmergeFromBlob(false);
@@ -469,9 +479,9 @@ export default function RightCompanionStep1To2({ step = 1 }) {
         </BlurFade>
       </div>
 
-      <RightCompanionStep3Overlay
-        show={step === 3 && showStep3Overlay}
-      />
+      {step === 3 ? (
+        <RightCompanionStep3Overlay show={showStep3Overlay} />
+      ) : null}
     </BlurFade>
   );
 }

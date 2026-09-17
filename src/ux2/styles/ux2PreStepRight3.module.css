@@ -8,3 +8,21 @@
   opacity: 0.75;
   pointer-events: none;
 }
+
+.textReveal {
+  animation: ux2PreStep3RightTextIn 0.88s cubic-bezier(0.33, 0, 0.15, 1) both;
+  will-change: opacity, filter, transform;
+}
+
+@keyframes ux2PreStep3RightTextIn {
+  0% {
+    opacity: 0;
+    filter: blur(12px);
+    transform: translateX(-2.2cqw);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateX(0);
+  }
+}

@@ -15,10 +15,7 @@ import {
   UX2_STEP7_QR_BLOB_WHITE,
 } from "@/ux2/lib/ux2Step7RightLayout";
 
-import {
-  UX2_RIGHT_VIDEO_BLOB_SRC,
-  UX2_RIGHT_WHITE_BLOB_IMG_CLASS,
-} from "@/ux2/lib/ux2RightIconFill";
+const UX2_STEP6_VIDEO_COLORED = "/figma/ux2/step4/video-blob.svg";
 import { STEP7_LEFT_ICON_HOLD_MS } from "@/ux2/lib/ux2Step7LeftEnter";
 import continuityStyles from "@/ux2/styles/ux2Step67Continuity.module.css";
 /** 6 — 컬러 video · 7~11 — 7단계 QR(white) 정착 유지 */
@@ -76,10 +73,10 @@ export default function RightCompanionStep6({ show = false, step = 6 }) {
             }`}
           >
             <Image
-              src={UX2_RIGHT_VIDEO_BLOB_SRC}
+              src={UX2_STEP6_VIDEO_COLORED}
               alt=""
               fill
-              className={UX2_RIGHT_WHITE_BLOB_IMG_CLASS}
+              className="object-contain drop-shadow-[0_0_20px_rgba(255,255,255,0.22)]"
               sizes="18vw"
             />
           </div>

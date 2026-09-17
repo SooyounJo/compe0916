@@ -1,18 +1,14 @@
 import Image from "next/image";
-import {
-  UX2_RIGHT_VIDEO_BLOB_SRC,
-  UX2_RIGHT_WHITE_BLOB_IMG_CLASS,
-} from "@/ux2/lib/ux2RightIconFill";
 
-/** UX2 듀얼 우측 4단계 — white camera(video) 블롭 */
+/** UX2 듀얼 우측 4단계 — Figma 카메라(video) 블롭 */
 export default function Ux2RightStep4CameraIcon() {
   return (
     <div className="relative h-full w-full">
       <Image
-        src={UX2_RIGHT_VIDEO_BLOB_SRC}
+        src="/figma/ux2/step4/video-blob.svg"
         alt=""
         fill
-        className={UX2_RIGHT_WHITE_BLOB_IMG_CLASS}
+        className="object-contain drop-shadow-[0_0_20px_rgba(255,255,255,0.22)]"
         sizes="18vw"
         priority
       />

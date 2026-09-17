@@ -1,5 +1,6 @@
 .enter,
-.settled {
+.settled,
+.exit {
   position: absolute;
 }
 
@@ -29,5 +30,28 @@
     opacity: var(--blob-end-opacity, 1);
     filter: blur(0);
     transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.exit {
+  opacity: var(--blob-end-opacity, 1);
+  filter: blur(0);
+  transform: translate(-50%, -50%) scale(1);
+  animation-name: ux2PreStepBlobExit;
+  animation-timing-function: cubic-bezier(0.33, 0, 0.15, 1);
+  animation-fill-mode: forwards;
+  backface-visibility: hidden;
+}
+
+@keyframes ux2PreStepBlobExit {
+  0% {
+    opacity: var(--blob-end-opacity, 1);
+    filter: blur(0);
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    filter: blur(14px);
+    transform: translate(-50%, -50%) scale(0.94);
   }
 }

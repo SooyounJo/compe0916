@@ -32,8 +32,8 @@ import Ux2InstagramIconPersist from "@/ux2/components/Ux2InstagramIconPersist";
 import Ux2Step0IconMotion from "@/ux2/components/Ux2Step0IconMotion";
 import Ux2VoiceIconAtSlot from "@/ux2/components/Ux2VoiceIconAtSlot";
 import { pctCircleRight, STEP0_RIGHT_ROW } from "@/ux2/lib/ux2Step0Layout";
-import cardStyles from "@/ux2/styles/step1-to2-cards.module.css";
 import { UX2_RIGHT_ICON_FILL } from "@/ux2/lib/ux2RightIconFill";
+import cardStyles from "@/ux2/styles/step1-to2-cards.module.css";
 
 const RIGHT_ROW = STEP0_RIGHT_ROW;
 const RIGHT_SLOT_X = RIGHT_ROW.left + RIGHT_ROW.blobSize / 2;

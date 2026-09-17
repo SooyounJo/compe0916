@@ -15,7 +15,7 @@ export default function Ux2PreStep3SearchBlob({
   centerY,
   blobSizeCqw,
   toPct,
-  iconFillColor = "#FFFFFF",
+  iconFillColor = "#9A93AA",
   /** 우측: 보이스 퇴장 직후 마운트 — CSS delay 생략 */
   immediateEnter = false,
   /** -2 좌: -3에서 등장한 블롭 유지 */

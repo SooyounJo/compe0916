@@ -26,6 +26,7 @@ import Ux2Step4IconPrefetch from "@/ux2/components/Ux2Step4IconPrefetch";
 import step0EdgeGlow from "@/ux2/styles/ux2LeftStep0EdgeGlow.module.css";
 import step7RightEdgeGlow from "@/ux2/styles/ux2LeftStep7RightEdgeGlow.module.css";
 import { UX2_FIRST_STEP, UX2_LAST_STEP } from "@/ux2/lib/ux2FlowSteps";
+import { ux2PreStep3ArcExitTotalMs } from "@/ux2/lib/ux2PreStep3IconEnter";
 import {
   centerOf,
   pctCircle,
@@ -54,12 +55,26 @@ export default function LeftAmbientBackground({
   const prevStepRef = useRef(step);
   const [holdAgentExit, setHoldAgentExit] = useState(false);
   const [preStep3ArcKey, setPreStep3ArcKey] = useState(0);
-
+  const [holdPreStep3Arc, setHoldPreStep3Arc] = useState(step === -3);
   useEffect(() => {
     const prev = prevStepRef.current;
     prevStepRef.current = step;
     if (step === -3 && prev !== -3) {
       setPreStep3ArcKey((k) => k + 1);
+      setHoldPreStep3Arc(true);
+    }
+    if (prev === -3 && step === -2) {
+      setHoldPreStep3Arc(true);
+      const t = setTimeout(
+        () => setHoldPreStep3Arc(false),
+        ux2PreStep3ArcExitTotalMs(),
+      );
+      return () => clearTimeout(t);
+    }
+    if (step === -3) {
+      setHoldPreStep3Arc(true);
+    } else if (step < -3) {
+      setHoldPreStep3Arc(false);
     }
     if (prev === 3 && step === 4) {
       setHoldAgentExit(true);
@@ -163,7 +178,6 @@ export default function LeftAmbientBackground({
         toPct={pctCircle}
         iconFillColor="#9A93AA"
         emphasized
-        blueTint={step === 2}
       />
       <Ux2VoiceIconAtSlot
         show={step === 3}
@@ -175,13 +189,13 @@ export default function LeftAmbientBackground({
 
       <LeftCompanionPreStepAmbient show={step === -3} />
       <BlurFade
-        show={step === -3}
+        show={step === -3 || holdPreStep3Arc}
         className="left-step4-ui-blur-in pointer-events-none absolute inset-0 z-[6] overflow-hidden"
       >
-        {step === -3 ? (
+        {step === -3 || holdPreStep3Arc ? (
           <LeftCompanionIconArc
             key={`ux2-pre-step-3-arc-${preStep3ArcKey}`}
-            step={-3}
+            step={step === -3 ? -3 : -2}
           />
         ) : null}
       </BlurFade>
