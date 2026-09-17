@@ -78,7 +78,7 @@ export const PRE_STEP_1_SEARCH = {
   size: STEP0_SEARCH_BLOB.size,
 };
 
-/** 하단 인스타 — 0단계 `Ux2Step0IconMotion` origin 블롭(275.75)과 동일 */
+/** 하단 인스타 — 0단계 `IG_ORIGIN` · 블롭 크기는 step0 motion과 동일 */
 export const PRE_STEP_1_INSTAGRAM = {
   centerX: STEP0_IG_CENTER.x,
   centerY: STEP0_IG_CENTER.y,

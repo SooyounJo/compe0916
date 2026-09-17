@@ -268,7 +268,7 @@ export default function LeftAmbientBackground({
       </BlurFade>
 
       <Ux2Step0IconMotion
-        show={step === 0}
+        show={step === 0 && !showIgPersist}
         slotCenterX={SEARCH_SLOT.x}
         slotCenterY={SEARCH_SLOT.y}
         originCenterX={IG_ORIGIN.x}

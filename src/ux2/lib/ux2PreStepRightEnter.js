@@ -21,12 +21,13 @@ export const UX2_PRE_STEP1_BG_BLUR_OUT_MS = Math.round(
   1180 * UX2_PRE_STEP1_BG_MOTION_PACE,
 );
 
-/** handoff·autoplay — night opacity vs BG blur 중 긴 쪽 */
+/** handoff·autoplay — night fade vs step1 opacity in */
 export function ux2PreStep1HandoffVisualEndMs() {
   return (
     UX2_PRE_STEP_NIGHT_HOLD_MS +
     Math.max(
       UX2_PRE_STEP_NIGHT_OPACITY_FADE_MS,
+      UX2_PRE_STEP1_BG_OPACITY_IN_MS,
       UX2_PRE_STEP1_BG_BLUR_OUT_MS,
     )
   );

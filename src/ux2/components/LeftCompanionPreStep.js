@@ -8,7 +8,10 @@ import Ux2IconBlob from "@/ux2/components/Ux2IconBlob";
 import Ux2PreStepBlobReveal from "@/ux2/components/Ux2PreStepBlobReveal";
 import Ux2Ux1Step7CenterLoadingDots from "@/ux2/components/Ux2Ux1Step7CenterLoadingDots";
 import Ux2VoiceRecorderFill from "@/ux2/components/Ux2VoiceRecorderFill";
-import { pctCircle, STEP0_SEARCH_BLOB } from "@/ux2/lib/ux2Step0Layout";
+import {
+  pctCircle,
+  STEP0_SEARCH_BLOB,
+} from "@/ux2/lib/ux2Step0Layout";
 import { LEFT_TEXT_GRADIENT } from "@/ux2/lib/ux2Step1Layout";
 import { UX2_PRE_STEP_PROMPTS } from "@/ux2/lib/ux2PreStepCopy";
 import { useUx2PreStep4TextReveal } from "@/ux2/lib/useUx2PreStep4TextReveal";
@@ -30,9 +33,9 @@ import {
   ux2PreStep1LeftInstaEnterEndMs,
   ux2PreStep2AllBlobsEnterEndS,
 } from "@/ux2/lib/ux2PreStep2BlobEnter";
+import { UX2_PRE_STEP0_LEFT_INSTAGRAM } from "@/ux2/lib/ux2PreStep3SearchBlobLayout";
 import {
   pctPre,
-  PRE_STEP_1_INSTAGRAM,
   PRE_STEP_1_PROMPT,
   PRE_STEP_2_PROMPT,
   PRE_STEP_4_COCKTAIL,
@@ -433,7 +436,7 @@ export default function LeftCompanionPreStep({
     preStep4HandoffInstant,
     exitingPreStep4,
   );
-  const revealStep0Bg = useUx2PreStep1Handoff(step);
+  const { revealStep0Bg } = useUx2PreStep1Handoff(step);
   const fadePreGradient = step === -1 && revealStep0Bg;
   /** -1까지 정적 블롭 · 0은 Ux2Step0IconMotion handoff */
   /** -2 좌 검색: Ux2LeftPreStepSearchPersist · -1: 인스타 handoff */
@@ -527,9 +530,9 @@ export default function LeftCompanionPreStep({
                   blobId="leftInstagram"
                   enter
                   enterDelayS={UX2_PRE_STEP1_LEFT_INSTA_ENTER_DELAY_S}
-                  centerX={PRE_STEP_1_INSTAGRAM.centerX}
-                  centerY={PRE_STEP_1_INSTAGRAM.centerY}
-                  blobSize={PRE_STEP_1_INSTAGRAM.size}
+                  centerX={UX2_PRE_STEP0_LEFT_INSTAGRAM.centerX}
+                  centerY={UX2_PRE_STEP0_LEFT_INSTAGRAM.centerY}
+                  blobSize={STEP0_SEARCH_BLOB.size}
                   iconSrc="/figma/ux2/instagram-icon.svg"
                   iconSizePct={42}
                 />

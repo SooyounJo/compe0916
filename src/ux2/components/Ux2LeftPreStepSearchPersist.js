@@ -3,7 +3,7 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import Ux2PreStep3SearchBlob from "@/ux2/components/Ux2PreStep3SearchBlob";
 import { ux2PreStep3SearchRevealDelayMs } from "@/ux2/lib/ux2PreStep3IconEnter";
-import { UX2_PRE_STEP3_LEFT_SEARCH } from "@/ux2/lib/ux2PreStep3SearchBlobLayout";
+import { UX2_PRE_STEP0_LEFT_SEARCH } from "@/ux2/lib/ux2PreStep3SearchBlobLayout";
 
 const LEFT_SEARCH_ICON_FILL = "#9A93AA";
 
@@ -73,10 +73,10 @@ export default function Ux2LeftPreStepSearchPersist({ step = 0 }) {
         show
         enterKey={searchEnterKey}
         settled={settled}
-        centerX={UX2_PRE_STEP3_LEFT_SEARCH.centerX}
-        centerY={UX2_PRE_STEP3_LEFT_SEARCH.centerY}
-        blobSizeCqw={UX2_PRE_STEP3_LEFT_SEARCH.blobSizeCqw}
-        toPct={UX2_PRE_STEP3_LEFT_SEARCH.toPct}
+        centerX={UX2_PRE_STEP0_LEFT_SEARCH.centerX}
+        centerY={UX2_PRE_STEP0_LEFT_SEARCH.centerY}
+        blobSizeCqw={UX2_PRE_STEP0_LEFT_SEARCH.blobSizeCqw}
+        toPct={UX2_PRE_STEP0_LEFT_SEARCH.toPct}
         iconFillColor={LEFT_SEARCH_ICON_FILL}
         immediateEnter={step === -3 && !settled}
       />

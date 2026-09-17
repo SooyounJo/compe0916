@@ -197,7 +197,7 @@ export default function CircleUI({
       {dualRight ? (
         <>
           <Ux2Step0IconMotion
-            show={step === 0}
+            show={step === 0 && !showIgPersist}
             slotCenterX={RIGHT_SLOT_X}
             slotCenterY={RIGHT_SLOT_Y}
             originCenterX={RIGHT_SLOT_X}

@@ -9,7 +9,7 @@ import {
   ux2PreStep2GenerateExitHoldMs,
 } from "@/ux2/lib/ux2PreStep2GenerateExit";
 import { useUx2PreStep4ExitFade } from "@/ux2/lib/useUx2PreStep4ExitFade";
-import preStep4ExitStyles from "@/ux2/styles/ux2PreStep4To3Exit.module.css";
+import generateExitStyles from "@/ux2/styles/ux2PreStep2GenerateExit.module.css";
 import Ux2PreStepGenerateDots from "@/ux2/components/Ux2PreStepGenerateDots";
 import { UX2_PRE_STEP_NIGHT_VIDEO } from "@/ux2/components/Ux2PreStepRightBackground";
 import { pctCircleRight } from "@/ux2/lib/ux2Step0Layout";
@@ -101,7 +101,18 @@ export default function Ux2PreStepRightGenerate({ step = 0 }) {
 
   const inner = (
     <div className={`${styles.root} absolute inset-0`}>
-      <div className={`${styles.scene} ${sceneClass} absolute inset-0`}>
+      <div
+        className={`${styles.scene} ${sceneClass} absolute inset-0 ${
+          exitingToMinus1 ? generateExitStyles.generateSceneUnblur : ""
+        }`}
+        style={
+          exitingToMinus1
+            ? {
+                "--ux2-pre2-gen-exit-ms": `${UX2_PRE_STEP2_GENERATE_EXIT_MS}ms`,
+              }
+            : undefined
+        }
+      >
         <video
           src={UX2_PRE_STEP_NIGHT_VIDEO}
           muted
@@ -136,11 +147,11 @@ export default function Ux2PreStepRightGenerate({ step = 0 }) {
   if (exitingToMinus1) {
     return (
       <div
-        className={`${rootClass} ${preStep4ExitStyles.sceneExitLayer} ${
-          minus1ExitFadeOut ? preStep4ExitStyles.sceneExitLayerOut : ""
+        className={`pointer-events-none absolute inset-0 z-[11] overflow-hidden rounded-full ${generateExitStyles.generateExitLayer} ${
+          minus1ExitFadeOut ? generateExitStyles.generateExitLayerOut : ""
         }`}
         style={{
-          "--ux2-pre4-exit-ms": `${UX2_PRE_STEP2_GENERATE_EXIT_MS}ms`,
+          "--ux2-pre2-gen-exit-ms": `${UX2_PRE_STEP2_GENERATE_EXIT_MS}ms`,
         }}
         aria-hidden={false}
       >
