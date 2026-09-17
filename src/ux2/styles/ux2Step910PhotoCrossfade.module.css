@@ -1,0 +1,45 @@
+.bgLayer {
+  transition:
+    opacity 1.4s cubic-bezier(0.33, 0, 0.15, 1),
+    filter 1.4s cubic-bezier(0.33, 0, 0.15, 1),
+    transform 1.4s cubic-bezier(0.33, 0, 0.15, 1);
+  will-change: opacity, filter, transform;
+}
+
+.bgLayerHidden {
+  opacity: 0;
+}
+
+.bgLayerVisible {
+  opacity: 1;
+}
+
+.bgLayerTen {
+  filter: blur(5px);
+  transform: scale(1.1);
+}
+
+.cardPhoto {
+  transition: opacity 1.35s cubic-bezier(0.33, 0, 0.15, 1);
+  will-change: opacity;
+}
+
+.cardPhotoHidden {
+  opacity: 0;
+}
+
+.cardPhotoVisible {
+  opacity: 1;
+}
+
+.cardChrome {
+  transition: opacity 1.1s cubic-bezier(0.33, 0, 0.15, 1);
+}
+
+.cardChromeHidden {
+  opacity: 0;
+}
+
+.cardChromeVisible {
+  opacity: 1;
+}

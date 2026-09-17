@@ -1,0 +1,38 @@
+/** UX2 — rim을 따라 줄줄이 이어지는 진입 (중간 rim-c/d 생략) */
+.followEnter {
+  animation-name: ux2-left-icon-follow-enter;
+  animation-duration: 1.32s;
+  animation-timing-function: cubic-bezier(0.33, 0, 0.15, 1);
+  animation-fill-mode: both;
+}
+
+@keyframes ux2-left-icon-follow-enter {
+  0% {
+    left: var(--orbit-start-left);
+    top: var(--orbit-start-top);
+    transform: translate(-50%, -50%) scale(0.5);
+    opacity: 0;
+    filter: blur(8px);
+  }
+  20% {
+    left: var(--orbit-entry-rim-a-left);
+    top: var(--orbit-entry-rim-a-top);
+    transform: translate(-50%, -50%) scale(0.6);
+    opacity: 0.28;
+    filter: blur(5px);
+  }
+  48% {
+    left: var(--orbit-entry-rim-b-left);
+    top: var(--orbit-entry-rim-b-top);
+    transform: translate(-50%, -50%) scale(0.76);
+    opacity: 0.65;
+    filter: blur(2px);
+  }
+  100% {
+    left: var(--orbit-end-left);
+    top: var(--orbit-end-top);
+    transform: translate(-50%, -50%) scale(1);
+    opacity: var(--orbit-end-opacity, 1);
+    filter: blur(0);
+  }
+}

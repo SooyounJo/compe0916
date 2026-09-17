@@ -121,6 +121,8 @@ export default function DotGridAmbient({ step }) {
       if (s === 5) {
         master = Math.min(1, phaseT / SPAWN_S);
         master = master * master * (3 - 2 * master);
+      } else if (s <= 7) {
+        master = 1;
       } else {
         const fadeT = phaseT - STEP6_FADE_DELAY_S;
         if (fadeT > 0) {

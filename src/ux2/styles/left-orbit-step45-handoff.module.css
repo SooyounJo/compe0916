@@ -1,0 +1,50 @@
+.relocate {
+  left: var(--orbit-end-left);
+  top: var(--orbit-end-top);
+  z-index: 20;
+  animation: ux2LeftHandoffRelocate 1.75s cubic-bezier(0.33, 0, 0.15, 1) both;
+  backface-visibility: hidden;
+}
+
+.exit {
+  left: var(--orbit-end-left);
+  top: var(--orbit-end-top);
+  z-index: 35;
+  animation: ux2LeftHandoffExit 1.75s cubic-bezier(0.33, 0, 0.15, 1) both;
+  backface-visibility: hidden;
+}
+
+.crossExit {
+  z-index: 45;
+}
+
+@keyframes ux2LeftHandoffRelocate {
+  0% {
+    transform: translate(
+      calc(-50% + var(--handoff-dx, 0cqw)),
+      calc(-50% + var(--handoff-dy, 0cqw))
+    );
+    opacity: var(--orbit-end-opacity, 1);
+  }
+  100% {
+    transform: translate(-50%, -50%);
+    opacity: var(--orbit-end-opacity, 1);
+  }
+}
+
+@keyframes ux2LeftHandoffExit {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: var(--orbit-end-opacity, 1);
+    filter: blur(0);
+  }
+  100% {
+    transform: translate(
+        calc(-50% + var(--handoff-exit-dx, 6cqw)),
+        calc(-50% + var(--handoff-exit-dy, -28cqw))
+      )
+      scale(0.84);
+    opacity: 0;
+    filter: blur(8px);
+  }
+}

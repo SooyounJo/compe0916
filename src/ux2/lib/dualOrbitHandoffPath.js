@@ -45,6 +45,11 @@ const RIGHT_HANDOFF_S = {
   kneeD: { left: "22%", top: "24%" },
 };
 
+function parsePct(value) {
+  return parseFloat(value);
+}
+
+/** @deprecated — left/top 키프레임용 */
 export function rightHandoffSStyleVars() {
   const s = RIGHT_HANDOFF_S;
   return {
@@ -58,6 +63,32 @@ export function rightHandoffSStyleVars() {
     "--handoff-s-c-top": s.kneeC.top,
     "--handoff-s-d-left": s.kneeD.left,
     "--handoff-s-d-top": s.kneeD.top,
+  };
+}
+
+/** 우 4→5 — gap(9시) → 슬롯, 슬롯마다 lerp + 가운데 살짝 위로 bulge */
+export function rightHandoffTransformVars(endLeftPct, endTopPct) {
+  const endL = parsePct(endLeftPct);
+  const endT = parsePct(endTopPct);
+  const startL = parsePct(RIGHT_HANDOFF_S.start.left);
+  const startT = parsePct(RIGHT_HANDOFF_S.start.top);
+
+  function offsetAt(t, bulgeY = 0) {
+    const curL = lerpNum(startL, endL, t);
+    const curT = lerpNum(startT, endT, t) + bulgeY;
+    return {
+      dx: `${curL - endL}cqw`,
+      dy: `${curT - endT}cqw`,
+    };
+  }
+
+  const start = offsetAt(0);
+  const mid = offsetAt(0.5, -5.5);
+  return {
+    "--handoff-from-start-dx": start.dx,
+    "--handoff-from-start-dy": start.dy,
+    "--handoff-mid-dx": mid.dx,
+    "--handoff-mid-dy": mid.dy,
   };
 }
 

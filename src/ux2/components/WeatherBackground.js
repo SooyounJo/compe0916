@@ -2,24 +2,31 @@
 
 import Image from "next/image";
 import { useEffect, useRef } from "react";
+import { ux2IsPreStep } from "@/ux2/lib/ux2FlowSteps";
 
 /** 배경 MP4 — 0~5.11초 구간 루프 */
 const BG_LOOP_END_S = 5.11;
 
 const UX2_STEP1_RIGHT_BG = "/figma/ux2/step1-right-bg.png";
 
-/** UX2 — 1단계 정적 BG · 2~5 MP4 */
+/** UX2 우측 — 0·1·2단계 step1-right-bg(33:225) · 3~5 MP4 */
 export default function WeatherBackground({
   step = 1,
   dualInnerGlow = false,
 }) {
   const step4Bg = step === 4;
-  const showDualGlow = dualInnerGlow && step >= 2 && step < 6;
-  const showStep1Photo = step === 1;
+  /** -4~-1: night·Weather만 — step1-right-bg에 박힌 아이콘 노출 방지 */
+  const showStep1RightPhoto = step >= 0 && step <= 2 && !ux2IsPreStep(step);
+  const showDualGlow =
+    dualInnerGlow &&
+    step >= 3 &&
+    step <= 6 &&
+    step !== 4 &&
+    !showStep1RightPhoto;
   const videoRef = useRef(null);
 
   useEffect(() => {
-    if (step === 1) return undefined;
+    if (step <= 2) return undefined;
 
     const video = videoRef.current;
     if (!video) return undefined;
@@ -59,13 +66,13 @@ export default function WeatherBackground({
         fill
         priority
         className={`object-cover object-center transition-opacity duration-[1200ms] ease-[cubic-bezier(0.33,0,0.15,1)] ${
-          showStep1Photo ? "opacity-100" : "opacity-0"
+          showStep1RightPhoto ? "opacity-100" : "opacity-0"
         }`}
         sizes="(max-width: 900px) 41vmin, 560px"
       />
       <div
         className={`weather-bg-ambient__motion absolute inset-0 transition-opacity duration-[1200ms] ease-[cubic-bezier(0.33,0,0.15,1)] ${
-          showStep1Photo ? "opacity-0" : "opacity-100"
+          showStep1RightPhoto ? "opacity-0" : "opacity-100"
         }`}
       >
         <video

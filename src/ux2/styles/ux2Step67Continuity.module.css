@@ -1,0 +1,29 @@
+/* 6→7 — BlurFade delay 재적용 없이 아이콘 이어짐 */
+.rightContinuity:global(.ui-blur-fade--visible) {
+  transition-delay: 0s, 0s;
+}
+
+.blobCrossfade {
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+
+.blobLayer {
+  position: absolute;
+  inset: 0;
+  transition: opacity 0.75s cubic-bezier(0.33, 0, 0.15, 1);
+}
+
+.blobLayerHidden {
+  opacity: 0;
+}
+
+.blobLayerVisible {
+  opacity: 1;
+}
+
+.orbit6FadeOut {
+  transition: opacity 0.85s cubic-bezier(0.33, 0, 0.15, 1);
+  opacity: 0;
+}
