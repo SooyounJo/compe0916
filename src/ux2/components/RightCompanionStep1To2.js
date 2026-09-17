@@ -10,6 +10,10 @@ import {
   STEP1_TITLE_BAND,
   STEP2_TITLE_BAND,
   feedSlotForContent,
+  STEP1_CARD_INTRO_RANK,
+  STEP1_CARD_INTRO_SCALE,
+  STEP1_CARD_INTRO_SHIFT_CQW,
+  STEP1_CARD_INTRO_STAGGER_MS,
   step2SlotRect,
 } from "@/ux2/lib/ux2Step1To2Morph";
 import { pctInCircle } from "@/ux2/lib/ux2Step2RightFeed";
@@ -46,7 +50,8 @@ const TEXT2 = {
 
 const STEP2_HERO_VIDEO = "/video/ux2-step2-center.mp4";
 const STEP2_HERO_VIDEO_DELAY_MS = 2000;
-const STEP2_CAROUSEL_AFTER_VIDEO_MS = 5000;
+/** 중앙 영상 재생 후 좌·우 사진이 차례로 중앙으로 넘어가는 간격 */
+const STEP2_CAROUSEL_AFTER_VIDEO_MS = 3600;
 
 function HeroCenterMedia({ showPhoto, heroVideoActive }) {
   const videoRef = useRef(null);
@@ -192,6 +197,7 @@ function MorphCard({
   step,
   morphToFeed,
   emergeFromBlob,
+  step1Intro,
   heroVideoActive,
   carouselRotation,
   feedExitStage = -1,
@@ -208,22 +214,37 @@ function MorphCard({
   const slotRank = FEED_SLOT_EXIT_RANK[feedSlot] ?? 0;
   const exitLeft =
     feedExitStage >= 0 && feedExitStage >= slotRank && atFeed;
+  const step1Layout = step === 1 && !morphToFeed && !emergeFromBlob;
+  const introRank = STEP1_CARD_INTRO_RANK[card.key] ?? 0;
+  const introActive = step1Layout && step1Intro;
+  const introSettle = step1Layout && !step1Intro;
 
   return (
     <div
-      className={`${cardStyles.card} ${
+      className={`${cardStyles.card} ${atFeed ? cardStyles.cardAtFeed : ""} ${
         emergeFromBlob ? cardStyles.cardBlurPeak : ""
-      } ${exitLeft ? cardStyles.cardExitLeft : ""}`}
+      } ${exitLeft ? cardStyles.cardExitLeft : ""} ${
+        introSettle ? cardStyles.cardStep1Enter : ""
+      }`}
       style={{
         left: `${emergeFromBlob ? BLOB_ORIGIN_PCT.x : rect.left}%`,
         top: `${emergeFromBlob ? BLOB_ORIGIN_PCT.y : rect.top}%`,
         width: emergeFromBlob ? "14.2cqw" : `${rect.width}%`,
         height: emergeFromBlob ? "14.2cqw" : `${rect.height}%`,
-        opacity: emergeFromBlob ? 0.55 : rect.opacity,
+        opacity: emergeFromBlob
+          ? 0.55
+          : introActive
+            ? rect.opacity * 0.45
+            : rect.opacity,
         borderRadius: `${rect.radiusCqw}cqw`,
         transform: emergeFromBlob
           ? "translate(-50%, -50%) scale(0.72)"
-          : "translate(0, 0) scale(1)",
+          : introActive
+            ? `translateX(-${STEP1_CARD_INTRO_SHIFT_CQW}cqw) scale(${STEP1_CARD_INTRO_SCALE})`
+            : "translateX(0) scale(1)",
+        transitionDelay: introSettle
+          ? `${introRank * STEP1_CARD_INTRO_STAGGER_MS}ms`
+          : "0ms",
         zIndex: isHero ? 4 : 2,
       }}
     >
@@ -272,6 +293,20 @@ export default function RightCompanionStep1To2({ step = 1 }) {
   const [carouselRotation, setCarouselRotation] = useState(step === 3 ? 2 : 0);
   const [feedExitStage, setFeedExitStage] = useState(-1);
   const [showStep3Overlay, setShowStep3Overlay] = useState(false);
+  const [step1Intro, setStep1Intro] = useState(true);
+
+  useEffect(() => {
+    if (step !== 1) {
+      setStep1Intro(true);
+      return undefined;
+    }
+
+    setStep1Intro(true);
+    const introId = requestAnimationFrame(() => {
+      requestAnimationFrame(() => setStep1Intro(false));
+    });
+    return () => cancelAnimationFrame(introId);
+  }, [step]);
 
   useEffect(() => {
     if (step === 3) {
@@ -369,6 +404,7 @@ export default function RightCompanionStep1To2({ step = 1 }) {
             step={uiStep}
             morphToFeed={morphToFeed}
             emergeFromBlob={emergeFromBlob}
+            step1Intro={step1Intro}
             heroVideoActive={
               card.key === "center" &&
               heroVideoActive &&

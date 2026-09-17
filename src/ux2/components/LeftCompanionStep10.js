@@ -7,8 +7,6 @@ import {
   sizeCqwLeft10,
   STEP10_LEFT_DOTS,
   STEP10_LEFT_PROMPT,
-  STEP10_LEFT_QR_BLOB,
-  STEP10_LEFT_VOICE,
 } from "@/ux2/lib/ux2Step10LeftLayout";
 
 const PROMPT_STYLE = {
@@ -43,51 +41,6 @@ export default function LeftCompanionStep10({ show = false }) {
           className="object-contain"
           sizes="20vw"
         />
-      </div>
-
-      <div
-        className="absolute -translate-x-1/2 -translate-y-1/2"
-        style={{
-          left: `${pctLeft10(STEP10_LEFT_VOICE.centerX)}%`,
-          top: `${pctLeft10(STEP10_LEFT_VOICE.centerY)}%`,
-          width: `${sizeCqwLeft10(STEP10_LEFT_VOICE.size)}%`,
-          height: `${sizeCqwLeft10(STEP10_LEFT_VOICE.size)}%`,
-        }}
-      >
-        <Image
-          src="/figma/ux2/step0/voice-recorder.svg"
-          alt=""
-          fill
-          className="object-contain drop-shadow-[0_4px_32px_rgba(255,255,255,0.45)]"
-          sizes="12vw"
-        />
-      </div>
-
-      <div
-        className="absolute -translate-x-1/2 -translate-y-1/2"
-        style={{
-          left: `${pctLeft10(STEP10_LEFT_QR_BLOB.centerX)}%`,
-          top: `${pctLeft10(STEP10_LEFT_QR_BLOB.centerY)}%`,
-          width: `${sizeCqwLeft10(STEP10_LEFT_QR_BLOB.size)}%`,
-          height: `${sizeCqwLeft10(STEP10_LEFT_QR_BLOB.size)}%`,
-        }}
-      >
-        <div className="relative h-full w-full">
-          <Image
-            src="/figma/left-orbit/step6-music-blob.svg"
-            alt=""
-            fill
-            className="object-contain drop-shadow-[0_0_24px_rgba(255,255,255,0.3)]"
-            sizes="18vw"
-          />
-          <Image
-            src="/figma/ux2/web-search-icon.svg"
-            alt=""
-            width={96}
-            height={96}
-            className="absolute left-1/2 top-1/2 h-[46%] w-[46%] -translate-x-1/2 -translate-y-1/2 object-contain"
-          />
-        </div>
       </div>
 
       <div

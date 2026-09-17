@@ -15,11 +15,13 @@ import LeftCompanionStep7 from "@/ux2/components/LeftCompanionStep7";
 import LeftCompanionStep8 from "@/ux2/components/LeftCompanionStep8";
 import LeftCompanionStep9 from "@/ux2/components/LeftCompanionStep9";
 import LeftCompanionStep10 from "@/ux2/components/LeftCompanionStep10";
+import Ux2Step911LeftQrIcon from "@/ux2/components/Ux2Step911LeftQrIcon";
 import Ux2InstagramIconPersist from "@/ux2/components/Ux2InstagramIconPersist";
 import Ux2VoiceIconAtSlot from "@/ux2/components/Ux2VoiceIconAtSlot";
 import Ux2Step0IconMotion from "@/ux2/components/Ux2Step0IconMotion";
 import Ux2LeftAmbientVideo from "@/ux2/components/Ux2LeftAmbientVideo";
 import Ux2Step4IconPrefetch from "@/ux2/components/Ux2Step4IconPrefetch";
+import step0EdgeGlow from "@/ux2/styles/ux2LeftStep0EdgeGlow.module.css";
 import { UX2_LAST_STEP } from "@/ux2/lib/ux2FlowSteps";
 import {
   centerOf,
@@ -68,6 +70,8 @@ export default function LeftAmbientBackground({
     (dotsGathering && step === 3) ||
     holdAgentExit;
   const leftVideoBg = step >= 1 && step <= UX2_LAST_STEP;
+  /** 1~2 좌측 원 연보라 rim · 3+ off (0→1은 crossfade로 서서히) */
+  const showLavenderEdge = step === 1 || step === 2;
 
   return (
     <div
@@ -95,6 +99,12 @@ export default function LeftAmbientBackground({
         }`}
         sizes="(max-width: 900px) 41vmin, 520px"
         priority={step === 0}
+      />
+      <div
+        className={`${step0EdgeGlow.wrap} ${BG_CROSSFADE} ${
+          showLavenderEdge ? "opacity-100" : "opacity-0"
+        }`}
+        aria-hidden
       />
 
       <Ux2Step0IconMotion
@@ -158,6 +168,7 @@ export default function LeftAmbientBackground({
       />
       <LeftCompanionStep7 show={step === 7} />
       <LeftCompanionStep8 show={step === 8} />
+      <Ux2Step911LeftQrIcon show={step >= 9 && step <= 11} />
       <LeftCompanionStep9 show={step === 9} />
       <LeftCompanionStep10 show={step === 10 || step === 11} />
     </div>

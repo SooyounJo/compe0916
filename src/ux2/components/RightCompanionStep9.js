@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import BlurFade from "@/ux2/components/BlurFade";
 import exitStyles from "@/ux2/styles/ux2Step11RightExit.module.css";
+import enterStyles from "@/ux2/styles/ux2Step9RightCardEnter.module.css";
 import {
   pctRight9,
   sizeCqwRight9,
@@ -14,19 +14,25 @@ import {
   STEP9_RIGHT_QR_BLOB,
   UX2_STEP9_MEMORY_CARD_PHOTO,
 } from "@/ux2/lib/ux2Step9RightLayout";
+import {
+  UX2_STEP9_QR_SCANNER_ICON_WHITE,
+  UX2_STEP9_QR_SCANNER_IN_BLOB_SCALE,
+} from "@/ux2/lib/ux2Step9Icons";
+import { UX2_STEP10_MEMORY_CARD_PHOTO } from "@/ux2/lib/ux2Step10RightLayout";
+import crossfadeStyles from "@/ux2/styles/ux2Step910PhotoCrossfade.module.css";
 
 /** Figma [50:522](https://www.figma.com/design/BeRQvUjf5ci89pXVH3bry5/Untitled?node-id=50-522) */
 export default function RightCompanionStep9({
   show = false,
-  cardPhotoSrc = UX2_STEP9_MEMORY_CARD_PHOTO,
-  /** PNG에 타이틀·하트·북마크가 포함된 10단계 카드 */
-  bakedCardChrome = false,
-  /** 11단계: 중앙 사진만 아래로 sink + 블러 */
+  flowStep = 9,
   exitDown = false,
+  cardSlideFromLeft = false,
 }) {
+  const atTenPlus = flowStep >= 10;
   const card = STEP9_RIGHT_MEMORY_CARD;
   const qrSize = sizeCqwRight9(STEP9_RIGHT_QR_BLOB.size);
   const [sinkActive, setSinkActive] = useState(false);
+  const [slideActive, setSlideActive] = useState(false);
 
   useEffect(() => {
     if (!show || !exitDown) {
@@ -44,7 +50,60 @@ export default function RightCompanionStep9({
     };
   }, [show, exitDown]);
 
-  const shell = (
+  useEffect(() => {
+    if (!show || !cardSlideFromLeft) {
+      setSlideActive(false);
+      return undefined;
+    }
+    setSlideActive(false);
+    let innerId = 0;
+    const outerId = requestAnimationFrame(() => {
+      innerId = requestAnimationFrame(() => setSlideActive(true));
+    });
+    return () => {
+      cancelAnimationFrame(outerId);
+      cancelAnimationFrame(innerId);
+    };
+  }, [show, cardSlideFromLeft]);
+
+  if (!show) {
+    return null;
+  }
+
+  const qrBlob = (
+    <div
+      className="absolute -translate-x-1/2 -translate-y-1/2"
+      style={{
+        left: `${pctRight9(STEP9_RIGHT_QR_BLOB.centerX)}%`,
+        top: `${pctRight9(STEP9_RIGHT_QR_BLOB.centerY)}%`,
+        width: `${qrSize}%`,
+        height: `${qrSize}%`,
+      }}
+    >
+      <div className="relative h-full w-full">
+        <Image
+          src="/figma/left-orbit/step6-music-blob.svg"
+          alt=""
+          fill
+          className="object-contain drop-shadow-[0_0_28px_rgba(255,255,255,0.35)]"
+          sizes="18vw"
+        />
+        <Image
+          src={UX2_STEP9_QR_SCANNER_ICON_WHITE}
+          alt=""
+          width={96}
+          height={96}
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 object-contain"
+          style={{
+            width: `${UX2_STEP9_QR_SCANNER_IN_BLOB_SCALE * 100}%`,
+            height: `${UX2_STEP9_QR_SCANNER_IN_BLOB_SCALE * 100}%`,
+          }}
+        />
+      </div>
+    </div>
+  );
+
+  const cardCluster = (
     <>
       <div
         className={`absolute overflow-hidden bg-[#1a1210] shadow-[0_12px_48px_rgba(0,0,0,0.28)] ${
@@ -59,113 +118,109 @@ export default function RightCompanionStep9({
         }}
       >
         <Image
-          src={cardPhotoSrc}
+          src={UX2_STEP9_MEMORY_CARD_PHOTO}
           alt=""
           fill
-          className={
-            bakedCardChrome
-              ? "object-cover object-center"
-              : "object-cover object-center scale-[1.06]"
-          }
+          className={`object-cover object-center scale-[1.06] ${crossfadeStyles.cardPhoto} ${
+            atTenPlus
+              ? crossfadeStyles.cardPhotoHidden
+              : crossfadeStyles.cardPhotoVisible
+          }`}
+          sizes="40vw"
+        />
+        <Image
+          src={UX2_STEP10_MEMORY_CARD_PHOTO}
+          alt=""
+          fill
+          className={`object-cover object-center ${crossfadeStyles.cardPhoto} ${
+            atTenPlus
+              ? crossfadeStyles.cardPhotoVisible
+              : crossfadeStyles.cardPhotoHidden
+          }`}
           sizes="40vw"
         />
       </div>
 
-      {bakedCardChrome ? null : (
-        <>
-          <p
-            className="absolute whitespace-nowrap text-[2.24cqw] font-bold leading-none text-white"
-            style={{
-              left: `${pctRight9(STEP9_RIGHT_CARD_TITLE.left)}%`,
-              top: `${pctRight9(STEP9_RIGHT_CARD_TITLE.top)}%`,
-              textShadow: "0 2px 12px rgba(0,0,0,0.35)",
-            }}
-          >
-            Wine party with my BF
-          </p>
+      <>
+        <p
+          className={`absolute whitespace-nowrap text-[2.24cqw] font-bold leading-none text-white ${crossfadeStyles.cardChrome} ${
+            atTenPlus
+              ? crossfadeStyles.cardChromeHidden
+              : crossfadeStyles.cardChromeVisible
+          }`}
+          style={{
+            left: `${pctRight9(STEP9_RIGHT_CARD_TITLE.left)}%`,
+            top: `${pctRight9(STEP9_RIGHT_CARD_TITLE.top)}%`,
+            textShadow: "0 2px 12px rgba(0,0,0,0.35)",
+          }}
+          aria-hidden={atTenPlus}
+        >
+          Wine party with my BF
+        </p>
 
-          <div
-            className="absolute -translate-x-1/2 -translate-y-1/2"
-            style={{
-              left: `${pctRight9(STEP9_RIGHT_HEART.centerX)}%`,
-              top: `${pctRight9(STEP9_RIGHT_HEART.centerY)}%`,
-              width: `${sizeCqwRight9(STEP9_RIGHT_HEART.size)}%`,
-              height: `${sizeCqwRight9(STEP9_RIGHT_HEART.size)}%`,
-            }}
-          >
-            <Image
-              src="/figma/ux2/step2/59df8.svg"
-              alt=""
-              fill
-              className="object-contain"
-              sizes="8vw"
-            />
-          </div>
-
-          <div
-            className="absolute -translate-x-1/2 -translate-y-1/2"
-            style={{
-              left: `${pctRight9(STEP9_RIGHT_BOOKMARK.centerX)}%`,
-              top: `${pctRight9(STEP9_RIGHT_BOOKMARK.centerY)}%`,
-              width: `${sizeCqwRight9(STEP9_RIGHT_BOOKMARK.size)}%`,
-              height: `${sizeCqwRight9(STEP9_RIGHT_BOOKMARK.size)}%`,
-            }}
-          >
-            <Image
-              src="/figma/ux2/step2/52235.svg"
-              alt=""
-              fill
-              className="object-contain"
-              sizes="8vw"
-            />
-          </div>
-        </>
-      )}
-
-      <div
-        className="absolute -translate-x-1/2 -translate-y-1/2"
-        style={{
-          left: `${pctRight9(STEP9_RIGHT_QR_BLOB.centerX)}%`,
-          top: `${pctRight9(STEP9_RIGHT_QR_BLOB.centerY)}%`,
-          width: `${qrSize}%`,
-          height: `${qrSize}%`,
-        }}
-      >
-        <div className="relative h-full w-full">
+        <div
+          className={`absolute -translate-x-1/2 -translate-y-1/2 ${crossfadeStyles.cardChrome} ${
+            atTenPlus
+              ? crossfadeStyles.cardChromeHidden
+              : crossfadeStyles.cardChromeVisible
+          }`}
+          style={{
+            left: `${pctRight9(STEP9_RIGHT_HEART.centerX)}%`,
+            top: `${pctRight9(STEP9_RIGHT_HEART.centerY)}%`,
+            width: `${sizeCqwRight9(STEP9_RIGHT_HEART.size)}%`,
+            height: `${sizeCqwRight9(STEP9_RIGHT_HEART.size)}%`,
+          }}
+          aria-hidden={atTenPlus}
+        >
           <Image
-            src="/figma/left-orbit/step6-music-blob.svg"
+            src="/figma/ux2/step2/59df8.svg"
             alt=""
             fill
-            className="object-contain drop-shadow-[0_0_28px_rgba(255,255,255,0.35)]"
-            sizes="18vw"
-          />
-          <Image
-            src="/figma/ux2/web-search-icon.svg"
-            alt=""
-            width={96}
-            height={96}
-            className="absolute left-1/2 top-1/2 h-[46%] w-[46%] -translate-x-1/2 -translate-y-1/2 object-contain"
+            className="object-contain"
+            sizes="8vw"
           />
         </div>
-      </div>
+
+        <div
+          className={`absolute -translate-x-1/2 -translate-y-1/2 ${crossfadeStyles.cardChrome} ${
+            atTenPlus
+              ? crossfadeStyles.cardChromeHidden
+              : crossfadeStyles.cardChromeVisible
+          }`}
+          style={{
+            left: `${pctRight9(STEP9_RIGHT_BOOKMARK.centerX)}%`,
+            top: `${pctRight9(STEP9_RIGHT_BOOKMARK.centerY)}%`,
+            width: `${sizeCqwRight9(STEP9_RIGHT_BOOKMARK.size)}%`,
+            height: `${sizeCqwRight9(STEP9_RIGHT_BOOKMARK.size)}%`,
+          }}
+          aria-hidden={atTenPlus}
+        >
+          <Image
+            src="/figma/ux2/step2/52235.svg"
+            alt=""
+            fill
+            className="object-contain"
+            sizes="8vw"
+          />
+        </div>
+      </>
     </>
   );
 
-  if (exitDown) {
-    if (!show) return null;
-    return (
-      <div className="pointer-events-none absolute inset-0 z-[14] overflow-hidden">
-        {shell}
-      </div>
-    );
-  }
-
   return (
-    <BlurFade
-      show={show}
-      className="pointer-events-none absolute inset-0 z-[14] overflow-hidden"
-    >
-      {shell}
-    </BlurFade>
+    <div className="pointer-events-none absolute inset-0 z-[14] overflow-hidden">
+      {qrBlob}
+      {cardSlideFromLeft ? (
+        <div
+          className={`absolute inset-0 ${enterStyles.cardGroup} ${
+            slideActive ? enterStyles.cardGroupActive : ""
+          }`}
+        >
+          {cardCluster}
+        </div>
+      ) : (
+        cardCluster
+      )}
+    </div>
   );
 }

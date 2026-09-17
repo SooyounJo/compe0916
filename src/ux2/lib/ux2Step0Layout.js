@@ -42,6 +42,9 @@ export const STEP0_RIGHT_ROW = {
   textOffsetX: 392.75,
 };
 
+/** 0단계 우측 카피 — Figma 대비 좌측(인스타 슬롯 쪽)으로 당김 (px, F0_RIGHT) */
+export const STEP0_RIGHT_TEXT_NUDGE_LEFT_PX = 72;
+
 export function pctCircleRight(px, basis = F0_RIGHT) {
   return (px / basis) * 100;
 }

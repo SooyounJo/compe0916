@@ -16,7 +16,6 @@ export const UX2_HANDOFF_EXIT_IDS = ["people", "gallery"];
 /** 4 아이콘 id → 5단계 정착 id */
 export const UX2_HANDOFF_RELOCATE = {
   video: "music",
-  edit: "calendar",
   bookmark: "moon",
 };
 

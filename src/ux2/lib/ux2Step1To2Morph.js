@@ -43,6 +43,17 @@ export const BLOB_ORIGIN_PCT = {
   y: pct(STEP0_RIGHT_ROW.top + STEP0_RIGHT_ROW.height / 2),
 };
 
+/** 1단계 — 좌→우 순차 등장 (작은 상태에서 슬롯으로) */
+export const STEP1_CARD_INTRO_STAGGER_MS = 200;
+export const STEP1_CARD_INTRO_SHIFT_CQW = 28;
+export const STEP1_CARD_INTRO_SCALE = 0.34;
+
+export const STEP1_CARD_INTRO_RANK = {
+  left: 0,
+  center: 1,
+  right: 2,
+};
+
 /** 좌 · 중 · 우 — 원 기준 % (step1 글래스 → step2 피드) */
 export const MORPH_CARDS = [
   {

@@ -3,14 +3,15 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import Image from "next/image";
 import BlurFade from "@/ux2/components/BlurFade";
-import { rightHandoffTransformVars } from "@/ux2/lib/dualOrbitHandoffPath";
+import { ux2RightHandoffTransformVars } from "@/ux2/lib/ux2LeftOrbitStep45Handoff";
+import rightHandoffStyles from "@/ux2/styles/ux2Step5RightHandoff.module.css";
 import {
   pctRight5,
   sizeCqwRight5,
-  STEP5_RIGHT_CENTER_RING,
   STEP5_RIGHT_PEOPLE,
   STEP5_RIGHT_PROMPT,
   STEP5_RIGHT_VIDEO,
+  ux2RightVideoBlobCenterPx,
 } from "@/ux2/lib/ux2Step5RightLayout";
 import {
   UX2_STEP5_RIGHT_HANDOFF_S,
@@ -25,7 +26,6 @@ const PROMPT_STYLE = {
   textShadow: "0 4px 73px rgba(255,255,255,0.8)",
 };
 
-const HANDOFF_CLASS = "icon-orbit-enter-handoff";
 const STEP5_TO6_EXIT_MS = 1680;
 
 /** 4→5 — 4부터 마운트(prevStep), gap에서 슬롯으로 transform 곡선 */
@@ -34,7 +34,6 @@ export default function RightCompanionStep5({ show = false, step = 5 }) {
   const [leavingTo6, setLeavingTo6] = useState(false);
   const prevStepRef = useRef(null);
 
-  const ringSize = sizeCqwRight5(STEP5_RIGHT_CENTER_RING.size);
   const peopleSize = sizeCqwRight5(STEP5_RIGHT_PEOPLE.size);
   const videoSize = sizeCqwRight5(STEP5_RIGHT_VIDEO.size);
 
@@ -84,8 +83,9 @@ export default function RightCompanionStep5({ show = false, step = 5 }) {
 
   const peopleEndLeft = `${pctRight5(STEP5_RIGHT_PEOPLE.centerX)}%`;
   const peopleEndTop = `${pctRight5(STEP5_RIGHT_PEOPLE.centerY)}%`;
-  const videoEndLeft = `${pctRight5(STEP5_RIGHT_VIDEO.centerX)}%`;
-  const videoEndTop = `${pctRight5(STEP5_RIGHT_VIDEO.centerY)}%`;
+  const videoCenter = ux2RightVideoBlobCenterPx();
+  const videoEndLeft = `${pctRight5(videoCenter.centerX)}%`;
+  const videoEndTop = `${pctRight5(videoCenter.centerY)}%`;
 
   const peopleEnd = {
     "--orbit-end-left": peopleEndLeft,
@@ -96,8 +96,11 @@ export default function RightCompanionStep5({ show = false, step = 5 }) {
     "--orbit-end-top": videoEndTop,
   };
 
-  const peopleHandoffVars = rightHandoffTransformVars(peopleEndLeft, peopleEndTop);
-  const videoHandoffVars = rightHandoffTransformVars(videoEndLeft, videoEndTop);
+  const peopleHandoffVars = ux2RightHandoffTransformVars(
+    peopleEndLeft,
+    peopleEndTop,
+  );
+  const videoHandoffVars = ux2RightHandoffTransformVars(videoEndLeft, videoEndTop);
 
   const blurFadeShow = (show && step === 5) || leavingTo6;
 
@@ -114,25 +117,7 @@ export default function RightCompanionStep5({ show = false, step = 5 }) {
         }`}
       >
         <div
-          className={`absolute overflow-hidden rounded-full border-[0.35cqw] border-white/55 bg-transparent shadow-[inset_0_0_40px_rgba(255,255,255,0.12)] ${
-            playEnter ? "icon-orbit-wine-step5-in" : "icon-orbit-settled"
-          }`}
-          style={{
-            "--orbit-end-left": `${pctRight5(STEP5_RIGHT_CENTER_RING.centerX)}%`,
-            "--orbit-end-top": `${pctRight5(STEP5_RIGHT_CENTER_RING.centerY)}%`,
-            width: `${ringSize}%`,
-            height: `${ringSize}%`,
-            ...(playEnter
-              ? {
-                  "--step5-wine-settle-delay": `${ux2Step5RightEnterDelayS("ring")}s`,
-                }
-              : {}),
-          }}
-          aria-hidden
-        />
-
-        <div
-          className={`absolute ${playEnter ? HANDOFF_CLASS : "icon-orbit-settled"}`}
+          className={`absolute ${playEnter ? rightHandoffStyles.handoff : "icon-orbit-settled"} relative`}
           style={{
             width: `${peopleSize}%`,
             height: `${peopleSize}%`,
@@ -146,26 +131,17 @@ export default function RightCompanionStep5({ show = false, step = 5 }) {
             ...(playEnter ? peopleHandoffVars : {}),
           }}
         >
-          <div className="relative h-full w-full">
-            <Image
-              src="/figma/left-orbit/people-blob.svg"
-              alt=""
-              fill
-              className="object-contain"
-              sizes="22vw"
-            />
-            <Image
-              src="/figma/icon-orbit-people.svg"
-              alt=""
-              width={120}
-              height={120}
-              className="absolute left-1/2 top-1/2 h-[43%] w-[43%] -translate-x-1/2 -translate-y-1/2 object-contain opacity-90"
-            />
-          </div>
+          <Image
+            src="/figma/ux2/step4/people-blob.svg"
+            alt=""
+            fill
+            className="object-contain drop-shadow-[0_0_20px_rgba(255,255,255,0.22)]"
+            sizes="22vw"
+          />
         </div>
 
         <div
-          className={`absolute ${playEnter ? HANDOFF_CLASS : "icon-orbit-settled"}`}
+          className={`absolute ${playEnter ? rightHandoffStyles.handoff : "icon-orbit-settled"} relative`}
           style={{
             width: `${videoSize}%`,
             height: `${videoSize}%`,
@@ -180,10 +156,10 @@ export default function RightCompanionStep5({ show = false, step = 5 }) {
           }}
         >
           <Image
-            src="/figma/left-orbit/cocktail-blob.svg"
+            src="/figma/ux2/step4/video-blob.svg"
             alt=""
             fill
-            className="object-contain drop-shadow-[0_0_20px_rgba(255,255,255,0.25)]"
+            className="object-contain drop-shadow-[0_0_20px_rgba(255,255,255,0.22)]"
             sizes="18vw"
           />
         </div>

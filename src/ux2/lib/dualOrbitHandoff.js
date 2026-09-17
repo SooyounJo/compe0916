@@ -1,5 +1,6 @@
 /** 4→5 한 흐름 — rim 이탈 → S자 gap → 우측 진입 */
-export const HANDOFF_ANIM_S = 2.1;
+/** 우측 icon-orbit-enter-handoff(1.75s)와 동기 */
+export const HANDOFF_ANIM_S = 1.75;
 export const HANDOFF_EASE = "cubic-bezier(0.33, 0, 0.15, 1)";
 
 const EXIT_AT_S = {

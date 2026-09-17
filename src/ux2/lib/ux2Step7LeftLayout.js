@@ -42,3 +42,12 @@ export const STEP7_LEFT_MUSIC_BLOB = {
   centerY: 809 + 275.75 / 2,
   size: 275.75,
 };
+
+/** Figma [8:393](https://www.figma.com/design/cXldlocGQQFUzuQBy7DTEn/-3-AI-Companion_2?node-id=8-393) — 8:408 QR 블롭 */
+export const STEP7_LEFT_QR_BLOB = {
+  centerX: F / 2 + 601.49,
+  centerY: 1155 + 258.482 / 2,
+  size: 258.482,
+};
+
+export const UX2_STEP7_QR_BLOB_SRC = "/figma/ux2/step7/qr-blob.svg";

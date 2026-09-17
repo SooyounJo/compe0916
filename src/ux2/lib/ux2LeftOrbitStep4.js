@@ -17,8 +17,9 @@ function sizeCqw(px) {
 
 /** Figma 8:252 대비 화면상 arc가 높게 보이는 보정 — 하단 rim 쪽으로 */
 const STEP4_ARC_Y_NUDGE_PX = 82;
-/** people(맨 우)만 arc보다 위 — Figma 8:268 */
-const STEP4_PEOPLE_LIFT_PX = 100;
+/** people — 하단 arc (Figma 8:277, 구 video 슬롯) */
+const STEP4_PEOPLE_LIFT_PX = 0;
+const STEP4_PEOPLE_NUDGE_RIGHT_PX = 0;
 
 /** Figma 프레임 → 블롭 중심 px */
 function centerFromFigma({ centerX, centerY, left, top, size }) {
@@ -45,6 +46,9 @@ function iconDef(def) {
   if (nudged.centerY != null) {
     nudged.centerY += yAdd;
   }
+  if (nudged.id === "people" && nudged.left != null) {
+    nudged.left += STEP4_PEOPLE_NUDGE_RIGHT_PX;
+  }
   const { x, y } = centerFromFigma(nudged);
   return {
     id: def.id,
@@ -60,11 +64,11 @@ function iconDef(def) {
 /** 8:259 … 8:280 — composite blob SVG */
 const ICON_DEFS = [
   iconDef({
-    id: "edit",
+    id: "video",
     left: 142,
     top: 940,
-    size: 183.482,
-    src: "/figma/ux2/step4/edit-blob.svg",
+    size: 251.945,
+    src: "/figma/ux2/step4/video-blob.svg",
   }),
   iconDef({
     id: "bookmark",
@@ -81,17 +85,10 @@ const ICON_DEFS = [
     src: "/figma/ux2/step4/gallery-blob.svg",
   }),
   iconDef({
-    id: "video",
+    id: "people",
     left: 1039,
     top: 1447,
     size: 251.945,
-    src: "/figma/ux2/step4/video-blob.svg",
-  }),
-  iconDef({
-    id: "people",
-    left: 1373,
-    top: 1150,
-    size: 296.673,
     src: "/figma/ux2/step4/people-blob.svg",
   }),
 ];

@@ -1,28 +1,15 @@
-import {
-  handoffExitDelay,
-  handoffRelocateDelay,
-} from "@/ux2/lib/dualOrbitHandoff";
-
-/** UX2 id → dualOrbitHandoff 키 */
-const EXIT_KEY = {
-  people: "people",
-  gallery: "burger",
-};
-
-const RELOCATE_KEY = {
-  video: "cocktail",
-  edit: "calendar",
-  bookmark: "moon",
+/** UX2 4→5 — 짧은 스태거 (좌→우 흐름) */
+const UX2_HANDOFF_DELAY_S = {
+  people: 0,
+  gallery: 0.05,
+  edit: 0.04,
+  bookmark: 0.09,
+  video: 0.13,
 };
 
 export function ux2HandoffDelayS(icon) {
-  if (icon.handoff === "exit") {
-    const key = EXIT_KEY[icon.id];
-    return key ? handoffExitDelay(key) : 0;
-  }
-  if (icon.handoff === "relocate") {
-    const key = RELOCATE_KEY[icon.id];
-    return key ? handoffRelocateDelay(key) : 0;
+  if (icon.handoff === "exit" || icon.handoff === "relocate") {
+    return UX2_HANDOFF_DELAY_S[icon.id] ?? 0;
   }
   return 0;
 }

@@ -9,23 +9,21 @@ import {
 } from "@/ux2/lib/leftOrbitEnterLatch";
 import { HANDOFF_ANIM_S } from "@/ux2/lib/dualOrbitHandoff";
 import { ux2HandoffDelayS } from "@/ux2/lib/ux2HandoffDelays";
+import { ux2LeftHandoffStyleVars } from "@/ux2/lib/ux2LeftOrbitStep45Handoff";
 import { UX2_LEFT_ORBIT_STEP4_ICONS } from "@/ux2/lib/ux2LeftOrbitStep4";
+import handoffStyles from "@/ux2/styles/left-orbit-step45-handoff.module.css";
 import {
   UX2_STEP4_ENTRY_BASE_S,
   UX2_STEP4_ENTER_DURATION_S,
   ux2Step4EnterDelayS,
 } from "@/ux2/lib/ux2LeftOrbitStep4Enter";
-import {
-  STEP5_LEFT_ICONS,
-  STEP5_LEFT_INNER_PCT,
-} from "@/ux2/lib/ux2Step5LeftLayout";
 
 const ARC_ENTER_CLASS = "left-icon-orbit-enter-arc";
 
 function iconMotionClass(step, arcSettled, playEnter, handoffPlaying, icon) {
   if (step === 5 && handoffPlaying) {
-    if (icon.handoff === "exit") return "left-icon-orbit-exit-rim";
-    if (icon.handoff === "relocate") return "left-icon-orbit-rim-relocate";
+    if (icon.handoff === "exit") return handoffStyles.exit;
+    if (icon.handoff === "relocate") return handoffStyles.relocate;
     return "left-icon-orbit-settled";
   }
   if (step === 4 && arcSettled) return "left-icon-orbit-settled";
@@ -82,56 +80,13 @@ function Step4Glyph({ icon }) {
   );
 }
 
-function Step5Glyph({ icon }) {
-  const innerPct = icon.innerPct ?? STEP5_LEFT_INNER_PCT;
-  const innerStyle = { width: `${innerPct}%`, height: `${innerPct}%` };
-
-  if (icon.variant === "music") {
-    return (
-      <div className="relative h-full w-full">
-        <Image
-          src="/figma/left-orbit/step6-music-blob.svg"
-          alt=""
-          fill
-          className="object-contain drop-shadow-[0_0_24px_rgba(255,255,255,0.28)]"
-          sizes="22vw"
-        />
-        <Image
-          src="/figma/left-orbit/step6-music-note.svg"
-          alt=""
-          width={84}
-          height={84}
-          style={innerStyle}
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 object-contain"
-        />
-      </div>
-    );
-  }
-  if (icon.iconSrc) {
-    return (
-      <div className="relative h-full w-full">
-        <Image src={icon.src} alt="" fill className="object-contain" sizes="20vw" />
-        <Image
-          src={icon.iconSrc}
-          alt=""
-          width={84}
-          height={84}
-          style={innerStyle}
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 object-contain"
-        />
-      </div>
-    );
-  }
-  return (
-    <div className="relative h-full w-full">
-      <Image
-        src={icon.src}
-        alt=""
-        fill
-        className="object-contain drop-shadow-[0_0_24px_rgba(255,255,255,0.28)]"
-        sizes="20vw"
-      />
-    </div>
+function step5SettledIconsFromStep4() {
+  return UX2_LEFT_ORBIT_STEP4_ICONS.filter((icon) => icon.handoff === "relocate").map(
+    (icon) => ({
+      ...icon,
+      left: icon.handoffEndLeft,
+      top: icon.handoffEndTop,
+    }),
   );
 }
 
@@ -214,67 +169,67 @@ export default function LeftCompanionIconArc({ step = 1 }) {
 
   if (step !== 4 && step !== 5) return null;
 
-  const showStep5Settled = step === 5 && handoffDone;
-  const showStep4Layer = step === 4 || (step === 5 && handoffPlaying);
+  const iconsOnScreen =
+    step === 4
+      ? UX2_LEFT_ORBIT_STEP4_ICONS
+      : step === 5 && handoffPlaying
+        ? UX2_LEFT_ORBIT_STEP4_ICONS
+        : step === 5 && handoffDone
+          ? step5SettledIconsFromStep4()
+          : [];
 
   return (
     <div className="pointer-events-none absolute inset-0 z-[6]" aria-hidden>
-      {showStep4Layer
-        ? UX2_LEFT_ORBIT_STEP4_ICONS.map((icon) => {
-            const motion = iconMotionClass(
-              step,
-              arcSettled,
-              playEnter,
-              handoffPlaying,
-              icon,
-            );
-            const delayS = handoffPlaying
-              ? ux2HandoffDelayS(icon)
-              : playEnter
-                ? UX2_STEP4_ENTRY_BASE_S + ux2Step4EnterDelayS(icon.id)
-                : 0;
+      {iconsOnScreen.map((icon) => {
+        const motion =
+          step === 5 && handoffDone
+            ? "left-icon-orbit-settled"
+            : iconMotionClass(
+                step,
+                arcSettled,
+                playEnter,
+                handoffPlaying,
+                icon,
+              );
+        const delayS = handoffPlaying
+          ? ux2HandoffDelayS(icon)
+          : playEnter
+            ? UX2_STEP4_ENTRY_BASE_S + ux2Step4EnterDelayS(icon.id)
+            : 0;
 
-            return (
-              <div
-                key={icon.id}
-                className={`absolute ${motion}`}
-                style={{
-                  width: `${icon.sizeCqw}cqw`,
-                  height: `${icon.sizeCqw}cqw`,
-                  animationDelay: `${delayS}s`,
-                  animationDuration: handoffPlaying
-                    ? `${HANDOFF_ANIM_S}s`
-                    : playEnter
-                      ? `${UX2_STEP4_ENTER_DURATION_S}s`
-                      : undefined,
-                  ...orbitStyleVars(icon),
-                }}
-                onAnimationStart={playEnter ? onEnterStart : undefined}
-                onAnimationEnd={playEnter ? onEnterEnd : undefined}
-              >
-                <Step4Glyph icon={icon} />
-              </div>
-            );
-          })
-        : null}
-
-      {showStep5Settled
-        ? STEP5_LEFT_ICONS.map((icon) => (
-            <div
-              key={icon.id}
-              className="left-icon-orbit-settled absolute"
-              style={{
-                width: `${icon.sizeCqw}cqw`,
-                height: `${icon.sizeCqw}cqw`,
+        const styleVars =
+          step === 5 && handoffDone
+            ? {
                 "--orbit-end-left": icon.left,
                 "--orbit-end-top": icon.top,
                 "--orbit-end-opacity": icon.opacity ?? 1,
-              }}
-            >
-              <Step5Glyph icon={icon} />
-            </div>
-          ))
-        : null}
+              }
+            : step === 5 && handoffPlaying
+              ? ux2LeftHandoffStyleVars(icon)
+              : orbitStyleVars(icon);
+
+        return (
+          <div
+            key={icon.id}
+            className={`absolute ${motion}`}
+            style={{
+              width: `${icon.sizeCqw}cqw`,
+              height: `${icon.sizeCqw}cqw`,
+              animationDelay: `${delayS}s`,
+              animationDuration: handoffPlaying
+                ? `${HANDOFF_ANIM_S}s`
+                : playEnter
+                  ? `${UX2_STEP4_ENTER_DURATION_S}s`
+                  : undefined,
+              ...styleVars,
+            }}
+            onAnimationStart={playEnter ? onEnterStart : undefined}
+            onAnimationEnd={playEnter ? onEnterEnd : undefined}
+          >
+            <Step4Glyph icon={icon} />
+          </div>
+        );
+      })}
     </div>
   );
 }

@@ -12,7 +12,10 @@ export default function Ux2IconBlob({
   className = "",
   style,
 }) {
-  const useMaskFill = iconFillColor === "#9A93AA" || iconFillColor === "#9a93aa";
+  const fill = iconFillColor?.toLowerCase();
+  const useMaskFill = fill === "#9a93aa" || fill === "#ffffff";
+  const maskGlyphClass =
+    fill === "#ffffff" ? tintStyles.glyphWhiteFill : tintStyles.glyph9a93aa;
 
   return (
     <div
@@ -33,7 +36,7 @@ export default function Ux2IconBlob({
         />
         {useMaskFill ? (
           <div
-            className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 ${tintStyles.glyph9a93aa}`}
+            className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 ${maskGlyphClass}`}
             style={{
               width: `${iconSizePct}%`,
               height: `${iconSizePct}%`,

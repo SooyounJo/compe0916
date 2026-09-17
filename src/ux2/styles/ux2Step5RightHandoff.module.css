@@ -1,0 +1,22 @@
+.handoff {
+  left: var(--orbit-end-left);
+  top: var(--orbit-end-top);
+  z-index: 40;
+  animation: ux2RightHandoffSlide 1.75s cubic-bezier(0.33, 0, 0.15, 1) both;
+  backface-visibility: hidden;
+}
+
+@keyframes ux2RightHandoffSlide {
+  0% {
+    transform: translate(
+        calc(-50% + var(--handoff-from-start-dx, 0cqw)),
+        calc(-50% + var(--handoff-from-start-dy, 0cqw))
+      )
+      scale(0.9);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}

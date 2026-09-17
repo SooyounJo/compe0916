@@ -1,10 +1,16 @@
 import BlurFade from "@/ux2/components/BlurFade";
-import { pctCircleRight, STEP0_RIGHT_ROW } from "@/ux2/lib/ux2Step0Layout";
+import {
+  pctCircleRight,
+  STEP0_RIGHT_ROW,
+  STEP0_RIGHT_TEXT_NUDGE_LEFT_PX,
+} from "@/ux2/lib/ux2Step0Layout";
 
 const TEXT_SHADOW = "0 4px 73px rgba(255,255,255,0.8)";
 const ROW = STEP0_RIGHT_ROW;
 const BLOB_CQW = pctCircleRight(ROW.blobSize);
-const GAP_CQW = pctCircleRight(ROW.textOffsetX - ROW.blobSize);
+const GAP_CQW = pctCircleRight(
+  ROW.textOffsetX - ROW.blobSize - STEP0_RIGHT_TEXT_NUDGE_LEFT_PX
+);
 
 /**
  * Figma [33:224](https://www.figma.com/design/cXldlocGQQFUzuQBy7DTEn/-3-AI-Companion_2?node-id=33-224)

@@ -1,6 +1,7 @@
 .card {
   position: absolute;
   overflow: hidden;
+  transform-origin: left center;
   transition:
     left 1.15s cubic-bezier(0.33, 0, 0.15, 1),
     top 1.15s cubic-bezier(0.33, 0, 0.15, 1),
@@ -11,6 +12,24 @@
     border-radius 1.05s cubic-bezier(0.33, 0, 0.15, 1),
     transform 1.15s cubic-bezier(0.33, 0, 0.15, 1);
   will-change: left, top, width, height, filter, opacity, transform;
+}
+
+/* 1단계 — 좌→우 등장 (delay는 인라인) */
+.cardStep1Enter {
+  transition-duration: 1.05s, 1.05s, 1.05s, 1.05s, 0.95s, 0.95s, 0.95s, 1.08s;
+}
+
+/* 2단계 피드 — 캐러셀 슬롯 교체·1→2 펼침 */
+.cardAtFeed {
+  transition:
+    left 0.88s cubic-bezier(0.33, 0, 0.15, 1),
+    top 0.88s cubic-bezier(0.33, 0, 0.15, 1),
+    width 0.88s cubic-bezier(0.33, 0, 0.15, 1),
+    height 0.88s cubic-bezier(0.33, 0, 0.15, 1),
+    opacity 0.8s cubic-bezier(0.33, 0, 0.15, 1),
+    filter 0.8s cubic-bezier(0.33, 0, 0.15, 1),
+    border-radius 0.8s cubic-bezier(0.33, 0, 0.15, 1),
+    transform 0.88s cubic-bezier(0.33, 0, 0.15, 1);
 }
 
 .cardBlurPeak {

@@ -1,3 +1,16 @@
+/* 우측 0단계 등 — 글리프 #FFFFFF */
+.glyphWhiteFill {
+  background-color: #ffffff;
+  mask-image: var(--ux2-icon-mask);
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-image: var(--ux2-icon-mask);
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+}
+
 /* Figma 좌측 — 인스타 글리프 #9A93AA (mask 방식, filter보다 진하게) */
 .glyph9a93aa {
   background-color: #9a93aa;

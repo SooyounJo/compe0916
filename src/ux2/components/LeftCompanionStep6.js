@@ -16,6 +16,11 @@ import {
   sizeCqwLeft7,
   STEP7_LEFT_MUSIC_BLOB,
 } from "@/ux2/lib/ux2Step7LeftLayout";
+import {
+  UX2_STEP8_COMPOSE_IN_BLOB_SCALE,
+  UX2_STEP8_COMPOSE_PURPLE,
+} from "@/ux2/lib/ux2Step8Icons";
+import Ux2Step7LeftBlobHandoff from "@/ux2/components/Ux2Step7LeftBlobHandoff";
 
 function OrbitIcon({
   layout,
@@ -56,6 +61,7 @@ function OrbitIcon({
 /** Figma [8:142](https://www.figma.com/design/cXldlocGQQFUzuQBy7DTEn/-3-AI-Companion_2?node-id=8-142) */
 export default function LeftCompanionStep6({ show = false, step = 6 }) {
   const step7Plus = step >= 7;
+  const step8 = step === 8;
   const showCenterDots = step >= 6 && step <= 7;
   const musicLayout = step7Plus ? STEP7_LEFT_MUSIC_BLOB : STEP6_LEFT_MUSIC;
   const musicPct = step7Plus ? pctLeft7 : pctLeft6;
@@ -85,30 +91,33 @@ export default function LeftCompanionStep6({ show = false, step = 6 }) {
         </div>
       ) : null}
 
-      <OrbitIcon
-        layout={musicLayout}
-        blobSrc="/figma/left-orbit/step6-music-blob.svg"
-        iconSrc="/figma/left-orbit/step6-music-note.svg"
-        iconScale={0.31}
-        pct={musicPct}
-        sizeCqw={musicSizeCqw}
-      />
+      {step === 7 ? (
+        <Ux2Step7LeftBlobHandoff show={show} />
+      ) : (
+        <OrbitIcon
+          layout={musicLayout}
+          blobSrc="/figma/ux2/step4/video-blob.svg"
+          iconSrc={step8 ? UX2_STEP8_COMPOSE_PURPLE : null}
+          iconScale={UX2_STEP8_COMPOSE_IN_BLOB_SCALE}
+          pct={musicPct}
+          sizeCqw={musicSizeCqw}
+        />
+      )}
       {!step7Plus ? (
         <>
           <OrbitIcon
             layout={STEP6_LEFT_ORBIT_A}
             blobSrc="/figma/ux2/step4/gallery-blob.svg"
-            iconSrc="/figma/icon-orbit-people.svg"
-            iconScale={0.38}
-          />
-          <OrbitIcon
-            layout={STEP6_LEFT_ORBIT_B}
-            blobSrc="/figma/ux2/step4/bookmark-blob.svg"
             iconSrc={null}
           />
           <OrbitIcon
             layout={STEP6_LEFT_ORBIT_C}
             blobSrc="/figma/ux2/step4/edit-blob.svg"
+            iconSrc={null}
+          />
+          <OrbitIcon
+            layout={STEP6_LEFT_ORBIT_B}
+            blobSrc="/figma/ux2/step4/bookmark-blob.svg"
             iconSrc={null}
           />
         </>

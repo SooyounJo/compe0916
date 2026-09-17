@@ -114,6 +114,8 @@ export default function Ux2Step0IconMotion({
         <Ux2IconBlob
           iconSrc="/figma/ux2/step0/web-search-icon.svg"
           iconSizePct={54}
+          iconFillColor={iconFillColor}
+          emphasized={emphasized}
           style={{ width: "100%", height: "100%" }}
         />
       </BlurFade>
@@ -142,6 +144,8 @@ export default function Ux2Step0IconMotion({
           <Ux2IconBlob
             iconSrc="/figma/ux2/step0/web-search-icon.svg"
             iconSizePct={54}
+            iconFillColor={iconFillColor}
+            emphasized={emphasized}
             style={{ width: "100%", height: "100%" }}
           />
         </BlurFade>

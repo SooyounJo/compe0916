@@ -14,19 +14,10 @@ import PartyNightScreen from "@/components/PartyNightScreen";
 import PartyNightBackground from "@/components/PartyNightBackground";
 import Ux2CenterHalftoneExpand from "@/ux2/components/Ux2CenterHalftoneExpand";
 import RightCompanionStep6 from "@/ux2/components/RightCompanionStep6";
-import Ux2DinnerPhotoBackground from "@/ux2/components/Ux2DinnerPhotoBackground";
-import {
-  STEP7_RIGHT_BG_IMAGE_SCALE,
-  UX2_STEP7_RIGHT_BG,
-} from "@/ux2/lib/ux2Step7RightLayout";
+import Ux2Step7RightBackground from "@/ux2/components/Ux2Step7RightBackground";
 import RightCompanionStep8 from "@/ux2/components/RightCompanionStep8";
 import RightCompanionStep9 from "@/ux2/components/RightCompanionStep9";
 import Ux2Step9RightBackground from "@/ux2/components/Ux2Step9RightBackground";
-import {
-  UX2_STEP10_MEMORY_CARD_PHOTO,
-  UX2_STEP10_RIGHT_BG,
-} from "@/ux2/lib/ux2Step10RightLayout";
-import { UX2_STEP8_RIGHT_BG } from "@/ux2/lib/ux2Step8RightLayout";
 import DotGridAmbient from "@/ux2/components/DotGridAmbient";
 import WeatherBackground from "@/ux2/components/WeatherBackground";
 import Ux2InstagramIconPersist from "@/ux2/components/Ux2InstagramIconPersist";
@@ -101,7 +92,7 @@ export default function CircleUI({
 
   /** 듀얼 우측: 7+ 할프톤 정적 BG · 3~6 weather · 단일 원 6에서 party-night */
   const showWeatherLayer = dualRight ? step < 7 : step < 6;
-  const dualPhotoBgStep = dualRight && step === 8;
+  const showStep7RightVideoBg = dualRight && (step === 7 || step === 8);
   const circleStep6Out = step >= 6 && !dualRight;
 
   return (
@@ -149,24 +140,10 @@ export default function CircleUI({
         <PartyNightBackground step={step} />
       )}
       {dualRight ? (
-        <Ux2DinnerPhotoBackground
-          show={step === 7}
-          src={UX2_STEP7_RIGHT_BG}
-          imageScale={STEP7_RIGHT_BG_IMAGE_SCALE}
-        />
+        <Ux2Step7RightBackground show={showStep7RightVideoBg} />
       ) : null}
       {dualRight ? (
-        <Ux2DinnerPhotoBackground show={dualPhotoBgStep} src={UX2_STEP8_RIGHT_BG} />
-      ) : null}
-      {dualRight ? (
-        <Ux2Step9RightBackground show={step === 9} />
-      ) : null}
-      {dualRight ? (
-        <Ux2Step9RightBackground
-          show={step === 10 || step === 11}
-          src={UX2_STEP10_RIGHT_BG}
-          blurStronger
-        />
+        <Ux2Step9RightBackground show={step >= 9 && step <= 11} step={step} />
       ) : null}
       <BlurFade
         show={dualRight ? step >= 5 && step <= 7 : step >= 5}
@@ -191,6 +168,7 @@ export default function CircleUI({
             onSettled={onIgSlotReady}
             handoffMode="opacity"
             instagramAtOrigin={false}
+            iconFillColor="#FFFFFF"
             emphasized
           />
           <Ux2InstagramIconPersist
@@ -221,28 +199,18 @@ export default function CircleUI({
       {dualRight ? (
         <RightCompanionStep6
           show={step === 6 || step === 7 || step === 8}
-          step={step >= 7 ? 7 : step}
+          step={step}
         />
       ) : null}
       {dualRight ? (
         <RightCompanionStep8 show={step === 8} />
       ) : null}
-      {dualRight ? (
-        <RightCompanionStep9 show={step === 9} />
-      ) : null}
-      {dualRight ? (
+      {dualRight && step >= 9 && step <= 11 ? (
         <RightCompanionStep9
-          show={step === 10}
-          cardPhotoSrc={UX2_STEP10_MEMORY_CARD_PHOTO}
-          bakedCardChrome
-        />
-      ) : null}
-      {dualRight ? (
-        <RightCompanionStep9
-          show={step === 11}
-          cardPhotoSrc={UX2_STEP10_MEMORY_CARD_PHOTO}
-          bakedCardChrome
-          exitDown
+          show
+          flowStep={step}
+          exitDown={step === 11}
+          cardSlideFromLeft={step === 9}
         />
       ) : null}
 
