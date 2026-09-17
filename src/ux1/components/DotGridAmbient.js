@@ -200,7 +200,7 @@ export default function DotGridAmbient({ step }) {
     };
   }, [step]);
 
-  if (step < 5) return null;
+  if (step < 5 || step === 7) return null;
 
   return (
     <div

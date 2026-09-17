@@ -1,8 +1,15 @@
-import Image from "next/image";
-import BlurFade from "./BlurFade";
-import { AgentDotsContinuity } from "./AgentDots";
+"use client";
 
-const F = 1879;
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { AgentDotsContinuity } from "./AgentDots";
+import {
+  UX1_STEP6_LEFT_DOTS_ENTER_DELAY_S,
+  UX1_STEP6_LEFT_TEXT_ENTER_DELAY_S,
+} from "../lib/leftOrbitStep4";
+import { UX1_STEP6_TO7_TEXT_OUT_ANIM_S } from "../lib/leftOrbitStep7";
+
+const FOOTER_TEXT_CLASS =
+  "font-doto absolute bottom-[11%] left-1/2 z-30 w-full -translate-x-1/2 px-4 text-center text-[4.65cqw] font-black leading-none tracking-[-0.04em]";
 
 const TEXT_STYLE = {
   backgroundImage:
@@ -13,62 +20,82 @@ const TEXT_STYLE = {
   textShadow: "0 4px 73px rgba(255,255,255,0.45)",
 };
 
-/** Figma [17:1723](https://www.figma.com/design/BeRQvUjf5ci89pXVH3bry5/Untitled?node-id=17-1723) */
-export default function LeftCompanionStep6({ show = false }) {
-  if (!show) return null;
+/** 6단계 — 로딩 닷·텍스트 fade-in */
+export default function LeftCompanionStep6({ step = 6 }) {
+  const [entering, setEntering] = useState(false);
+  const [exitingTo7, setExitingTo7] = useState(false);
+  const prevStepRef = useRef(null);
 
-  const dotsTop = `${((912 + 55.767 / 2) / F) * 100}%`;
-  const musicLeft = `${((939.5 + 699.13) / F) * 100}%`;
-  const musicTop = `${((809 + 275.75 / 2) / F) * 100}%`;
-  const musicSizeCqw = (275.75 / F) * 100;
-  const textTop = `${(1408 / F) * 100}%`;
+  useLayoutEffect(() => {
+    const prevStep = prevStepRef.current;
+    prevStepRef.current = step;
+
+    if (step === 6 && prevStep === 5) {
+      setEntering(true);
+      setExitingTo7(false);
+      return undefined;
+    }
+
+    if (step === 7 && prevStep === 6) {
+      setEntering(false);
+      setExitingTo7(true);
+      return undefined;
+    }
+
+    setEntering(false);
+    setExitingTo7(false);
+    return undefined;
+  }, [step]);
+
+  useEffect(() => {
+    if (!exitingTo7) return undefined;
+    const timer = setTimeout(
+      () => setExitingTo7(false),
+      UX1_STEP6_TO7_TEXT_OUT_ANIM_S * 1000 + 80,
+    );
+    return () => clearTimeout(timer);
+  }, [exitingTo7]);
+
+  if (step !== 6 && !exitingTo7) return null;
+
+  const dotsMotion = exitingTo7
+    ? "ux1-left-step6-fade-in--settled"
+    : entering
+      ? "ux1-left-step6-fade-in"
+      : "ux1-left-step6-fade-in--settled";
+  const textMotion = exitingTo7
+    ? "ux1-left-step6-fade-out"
+    : entering
+      ? "ux1-left-step6-fade-in"
+      : "ux1-left-step6-fade-in--settled";
 
   return (
-    <BlurFade
-      show={show}
-      className="party-night-foreground pointer-events-none absolute inset-0 z-[5]"
-    >
-      <div
-        className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2"
-        style={{ top: dotsTop }}
-      >
-        <AgentDotsContinuity step={1} gathering={false} />
-      </div>
-
-      <div
-        className="absolute -translate-x-1/2 -translate-y-1/2"
-        style={{
-          left: musicLeft,
-          top: musicTop,
-          width: `${musicSizeCqw}cqw`,
-          height: `${musicSizeCqw}cqw`,
-        }}
-      >
-        <div className="relative h-full w-full">
-          <Image
-            src="/figma/left-orbit/step6-music-blob.svg"
-            alt=""
-            fill
-            className="object-contain"
-            sizes="18vw"
-          />
-          <Image
-            src="/figma/left-orbit/step6-music-note.svg"
-            alt=""
-            width={88}
-            height={88}
-            className="absolute left-1/2 top-1/2 h-[31%] w-[31%] -translate-x-1/2 -translate-y-1/2 object-contain"
-          />
+    <div className="party-night-foreground pointer-events-none absolute inset-0 z-[5]">
+      {!exitingTo7 ? (
+        <div
+          className={`absolute left-1/2 top-1/2 z-[3] -translate-x-1/2 -translate-y-1/2 ${dotsMotion}`}
+          style={{
+            animationDelay: entering
+              ? `${UX1_STEP6_LEFT_DOTS_ENTER_DELAY_S}s`
+              : undefined,
+          }}
+        >
+          <AgentDotsContinuity step={1} gathering={false} />
         </div>
-      </div>
+      ) : null}
 
       <div
-        className="font-doto absolute left-1/2 w-full -translate-x-1/2 px-4 text-center text-[4.79cqw] font-black leading-none tracking-[-0.04em]"
-        style={{ top: textTop, ...TEXT_STYLE }}
+        className={`${FOOTER_TEXT_CLASS} ${textMotion}`}
+        style={{
+          ...TEXT_STYLE,
+          animationDelay: entering
+            ? `${UX1_STEP6_LEFT_TEXT_ENTER_DELAY_S}s`
+            : undefined,
+        }}
       >
         <p className="mb-0 leading-none">Home party</p>
         <p className="leading-none">music for you</p>
       </div>
-    </BlurFade>
+    </div>
   );
 }

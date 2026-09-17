@@ -1,3 +1,6 @@
+"use client";
+
+import { useLayoutEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { AgentDotsContinuity } from "./AgentDots";
 import { AgentBlobShell } from "./AgentBlobCluster";
@@ -12,15 +15,20 @@ import PartyNightBackground from "./PartyNightBackground";
 import DotGridAmbient from "./DotGridAmbient";
 import WeatherBackground from "./WeatherBackground";
 import RightStep4MusicIcon from "./RightStep4MusicIcon";
+import RightCompanionStep7 from "./RightCompanionStep7";
 import { UX1_STEP4_RIGHT_REVEAL_DELAY_S } from "../lib/leftOrbitStep4";
+import {
+  UX1_STEP7_RIGHT_MUSIC_OUT_ANIM_S,
+  UX1_STEP7_RIGHT_MUSIC_OUT_DELAY_S,
+} from "../lib/leftOrbitStep7";
 
 const T = "duration-1000 ease-in-out transition-all";
 /** 3→4: gather(3末) → 4에서 블롭·닷 함께 축소 */
 const CENTER_CLUSTER_EASE =
   "ease-[cubic-bezier(0.33,0,0.15,1)] transition-[transform,opacity,filter]";
 const CENTER_CLUSTER_IDLE = `scale-100 opacity-100 blur-0 duration-[900ms] ${CENTER_CLUSTER_EASE}`;
-const CENTER_CLUSTER_GATHER = `scale-[0.94] opacity-[0.88] blur-[2px] duration-[1000ms] ${CENTER_CLUSTER_EASE}`;
-const CENTER_CLUSTER_GONE = `scale-[0.92] opacity-0 blur-[8px] duration-[1500ms] ${CENTER_CLUSTER_EASE}`;
+const CENTER_CLUSTER_GATHER = `scale-100 opacity-0 duration-[1600ms] transition-opacity ease-[cubic-bezier(0.33,0,0.15,1)]`;
+const CENTER_CLUSTER_GONE = `scale-100 opacity-0 duration-[1500ms] transition-opacity ease-[cubic-bezier(0.33,0,0.15,1)]`;
 /** 2~6: Figma 에이전트 UI 축소 (1번은 풀 비율) */
 const COMPACT_UI_SCALE = 0.46;
 
@@ -68,10 +76,39 @@ export default function CircleUI({
   const blobShellPulse =
     step === 3 && shellLit && !dotsGathering && !centerClusterExit;
 
+  const [rightMusicExiting, setRightMusicExiting] = useState(false);
+  const prevStepRef = useRef(null);
+
+  useLayoutEffect(() => {
+    const prevStep = prevStepRef.current;
+    prevStepRef.current = step;
+
+    if (dualRight && step === 7 && prevStep === 6) {
+      setRightMusicExiting(true);
+      const timer = setTimeout(
+        () => setRightMusicExiting(false),
+        (UX1_STEP7_RIGHT_MUSIC_OUT_DELAY_S + UX1_STEP7_RIGHT_MUSIC_OUT_ANIM_S) *
+          1000 +
+          80,
+      );
+      return () => clearTimeout(timer);
+    }
+
+    if (step !== 7) {
+      setRightMusicExiting(false);
+    }
+
+    return undefined;
+  }, [step, dualRight]);
+
+  const showRightMusic =
+    dualRight &&
+    ((step >= 4 && step <= 6) || (step === 7 && rightMusicExiting));
+
   return (
     <div
       className={`@container/circle relative aspect-square w-[min(88vmin,560px)] max-w-[560px] overflow-hidden rounded-full bg-[#0a0a0a] shadow-[0_8px_40px_rgba(0,0,0,0.45)] [container-type:size] ${
-        step >= 6 ? "circle-step-6-out" : ""
+        step === 6 ? "circle-step-6-out" : ""
       } ${rootClassName}`}
       role="img"
       aria-label="연속 UI 경험"
@@ -110,20 +147,30 @@ export default function CircleUI({
       <PartyNightBackground step={step} />
       <DotGridAmbient step={step} />
       <PartyNightScreen step={step} />
+      {dualRight ? <RightCompanionStep7 step={step} /> : null}
 
       <WeatherFace show={step <= 1} />
 
       <VoiceMusicSlot step={step} dotsGathering={dotsGathering} />
 
-      {dualRight && (step === 4 || step === 5) ? (
+      {showRightMusic ? (
         <div
           className={`right-step4-music-icon${
-            step === 5 ? " right-step4-music-icon--settled" : ""
+            step >= 5 && step <= 6
+              ? " right-step4-music-icon--settled"
+              : ""
+          }${
+            step === 7 && rightMusicExiting ? " ux1-right-step7-music-out" : ""
           }`}
           style={
             step === 4
               ? { animationDelay: `${UX1_STEP4_RIGHT_REVEAL_DELAY_S}s` }
-              : undefined
+              : step === 7 && rightMusicExiting
+                ? {
+                    animationDelay: `${UX1_STEP7_RIGHT_MUSIC_OUT_DELAY_S}s`,
+                    animationDuration: `${UX1_STEP7_RIGHT_MUSIC_OUT_ANIM_S}s`,
+                  }
+                : undefined
           }
           aria-hidden
         >
@@ -165,6 +212,7 @@ export default function CircleUI({
               <AgentDotsContinuity
                 step={dotsPhase}
                 gathering={dotsGathering}
+                exiting={centerClusterExit}
                 step1White
               />
             </div>

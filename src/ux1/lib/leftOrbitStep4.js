@@ -154,6 +154,20 @@ export function leftStep5MusicEnterDelayS() {
 export function step5WineFooterDelayS() {
   return leftStep5MusicEnterDelayS() + 0.45;
 }
+
+/** globals.css ux1-right-icon-step6-exit duration과 동일 */
+export const UX1_STEP6_RIGHT_EXIT_ANIM_S = 1.2;
+export const UX1_STEP6_RIGHT_EXIT_STAGGER_S = 0.14;
+
+/** 5→6: arc 상단→하단 퇴장 (people → burger → wine) */
+export function rightStep6ExitDelayS(exitIndex = 0) {
+  return exitIndex * UX1_STEP6_RIGHT_EXIT_STAGGER_S;
+}
+
+/** globals.css ux1-left-step6-fade-in duration과 동일 */
+export const UX1_STEP6_LEFT_ENTER_ANIM_S = 1.2;
+export const UX1_STEP6_LEFT_DOTS_ENTER_DELAY_S = 0.3;
+export const UX1_STEP6_LEFT_TEXT_ENTER_DELAY_S = 0.65;
 /** 4→5: 좌 arc 5개 제자리 퇴장 완료 */
 export const UX1_STEP4_TO5_EXIT_TOTAL_S =
   LEFT_ORBIT_STEP4_ENTRY_BASE_S +

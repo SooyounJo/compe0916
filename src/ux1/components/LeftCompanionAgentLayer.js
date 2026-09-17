@@ -4,8 +4,8 @@ import { AgentBlobShell } from "./AgentBlobCluster";
 const CENTER_CLUSTER_EASE =
   "ease-[cubic-bezier(0.33,0,0.15,1)] transition-[transform,opacity,filter]";
 const CENTER_CLUSTER_IDLE = `scale-100 opacity-100 blur-0 duration-[900ms] ${CENTER_CLUSTER_EASE}`;
-const CENTER_CLUSTER_GATHER = `scale-[0.94] opacity-[0.88] blur-[2px] duration-[1000ms] ${CENTER_CLUSTER_EASE}`;
-const CENTER_CLUSTER_GONE = `scale-[0.92] opacity-0 blur-[8px] duration-[1500ms] ${CENTER_CLUSTER_EASE}`;
+const CENTER_CLUSTER_GATHER = `scale-100 opacity-0 duration-[1600ms] transition-opacity ease-[cubic-bezier(0.33,0,0.15,1)]`;
+const CENTER_CLUSTER_GONE = `scale-100 opacity-0 duration-[1500ms] transition-opacity ease-[cubic-bezier(0.33,0,0.15,1)]`;
 
 /** 우측 CircleUI 중앙 닷·블롭과 동기 (2~4) */
 export default function LeftCompanionAgentLayer({
@@ -68,6 +68,7 @@ export default function LeftCompanionAgentLayer({
           <AgentDotsContinuity
             step={dotsPhase}
             gathering={dotsGathering}
+            exiting={centerClusterExit}
           />
         </div>
       </div>

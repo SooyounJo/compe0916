@@ -32,6 +32,13 @@ export const RIGHT_STEP5_STAGGER_INDEX = {
   people: 2,
 };
 
+/** 5→6 퇴장 stagger — arc 상단→하단 (사람 → 버거 → 와인) */
+export const RIGHT_STEP6_EXIT_INDEX = {
+  people: 0,
+  burger: 1,
+  wine: 2,
+};
+
 export const ORBIT_WINE = {
   sizeCqw: 14,
   ...step5ArcPosition(STEP5_WINE_ARC_DEG),

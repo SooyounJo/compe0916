@@ -33,8 +33,6 @@ const CLUSTER_OFFSETS = [
   { x: "-9.1px", y: "5.25px", opacity: 0.5 },
 ];
 
-const GATHER_CENTER = { x: "0px", y: "0px", opacity: 0 };
-
 const DOT_MOVE =
   "transition-[transform,opacity,filter] duration-[1200ms] ease-[cubic-bezier(0.25,0.1,0.2,1)]";
 
@@ -52,11 +50,7 @@ function DotShell({ index, step, gathering, step1White = false }) {
   let y = (step1Row ? STEP1_ROW_OFFSETS : ROW_OFFSETS)[index].y;
   let dotOpacity = 1;
 
-  if (gathering) {
-    x = GATHER_CENTER.x;
-    y = GATHER_CENTER.y;
-    dotOpacity = GATHER_CENTER.opacity;
-  } else if (clustered) {
+  if (clustered) {
     x = CLUSTER_OFFSETS[index].x;
     y = CLUSTER_OFFSETS[index].y;
     dotOpacity = CLUSTER_OFFSETS[index].opacity;
@@ -94,14 +88,10 @@ function DotShell({ index, step, gathering, step1White = false }) {
 
   return (
     <span
-      className={`absolute left-1/2 top-1/2 ${sizeClass} ${DOT_MOVE} ${
-        gathering ? "scale-[0.35]" : "scale-100"
-      }`}
+      className={`absolute left-1/2 top-1/2 ${sizeClass} ${DOT_MOVE} scale-100`}
       style={{
         transform: dotTransform(x, y),
-        opacity: gathering ? dotOpacity : undefined,
-        transitionDelay:
-          clustered && !gathering ? `${index * 70}ms` : "0ms",
+        transitionDelay: clustered && !gathering ? `${index * 70}ms` : "0ms",
       }}
     >
       <span
@@ -109,12 +99,10 @@ function DotShell({ index, step, gathering, step1White = false }) {
         style={
           orbitStyle
             ? undefined
-            : gathering
-              ? { opacity: 0 }
-              : {
-                  animationDuration: `${WAVE_DURATION_S}s`,
-                  animationDelay: `${delay + 0.08}s`,
-                }
+            : {
+                animationDuration: `${WAVE_DURATION_S}s`,
+                animationDelay: `${delay + 0.08}s`,
+              }
         }
       />
       <span
@@ -122,12 +110,10 @@ function DotShell({ index, step, gathering, step1White = false }) {
         style={
           orbitStyle
             ? undefined
-            : gathering
-              ? { opacity: 0 }
-              : {
-                  animationDuration: `${WAVE_DURATION_S}s`,
-                  animationDelay: `${delay + 0.2}s`,
-                }
+            : {
+                animationDuration: `${WAVE_DURATION_S}s`,
+                animationDelay: `${delay + 0.2}s`,
+              }
         }
       />
       <span
@@ -135,12 +121,10 @@ function DotShell({ index, step, gathering, step1White = false }) {
         style={
           orbitStyle
             ? undefined
-            : gathering
-              ? { opacity: 0 }
-              : {
-                  animationDuration: `${WAVE_DURATION_S}s`,
-                  animationDelay: `${delay + 0.34}s`,
-                }
+            : {
+                animationDuration: `${WAVE_DURATION_S}s`,
+                animationDelay: `${delay + 0.34}s`,
+              }
         }
       />
       <span
@@ -162,18 +146,15 @@ function DotShell({ index, step, gathering, step1White = false }) {
 export function AgentDotsContinuity({
   step,
   gathering = false,
+  exiting = false,
   step1White = false,
 }) {
   const clustered = step >= 2;
-  const spinCluster = step >= 2 && !gathering;
+  const spinCluster = step >= 2 && !gathering && !exiting;
 
   return (
     <div
-      className={`relative ${DOT_MOVE} ${
-        clustered ? "delay-[450ms]" : "delay-0"
-      } ${
-        gathering ? "scale-[0.55] opacity-0" : "scale-100 opacity-100"
-      }`}
+      className={`relative ${clustered ? "delay-[450ms]" : "delay-0"}`}
       style={{
         width: clustered
           ? `${CLUSTER_BOX_W}px`
