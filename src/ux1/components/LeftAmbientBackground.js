@@ -70,7 +70,7 @@ export default function LeftAmbientBackground({
         <source src={LEFT_AMBIENT_BG_VIDEO} type="video/mp4" />
       </video>
 
-      <BlurFade show={step === 1}>
+      <BlurFade show={step === 1} className="absolute inset-0">
         <LeftCompanionStep1 show />
       </BlurFade>
 
