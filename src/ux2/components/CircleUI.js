@@ -14,6 +14,8 @@ import PartyNightScreen from "@/components/PartyNightScreen";
 import PartyNightBackground from "@/components/PartyNightBackground";
 import Ux2CenterHalftoneExpand from "@/ux2/components/Ux2CenterHalftoneExpand";
 import RightCompanionStep6 from "@/ux2/components/RightCompanionStep6";
+import Ux2PreStepRightBackground from "@/ux2/components/Ux2PreStepRightBackground";
+import RightCompanionPreStepIcons from "@/ux2/components/RightCompanionPreStepIcons";
 import Ux2Step7RightBackground from "@/ux2/components/Ux2Step7RightBackground";
 import RightCompanionStep8 from "@/ux2/components/RightCompanionStep8";
 import RightCompanionStep9 from "@/ux2/components/RightCompanionStep9";
@@ -109,6 +111,8 @@ export default function CircleUI({
       >
         <WeatherBackground step={step} dualInnerGlow={dualRight} />
       </BlurFade>
+      {dualRight ? <Ux2PreStepRightBackground step={step} /> : null}
+      {dualRight ? <RightCompanionPreStepIcons step={step} /> : null}
       <BlurFade
         show={showWeatherRings}
         className="pointer-events-none absolute inset-0 origin-center scale-[1.12]"

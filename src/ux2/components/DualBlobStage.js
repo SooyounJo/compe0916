@@ -3,12 +3,13 @@
 import { useCallback, useEffect, useState } from "react";
 import CircleUI from "@/ux2/components/CircleUI";
 import CompanionLeftBlob from "@/ux2/components/CompanionLeftBlob";
+import { ux2IsPreStep } from "@/ux2/lib/ux2FlowSteps";
 
 export default function DualBlobStage({ step = 1, dotsGathering = false }) {
   const [igSlotReady, setIgSlotReady] = useState(false);
 
   useEffect(() => {
-    if (step === 0) {
+    if (ux2IsPreStep(step) || step === 0) {
       setIgSlotReady(false);
     } else if (step >= 1 && step <= 3) {
       setIgSlotReady(true);
@@ -19,7 +20,8 @@ export default function DualBlobStage({ step = 1, dotsGathering = false }) {
     setIgSlotReady(true);
   }, []);
 
-  const showIgPersist = step <= 2 && (step >= 1 || igSlotReady);
+  const showIgPersist =
+    !ux2IsPreStep(step) && step <= 2 && (step >= 1 || igSlotReady);
 
   return (
     <div className="dual-blob-stage flex-nowrap">

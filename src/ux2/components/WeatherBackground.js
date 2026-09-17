@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useRef } from "react";
+import { ux2IsPreStep } from "@/ux2/lib/ux2FlowSteps";
 
 /** 배경 MP4 — 0~5.11초 구간 루프 */
 const BG_LOOP_END_S = 5.11;
@@ -14,7 +15,8 @@ export default function WeatherBackground({
   dualInnerGlow = false,
 }) {
   const step4Bg = step === 4;
-  const showStep1RightPhoto = step <= 2;
+  /** -4~-1: night·Weather만 — step1-right-bg에 박힌 아이콘 노출 방지 */
+  const showStep1RightPhoto = step >= 0 && step <= 2 && !ux2IsPreStep(step);
   const showDualGlow =
     dualInnerGlow &&
     step >= 3 &&

@@ -22,6 +22,9 @@ import {
 const ARC_ENTER_CLASS = "left-icon-orbit-enter-arc";
 
 function iconMotionClass(step, arcSettled, playEnter, handoffPlaying, icon) {
+  if (step === -3) {
+    return "left-icon-orbit-settled";
+  }
   if (step === 5 && handoffPlaying) {
     if (icon.handoff === "crossRight") {
       return `${handoffStyles.exit} ${handoffStyles.crossExit}`;
@@ -137,7 +140,9 @@ export default function LeftCompanionIconArc({ step = 1 }) {
     return undefined;
   }, [step]);
 
-  const playEnter = step === 4 && entering && !arcSettled;
+  const preStep3Arc = step === -3;
+
+  const playEnter = step === 4 && entering && !arcSettled && !preStep3Arc;
 
   const onEnterStart = useCallback(
     (e) => {
@@ -162,10 +167,12 @@ export default function LeftCompanionIconArc({ step = 1 }) {
   if (step === 5 && !handoffPlaying) {
     return null;
   }
-  if (step !== 4 && step !== 5) return null;
+  if (step !== 4 && step !== 5 && step !== -3) return null;
 
   const iconsOnScreen =
-    step === 4 || (step === 5 && handoffPlaying)
+    step === 4 ||
+    preStep3Arc ||
+    (step === 5 && handoffPlaying)
       ? UX2_LEFT_ORBIT_STEP4_ICONS
       : [];
 

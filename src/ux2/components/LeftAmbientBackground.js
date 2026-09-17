@@ -5,6 +5,10 @@ import Image from "next/image";
 import BlurFade from "@/ux2/components/BlurFade";
 import LeftCompanionAgentLayer from "@/ux2/components/LeftCompanionAgentLayer";
 import LeftCompanionIconArc from "@/ux2/components/LeftCompanionIconArc";
+import LeftCompanionPreStep, {
+  LeftCompanionPreStepAmbient,
+} from "@/ux2/components/LeftCompanionPreStep";
+import { ux2IsPreStep } from "@/ux2/lib/ux2FlowSteps";
 import LeftCompanionStep0 from "@/ux2/components/LeftCompanionStep0";
 import LeftCompanionStep1 from "@/ux2/components/LeftCompanionStep1";
 import LeftCompanionStep2 from "@/ux2/components/LeftCompanionStep2";
@@ -21,7 +25,7 @@ import Ux2LeftAmbientVideo from "@/ux2/components/Ux2LeftAmbientVideo";
 import Ux2Step4IconPrefetch from "@/ux2/components/Ux2Step4IconPrefetch";
 import step0EdgeGlow from "@/ux2/styles/ux2LeftStep0EdgeGlow.module.css";
 import step7RightEdgeGlow from "@/ux2/styles/ux2LeftStep7RightEdgeGlow.module.css";
-import { UX2_LAST_STEP } from "@/ux2/lib/ux2FlowSteps";
+import { UX2_FIRST_STEP, UX2_LAST_STEP } from "@/ux2/lib/ux2FlowSteps";
 import {
   centerOf,
   pctCircle,
@@ -71,6 +75,8 @@ export default function LeftAmbientBackground({
   const showLavenderEdge = step === 1 || step === 2;
   const showStep7RightEdgeGold = step >= 7 && step <= 8;
   const showStep9RightEdgeLilac = step >= 9 && step <= UX2_LAST_STEP;
+  const showIntroLeftPhoto = step === 0;
+  const showPreStepLeftPhoto = ux2IsPreStep(step);
 
   return (
     <div
@@ -94,10 +100,10 @@ export default function LeftAmbientBackground({
         alt=""
         fill
         className={`left-ambient__photo object-cover object-center ${BG_CROSSFADE} ${
-          step === 0 ? "opacity-100" : "opacity-0"
+          showIntroLeftPhoto || showPreStepLeftPhoto ? "opacity-100" : "opacity-0"
         }`}
         sizes="(max-width: 900px) 41vmin, 520px"
-        priority={step === 0}
+        priority={showIntroLeftPhoto || showPreStepLeftPhoto}
       />
       <div
         className={`${step0EdgeGlow.wrap} ${BG_CROSSFADE} ${
@@ -162,6 +168,14 @@ export default function LeftAmbientBackground({
         toPct={pctCircle}
       />
 
+      <LeftCompanionPreStepAmbient show={step === -3} />
+      <BlurFade
+        show={step === -3}
+        className="left-step4-ui-blur-in pointer-events-none absolute inset-0 z-[6] overflow-hidden"
+      >
+        <LeftCompanionIconArc step={-3} />
+      </BlurFade>
+      <LeftCompanionPreStep step={step} />
       <LeftCompanionStep0 show={step === 0} />
       <LeftCompanionStep1 show={step === 1} />
       <LeftCompanionStep2 show={step === 2} />

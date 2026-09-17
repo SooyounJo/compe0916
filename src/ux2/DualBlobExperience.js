@@ -1,15 +1,17 @@
 import { useCallback, useEffect, useState } from "react";
 import DualBlobStage from "@/ux2/components/DualBlobStage";
 import ScreenNav from "@/ux2/components/ScreenNav";
-import { UX2_LAST_STEP } from "@/ux2/lib/ux2FlowSteps";
+import { UX2_FIRST_STEP, UX2_LAST_STEP } from "@/ux2/lib/ux2FlowSteps";
 
 const DEFAULT_STEP_MS = 3000;
 const GATHER_MS = 1000;
 /** step 4 진입 후 cluster GONE(1.2s)과 맞춤 */
 const GATHER_RELEASE_MS = 1280;
+const FIRST_STEP = UX2_FIRST_STEP;
 const LAST_STEP = UX2_LAST_STEP;
 
 const STEP_DWELL_MS = {
+  [-1]: 3600,
   0: DEFAULT_STEP_MS,
   1: DEFAULT_STEP_MS,
   2: DEFAULT_STEP_MS,
@@ -22,9 +24,9 @@ function dwellMsForStep(step) {
   return STEP_DWELL_MS[step] ?? DEFAULT_STEP_MS;
 }
 
-/** UX2 — 0~11단계 (UX1과 분리된 복사본 트리) */
+/** UX2 — -4~11단계 (UX1과 분리된 복사본 트리) */
 export default function DualBlobExperience() {
-  const [activeStep, setActiveStep] = useState(0);
+  const [activeStep, setActiveStep] = useState(UX2_FIRST_STEP);
   const [isPlaying, setIsPlaying] = useState(false);
   const [dotsGathering, setDotsGathering] = useState(false);
 
@@ -49,7 +51,7 @@ export default function DualBlobExperience() {
 
   const handleStart = useCallback(() => {
     setDotsGathering(false);
-    setActiveStep(0);
+    setActiveStep(FIRST_STEP);
     setIsPlaying(true);
   }, []);
 
